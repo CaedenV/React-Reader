@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap');
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Lora", serif;
+}
+body{
+  background-color: bisque;
+}
+a{
+  text-decoration: none;
+  color: inherit;
+  line-height: 1;
+  cursor: pointer;
+}
+.container{
+  padding-left: 10%;
+  padding-right: 10%;
+}
+.btn{
+  background: transparent;
+  color: bisque;
+  padding: 14px 25px;
+  font-size: 16px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
