@@ -1,32 +1,46 @@
 const express = require('express');
-const connection = require('../connection');
+const db = require('../server');
 const router = express.Router();
-var auth = require('../services/authentication');
 
-router.post('/add', auth.authenticateToken, (req, res) => {
-  let rev = req.body;
-  var query = "insert into reviews (bookId, rating, title, text) values (?,?,?,?)";
-  connection.query(query, [rev.bookId, rev.rating, rev.title, rev.text], (err, results) => {
-      if (!err) {
-          return res.status(200).json({ message: "Review Added Successfully." });
-      }
-      else {
-          return res.status(500).json(err);
-      }
-  });
-})
+// Verify the JWT token
+router.use((req, res, next) => {
+    const token = req.header('Authorization').replace('Bearer ', '');
+    if (!token) {
+        return res.status(401).json({ success: false, message: 'No token provided' });
+    }
+    try {
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN);
+        req.user = decoded;
+        next();
+    } catch (err) {
+        return res.status(400).json({ success: false, message: 'Invalid token' });
+    }
+});
 
-router.get('/getByBook/:id', (req, res) => {
-  const id = req.params.id;
-    var query = "select rating, title, text from reviews where bookId = ?";
-    connection.query(query, [id], (err, results) => {
+router.post('/add', (req, res) => {
+    let { rev } = req;
+    var query = "insert into reviews (bookId, rating, title, text) values (?,?,?,?)";
+    db.query(query, [rev.bookId, rev.rating, rev.title, rev.text], (err, results) => {
         if (!err) {
-            return res.status(200).json(results);
+            return res.status(200).json({ success: true, message: "Review Added Successfully." });
         }
         else {
-            return res.status(500).json(err);
+            return res.status(500).json({ success: false, message: 'Error occured when adding review. Please try again later.' });
         }
     });
-})
+});
+
+router.get('/getByBook', (req, res) => {
+    const { book } = req;
+    var query = "select rating, title, text from reviews where bookId = ?";
+    db.query(query, [book.id], (err, results) => {
+        if (!err) {
+            return res.status(200).json({ success: true, revs: results });
+        }
+        else {
+            return res.status(500).json({ success: false, message: 'Error occured while retrieving reviews. Please try again later.' });
+        }
+    });
+});
 
 module.exports = router;

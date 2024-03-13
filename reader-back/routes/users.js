@@ -1,75 +1,94 @@
 const express = require('express');
-const connection = require('../connection');
 const router = express.Router();
-const image = require('../../src/assets/default');
-
 const jwt = require('jsonwebtoken');
-require('dotenv').config();
-var auth = require('../services/authentication');
 const bcrypt = require('bcryptjs');
+const db = require('../server');
+require('dotenv').config();
 
+// Create the Hashed Password
 const hashPassword = (password) => {
   const salt = bcrypt.genSaltSync(10);
   const hash = bcrypt.hashSync(password, salt);
   return hash;
 };
 
+// Verify the JWT token
+router.use((req, res, next) => {
+  const token = req.header('Authorization').replace('Bearer ', '');
+  if (!token) {
+    return res.status(401).json({ success: false, message: 'No token provided' });
+  }
+  try {
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    return res.status(400).json({ success: false, message: 'Invalid token' });
+  }
+});
 
 router.post('/register', (req, res) => {
-  const { userName, password } = req.body;
+  const { userName, email, password } = req.body;
+  if (!userName || !email || !password) {
+    return res.status(400).json({ success: false, message: 'All fields are required.' });
+  }
   const hashedPassword = hashPassword(password);
-  query = "select userName, password from users where userName =?"
-  connection.query(query, [userName], (error, result) => {
+  query = "select email, password from users where userName =?"
+  db.query(query, [email], (error, result) => {
     if (!error) {
       if (result.length <= 0) {
-        query = "insert into users (userName, password, pic) values (?,?,?)";
-        connection.query(query, [userName, hashedPassword, image], (err, results) => {
+        query = "insert into users (userName, email, password) values (?,?,?)";
+        db.query(query, [userName, email, hashedPassword], (err, results) => {
           if (!err) {
-            return res.status(200).json({ message: "Successfully Registered." });
+            const token = jwt.sign({ id: results.insertId }, process.env.ACCESS_TOKEN, { expiresIn: '8h' });
+            return res.status(200).json({ success: true, token: token });
           }
           else {
-            return res.status(500).json(err);
+            return res.status(500).json({ success: false, message: 'Error occured. Please try again later.' });
           }
         });
       }
       else {
-        return res.status(400).json({ message: "Username already exists." })
+        return res.status(400).json({ success: false, message: 'Account already exists.' });
       }
     }
     else {
-      return res.status(500).json(error);
+      return res.status(500).json({ success: false, message: 'Sorry, something went wrong. Please try again later.' });
     }
   });
 })
 
 router.post('/login', (req, res) => {
-  let user = req.body;
-  query = "select userName, password from users where userName=?";
-  connection.query(query, [user.userName], (err, result) => {
+  let { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ success: false, message: 'Both email and password are required.' });
+  }
+  query = "select id, password from users where email = ?";
+  db.query(query, [email], (err, result) => {
     if (!err) {
-      if (results.length <= 0 || results[0].password != user.password) {
-        return res.status(401).json({ message: "Incorrect Username or Password." });
+      if (results.length <= 0) {
+        return res.status(401).json({ success: false, message: 'Incorrect Email or Password.' });
       }
-      else if (results[0].password == user.password) {
-        const response = {
-          userName: results[0].userName,
-        };
-        const accessToken = jwt.sign(response, process.env.ACCESS_TOKEN, { expiresIn: '8h' })
-        res.status(200).json({ token: accessToken });
-      }
-      else {
-        return res.status(400).json({ message: "Something went wrong. Please try again later" });
-      }
+      bcrypt.compare(password, results[0].password, (err, match) => {
+        if (err) {
+          return res.status(500).json({ success: false, message: 'An error occured while checking credentials.' });
+        }
+        if (!match) {
+          return res.status(401).json({ success: false, message: 'Incorrect Email or Password.' });
+        }
+        const token = jwt.sign({ id: results[0].id }, process.env.ACCESS_TOKEN, { expiresIn: '8h' });
+        return res.status(200).json({ success: true, token: token });
+      });
     }
     else {
-      return res.status(500).json(err);
+      return res.status(500).json({ success: false, message: 'An error occured while checking credentials.' });
     }
-  })
-})
+  });
+});
 
-router.get('/get', auth.authenticateToken, (req, res) => {
-  var query = "select id, userName, pic, favGenre, nowRead from users";
-  connection.query(query, (err, results) => {
+router.get('/getAll', (req, res) => {
+  var query = "select id, userName, email from users";
+  db.query(query, (err, results) => {
     if (!err) {
       return response.status(200).json(results);
     }
@@ -77,64 +96,65 @@ router.get('/get', auth.authenticateToken, (req, res) => {
       return res.status(500).json(err);
     }
   });
-})
+});
 
-router.get('/getById/:id', auth.authenticateToken, (req, res) => {
-  const id = req.params.id;
+router.get('/getUser', (req, res) => {
+  const { user } = req;
   var query = "select userName, pic, favGenre, nowRead from users where id = ?";
-  connection.query(query, [id], (err, results) => {
-    if (!err) {
-      return response.status(200).json(results[0]);
+  db.query(query, [user.id], (err, results) => {
+    if (err) {
+      return res.status(500).json({ success: false, message: 'An error occured while fetching the user.' });
     }
-    else {
-      return res.status(500).json(err);
+    if (results.length <= 0) {
+      return res.status(404).json({ success: false, message: 'User not found.' });
     }
+    return response.status(200).json({ success: true, user: results[0] });
   });
-})
+});
 
-router.patch('/update', auth.authenticateToken, (req, res) => {
-  let user = req.body;
+router.patch('/update', (req, res) => {
+  let { user } = req;
   var query = "update user set pic=?,favGenre=?,nowRead=? where id=?";
-  connection.query(query, [user.pic, user.favGenre, user.nowRead, user.id], (err, results) => {
+  db.query(query, [user.pic, user.favGenre, user.nowRead, user.id], (err, results) => {
     if (!err) {
       if (res.affectedRows == 0) {
-        return res.status(404).json({ message: "User Id does not exist." });
+        return res.status(404).json({ success: false, message: 'User Id does not exist.' });
       }
-      return res.status(200).json({ message: "User updated successfully" });
+      return res.status(200).json({ success: true, message: 'User updated successfully' });
     }
     else {
-      return res.status(500).json(err);
+      return res.status(500).json({ success: false, message: 'An error occured while updating your profile.' });
     }
   });
-})
+});
 
-router.get('/libraries/:id', auth.authenticateToken, (req, res, next) => {
-  const id = req.params.id;
+router.get('/libraries', (req, res) => {
+  const { user } = req;
   var ownedBooks;
   var wishedBooks;
   var favBooks;
   var query = "select bookId, bookRank from favbooks where id=?";
-  connection.query(query, [id], (err, results) => {
+  db.query(query, [user.id], (err, results) => {
     if (!err) {
       favBooks = results;
     }
     else {
-      return res.status(500).json(err);
+      return res.status(500).json({ success: false, message: 'An error occured while fetching your Favorite Books.' });
     }
   });
 
   var query = "select bookId from ownedbooks where id=?";
-  connection.query(query, [id], (err, results) => {
+  db.query(query, [user.id], (err, results) => {
     if (!err) {
       ownedBooks = results;
     }
     else {
-      return res.status(500).json(err);
+      return res.status(500).json({ success: false, message: 'An error occured while fetching your Owned Books.' });
     }
   });
 
   var query = "select bookId from wishedbooks where id=?";
-  connection.query(query, [id], (err, results) => {
+  db.query(query, [user.id], (err, results) => {
     if (!err) {
       wishedBooks = results;
       var data = {
@@ -142,12 +162,12 @@ router.get('/libraries/:id', auth.authenticateToken, (req, res, next) => {
         wished: wishedBooks,
         faved: favBooks
       };
-      return res.status(200).json(data);
+      return res.status(200).json({ success: true, library: data });
     }
     else {
-      return res.status(500).json(err);
+      return res.status(500).json({ success: false, message: 'An error occured while fetching your Wished Books.' });
     }
   });
-})
+});
 
 module.exports = router;;
