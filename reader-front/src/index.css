@@ -18,12 +18,10 @@ a{
   padding-left: 10%;
   padding-right: 10%;
 }
-.btn{
-  background: transparent;
-  color: bisque;
-  padding: 14px 25px;
-  font-size: 16px;
-  border: none;
-  outline: none;
+.appRoutes {
+  padding-top: 60px;
+}
+
+button {
   cursor: pointer;
 }

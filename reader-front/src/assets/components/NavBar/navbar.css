@@ -34,13 +34,14 @@ nav ul li {
 }
 .userOptions{
     background-color: rgb(172, 146, 223);
+    color: bisque;
     border: 1px solid rgb(250, 198, 135);
     display: flex;
     flex-direction: column;
     border-radius: 8px;
     width: 100px;
     align-items: center;
-    height: 75px;
+    padding-bottom: 8px;
 }
 .userNotifs {
     background-color: rgb(250, 198, 135);
@@ -50,8 +51,15 @@ nav ul li {
     border-radius: 8px;
     width: 100px;
     align-items: center;
-    height: 75px;
 }
 .userOptions a {
     margin-top: 5px;
+}
+
+.userBtn {
+    color: bisque;
+    background-color: transparent;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
 }

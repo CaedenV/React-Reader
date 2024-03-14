@@ -1,0 +1,35 @@
+.intro {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.back {
+    width: 100%;
+    height: 50vh;
+    object-fit: cover;
+    filter: sepia(0.8);
+}
+
+.introHead {
+    font-size: xx-large;
+    color: mediumpurple;
+    margin-top: 10px;
+}
+
+.introBody {
+    font-size: large;
+    color: rgb(97, 81, 128);
+    margin-top: 10px;
+}
+
+.start {
+    border: none;
+    color: bisque;
+    background-color: mediumpurple;
+    border-radius: 8px;
+    font-size: large;
+    padding: 3px;
+    margin-top: 20px;
+}
+

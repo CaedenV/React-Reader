@@ -1,36 +1,73 @@
-import React from 'react'
-import './navbar.css'
-import logo from '../../../assets/logo.png'
-import Popup from 'reactjs-popup'
+import React, { useEffect, useState } from 'react';
+import './navbar.css';
+import logo from '../../../assets/logo.png';
+import Popup from 'reactjs-popup';
+import Login from '../Login-Register/Login';
+import Register from '../Login-Register/Register';
+import { Link } from 'react-router-dom';
 
-const NavBar = (userId) => {
+const NavBar = ({ userId, setUserId }) => {
+    const [loginPopOpen, setLoginPopOpen] = useState(false);
+    const [registerPopOpen, setRegisterPopOpen] = useState(false);
+    const [userInfo, setUserInfo] = useState({});
+
+    const handleLoginClick = () => {
+        setLoginPopOpen(true);
+    };
+    const handleRegisterClick = () => {
+        setRegisterPopOpen(true);
+    };
+    const handleSignRegClose = () => {
+        setRegisterPopOpen(false);
+        setLoginPopOpen(true);
+    }
+
+    useEffect(() => {
+        //setLocalId(userId);
+    }, [userId]);
+
     return (
-        <nav className='container'>
-            <img src={logo} alt="WeReader" className='logo' />
-            <ul>
-                <li><a href="">HOME</a></li>
-                <li><a href="">STORE</a></li>
-                <li><a href="">READ</a></li>
-                <li><a href="">LIBRARY</a></li>
-            </ul>
-            <div className="profile">
-                <Popup trigger={<button><i class="fa-solid fa-circle-user"></i></button>} position="bottom center" className='userOptions'>
-                    <div className="userOptions">
-                        {userId ? <a href="">Profile</a>: <a href="/">Log In</a>}
-                        <a href="">Settings</a>
-                        {userId ? <a href="">Logout</a>:<></>}
-                    </div>
-                </Popup>
-                <Popup trigger={<button><i class="fa-solid fa-bell"></i></button>} position="bottom center" className='userOptions'>
-                    <div className="userNotifs">
-                        <a href="/">Book 1</a>
-                        <a href="">Book 2</a>
-                        <a href="">Book 3</a>
-                    </div>
-                </Popup>
-            </div>
+        <div>
+            <nav className='container'>
+                <Link to={''}><img src={logo} alt="WeReader" className='logo' /></Link>
+                <ul>
+                    <li><Link to={`${userId}/home`}>HOME</Link></li>
+                    <li><Link to={`store`}>STORE</Link></li>
+                    <li><Link to={`read`}>READ</Link></li>
+                    <li><Link to={`${userId}/library`}>LIBRARY</Link></li>
+                </ul>
+                <div className="profile">
+                    <Popup trigger={<button><i className="fa-solid fa-circle-user"></i></button>} position="bottom center" className='userOptions'>
+                        {userId ? (
+                            <div className="userOptions">
+                                <Link to={`/${userId}/profile`}>Profile</Link>
+                                <a href="">Settings</a>
+                                <a href="">Logout</a>
+                            </div>
+                        ) : (
+                            <div className="userOptions">
+                                <button className='userBtn signUp' onClick={handleRegisterClick}>Sign Up</button>
+                                <button className='userBtn logIn' onClick={handleLoginClick}>Log In</button>
+                            </div>
+                        )}
 
-        </nav>
+                    </Popup>
+                    {userId ? (
+                        <Popup trigger={<button><i className="fa-solid fa-bell"></i></button>} position="bottom center" className='userOptions'>
+                            <div className="userNotifs">
+                                <a href="/">Book 1</a>
+                                <a href="">Book 2</a>
+                                <a href="">Book 3</a>
+                            </div>
+                        </Popup>
+                    ) : (
+                        <></>
+                    )}
+                </div>
+            </nav>
+            {registerPopOpen && <Register onClose={() => setRegisterPopOpen(false)}  onSign={handleSignRegClose}/>}
+            {loginPopOpen && <Login onClose={() => setLoginPopOpen(false)} />}
+        </div>
     )
 }
 
