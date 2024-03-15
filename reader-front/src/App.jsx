@@ -21,12 +21,12 @@ function App() {
         <Routes>
           <Route exact path="/" element={userId !== null ? <UserDash backend={backend} userId={userId} /> : <DefaultHome />} />
           <Route path="/store/:sParams/:sQuery" element={userId !== null ? <Store backend={backend} userId={userId} /> : <DefaultHome />} />
-          <Route path="/store" element={userId !== null ? <Store backend={backend} userId={userId} /> : <DefaultHome />} />
+          <Route path="/store" element={<Store backend={backend} userId={userId} />} />
           <Route path="/:userId/profile" element={userId !== null ? <Profile backend={backend} userId={userId} /> : <DefaultHome />} />
           <Route path="/:bookId" element={userId !== null ? <Single userId={userId} /> : <DefaultHome />} />
           <Route path="/:userId/library" element={userId !== null ? <Libraries backend={backend} userId={userId} /> : <DefaultHome />} />
           <Route path="/read/:bookId" element={userId !== null ? <Read /> : <DefaultHome />} />
-          <Route path="/:userId/home" element={<UserDash backend={backend} userId={userId} />} />
+          <Route path="/:userId/home" element={userId !== null ? <UserDash backend={backend} userId={userId} /> : <DefaultHome />} />
         </Routes>
       </div>
 

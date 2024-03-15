@@ -5,6 +5,7 @@ import Popup from 'reactjs-popup';
 import Login from '../Login-Register/Login';
 import Register from '../Login-Register/Register';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const NavBar = ({ userId, setUserId }) => {
     const [loginPopOpen, setLoginPopOpen] = useState(false);
@@ -18,6 +19,7 @@ const NavBar = ({ userId, setUserId }) => {
         setRegisterPopOpen(true);
     };
     const handleSignRegClose = () => {
+        
         setRegisterPopOpen(false);
         setLoginPopOpen(true);
     }
@@ -31,10 +33,10 @@ const NavBar = ({ userId, setUserId }) => {
             <nav className='container'>
                 <Link to={''}><img src={logo} alt="WeReader" className='logo' /></Link>
                 <ul>
-                    <li><Link to={`${userId}/home`}>HOME</Link></li>
+                    <li><Link to={userId ? `${userId}/home`: '/'}>HOME</Link></li>
                     <li><Link to={`store`}>STORE</Link></li>
-                    <li><Link to={`read`}>READ</Link></li>
-                    <li><Link to={`${userId}/library`}>LIBRARY</Link></li>
+                    <li><Link to={userId ? `read`: '/'}>READ</Link></li>
+                    <li><Link to={userId ? `${userId}/library`: '/'}>LIBRARY</Link></li>
                 </ul>
                 <div className="profile">
                     <Popup trigger={<button><i className="fa-solid fa-circle-user"></i></button>} position="bottom center" className='userOptions'>
@@ -65,8 +67,8 @@ const NavBar = ({ userId, setUserId }) => {
                     )}
                 </div>
             </nav>
-            {registerPopOpen && <Register onClose={() => setRegisterPopOpen(false)}  onSign={handleSignRegClose}/>}
-            {loginPopOpen && <Login onClose={() => setLoginPopOpen(false)} />}
+            {registerPopOpen && <Register onClose={() => setRegisterPopOpen(false)}  onSign={handleSignRegClose} setUser={setUserId}/>}
+            {loginPopOpen && <Login onClose={() => setLoginPopOpen(false)} setUser={setUserId}/>}
         </div>
     )
 }

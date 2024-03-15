@@ -37,8 +37,8 @@ db.connect((err) => {
   console.log('Connected to MySQL database.');
 });
 
-app.listen(3001, () => {
-  console.log('Server is running on port 3001.');
+app.listen(process.env.PORT, () => {
+  console.log('Server is running on port' + process.env.PORT + ".");
 });
 
 module.exports = db;

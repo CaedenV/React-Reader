@@ -1,0 +1,9 @@
+export const backend = "http://localhost:3000";
+export const userBack = "http://localhost:3000/users";
+export const bookBack = "http://localhost:3000/books";
+export const friendBack = "http://localhost:3000/friends";
+export const revBack = "http://localhost:3000/revs";
+export const notifBack = "http://localhost:3000/notifs";
+export const wishBack = "http://localhost:3000/wished";
+export const favBack = "http://localhost:3000/favs";
+export const ownBack = "http://localhost:3000/owned";
