@@ -26,6 +26,7 @@ const Register = ({ onClose, onSign, setUser }) => {
             email: formData.get('email'),
             password: formData.get('pw'),
         }
+        
         const response = axios.post(`${userBack}/register`, data);
         console.log(response);
         // setValid(response[0].message);

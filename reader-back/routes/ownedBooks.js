@@ -19,29 +19,24 @@ router.use((req, res, next) => {
 
 router.post('/add', (req, res) => {
   let book = req.body;
-  query = "insert into ownedbooks (userId, bookId) values (?,?)";
-  db.query(query, [book.userId, book.bookId], (err, results) => {
-    if (!err) {
-      return res.status(200).json({ success: true, message: "Book Owned Successfully." });
-    }
-    else {
-      return res.status(500).json({ success: false, message: 'An error occured adding to your Owned Books. Please try again later.' });
-    }
-  });
-})
+  var query = "insert into ownedbooks (userId, bookId) values (?,?)";
+  try {
+    const results = db.query(query, [book.userId, book.bookId]);
+    return res.status(200).json({ success: true, message: "Book Owned Successfully." });
+  } catch {
+    return res.status(500).json({ success: false, message: 'An error occured adding to your Owned Books. Please try again later.' });
+  }
+});
 
 router.get('/getByUser/:id', (req, res) => {
   const id = req.params.id;
   var query = "select bookId from ownedbooks where userId = ?";
-  db.query(query, [id], (err, results) => {
-    if (!err) {
-      return res.status(200).json({ success: true, owned: results });
-    }
-    else {
-      return res.status(500).json({ success: false, message: 'An error occured getting your Owned Books. Please try again later.' });
-    }
-  });
+  try {
+    const resultts = db.query(query, [id]);
+    return res.status(200).json({ success: true, owned: results });
+  } catch {
+    return res.status(500).json({ success: false, message: 'An error occured getting your Owned Books. Please try again later.' });
+  }
 });
-
 
 module.exports = router;

@@ -19,28 +19,24 @@ router.use((req, res, next) => {
 
 router.post('/add', (req, res) => {
   let fav = req.body;
-  query = "insert into favbooks (userId, bookId, bookRank) values (?,?,?)";
-  db.query(query, [fav.userId, fav.bookId, fav.Rank], (err, results) => {
-    if (!err) {
-      return res.status(200).json({ success: true, message: "Book Favorited Successfully." });
-    }
-    else {
-      return res.status(500).json({ success: false, message: 'An error occured adding to your favorites. Please try again later.' });
-    }
-  });
-})
+  var query = "insert into favbooks (userId, bookId, bookRank) values (?,?,?)";
+  try {
+    const results = db.query(query, [fav.userId, fav.bookId, fav.Rank]);
+    return res.status(200).json({ success: true, message: "Book Favorited Successfully." });
+  } catch {
+    return res.status(500).json({ success: false, message: 'An error occured adding to your favorites. Please try again later.' });
+  }
+});
 
 router.get('/getByUser/:id', (req, res) => {
   const id = req.params.id;
   var query = "select bookId, bookRank from favbooks where userId = ?";
-  db.query(query, [id], (err, results) => {
-    if (!err) {
-      return res.status(200).json({ success: true, favs: results });
-    }
-    else {
-      return res.status(500).json({ success: false, message: 'An error occured getting your favorites. Please try again later.' });
-    }
-  });
+  try {
+    const resultts = db.query(query, [id]);
+    return res.status(200).json({ success: true, favs: results });
+  } catch {
+    return res.status(500).json({ success: false, message: 'An error occured getting your favorites. Please try again later.' });
+  }
 });
 
 

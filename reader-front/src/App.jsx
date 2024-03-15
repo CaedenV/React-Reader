@@ -8,8 +8,6 @@ import Read from './assets/pages/Read/Read';
 import Single from './assets/pages/Single/Single';
 import Store from './assets/pages/Store/Store';
 import UserDash from './assets/pages/UserDash/UserDash';
-import Login from './assets/components/Login-Register/Login';
-import Register from './assets/components/Login-Register/Register';
 
 function App() {
   const [userId, setUserId] = useState(null);

@@ -1,36 +1,41 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mysql = require('mysql');
+const cors = require('cors');
 require('dotenv').config();
 
-import users from './routes/users';
-import books from './routes/books';
-import friends from './routes/friendUsers';
-import favBooks from './routes/favBooks';
-import owned from './routes/ownedBooks';
-import wished from './routes/wishedBooks';
-import notifs from './routes/notifs';
-import revs from './routes/reviews';
-
+const users = require('./routes/users');
+const books = require('./routes/books');
+const friends = require('./routes/friendUsers');
+const favBooks = require('./routes/favBooks');
+const owned = require('./routes/ownedBooks');
+const wished = require('./routes/wishedBooks');
+const notifs = require('./routes/notifs');
+const revs = require('./routes/reviews');
 const app = express();
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use('/api/users', users);
-app.use('/api/books', books);
-app.use('/api/friends', friends);
-app.use('/api/notifs', notifs);
-app.use('/api/revs', revs);
-app.use('/api/wished', wished);
-app.use('/api/favs', favBooks);
-app.use('/api/owned', owned);
 
-const db = mysql.createConnection({
-    port: process.env.DB_PORT,
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_DATABASE
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cors());
+
+
+app.use('/users', users);
+app.use('/books', books);
+app.use('/friends', friends);
+app.use('/notifs', notifs);
+app.use('/revs', revs);
+app.use('/wished', wished);
+app.use('/favs', favBooks);
+app.use('/owned', owned);
+
+var db  = mysql.createConnection({
+  port            : process.env.DB_PORT,
+  host            : process.env.DB_HOST,
+  user            : process.env.DB_USER,
+  password        : process.env.DB_PASSWORD,
+  database        : process.env.DB_DATABASE
 });
+ 
 
 db.connect((err) => {
   if (err) throw err;
@@ -38,7 +43,7 @@ db.connect((err) => {
 });
 
 app.listen(process.env.PORT, () => {
-  console.log('Server is running on port' + process.env.PORT + ".");
+  console.log('Server is running on port ' + process.env.PORT + ".");
 });
 
 module.exports = db;

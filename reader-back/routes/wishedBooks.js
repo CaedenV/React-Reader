@@ -18,30 +18,25 @@ router.use((req, res, next) => {
 });
 
 router.post('/add', (req, res) => {
-  let wish = req.body;
+  let book = req.body;
   query = "insert into wishedbooks (userId, bookId) values (?,?)";
-  db.query(query, [wish.userId, wish.bookId], (err, results) => {
-    if (!err) {
-      return res.status(200).json({ success: true, message: "Book Wished Successfully." });
-    }
-    else {
-      return res.status(500).json({ success: false, message: 'An error occured getting adding to your Wished Books. Please try again later.' });
-    }
-  });
-})
+  try {
+    const results = db.query(query, [book.userId, book.bookId]);
+    return res.status(200).json({ success: true, message: "Book Wished Successfully." });
+  } catch {
+    return res.status(500).json({ success: false, message: 'An error occured getting adding to your Wished Books. Please try again later.' });
+  }
+});
 
 router.get('/getByUser/:id', (req, res) => {
   const id = req.params.id;
   var query = "select bookId from wishedbooks where userId = ?";
-  db.query(query, [id], (err, results) => {
-    if (!err) {
-      return res.status(200).json({ success: true, wished: results });
-    }
-    else {
-      return res.status(500).json({ success: false, message: 'An error occured getting your Wished Books. Please try again later.' });
-    }
-  });
+  try {
+    const resultts = db.query(query, [id]);
+    return res.status(200).json({ success: true, wished: results });
+  } catch {
+    return res.status(500).json({ success: false, message: 'An error occured getting your Wished Books. Please try again later.' });
+  }
 });
-
 
 module.exports = router;
