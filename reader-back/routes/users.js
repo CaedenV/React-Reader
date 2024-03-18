@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const db = require('../server');
+const db = require('../db');
 
 // Create the Hashed Password
 const hashPassword = (password) => {
@@ -15,59 +15,77 @@ const hashPassword = (password) => {
 function protect(req, res, next) {
   const token = req.header('Authorization').replace('Bearer ', '');
   if (!token) {
-    return res.status(401).json({ success: false, message: 'No token provided' });
+    return res.json({ success: false, message: 'No token provided' });
   }
   try {
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN);
     req.user = decoded;
     next();
   } catch (err) {
-    return res.status(400).json({ success: false, message: 'Invalid token' });
+    return res.json({ success: false, message: 'Invalid token' });
   }
 }
 
 router.post('/register', async (req, res) => {
   const { userName, email, password } = req.body;
-  console.log(req.body);
+
   if (!userName || !email || !password) {
-    return res.status(400).json({ success: false, message: 'All fields are required.' });
+    console.log("Not all fields");
+    return res.json({ success: false, message: 'All fields are required.' });
   }
   const hashedPassword = hashPassword(password);
-  var query = "select email, password from users where email = ?";
+  var query = "select userName, password from users where email = ?";
   try {
-    const result = await db.query(query, [email]);
+    console.log("In TRY");
+    const result = await new Promise((resolve, reject) => {
+      db.query(query, [email], (error, results) => {
+        if (error) { reject(error); }
+        else { resolve(results); }
+      });
+    });
     if (result.length <= 0) {
+      console.log("In NOT FOUND");
       query = "insert into users (userName, email, password) values (?,?,?)";
-      const results = await db.query(query, [userName, email, hashedPassword]);
-      const token = jwt.sign({ id: results.insertId }, process.env.ACCESS_TOKEN, { expiresIn: '8h' });
+      const insertedResults = await new Promise((resolve, reject) => {
+        db.query(query, [userName, email, hashedPassword], (error, results) => {
+          if (error) { reject(error); } else { resolve(results); }
+        });
+      });
+      const token = jwt.sign({ id: insertedResults.insertId }, process.env.ACCESS_TOKEN, { expiresIn: '8h' });
       return res.status(200).json({ success: true, token: token });
     }
     else {
-      return res.status(400).json({ success: false, message: 'Account already exists.' });
+      return res.json({ success: false, message: 'Account already exists. Please sign in.' });
     }
   }
   catch (error) {
-    return res.status(500).json({ success: false, message: 'Sorry, something went wrong. Please try again' });
+    return res.status(500).json({ success: false, message: error });
   }
 });
 
-router.post('/login', (req, res) => {
-  let { email, password } = req.body;
+router.post('/login', async (req, res) => {
+  const { email, password } = req.body;
   if (!email || !password) {
-    return res.status(400).json({ success: false, message: 'Both email and password are required.' });
+    return res.json({ success: false, message: 'Both email and password are required.' });
   }
   query = "select id, password from users where email = ?";
   try {
-    const results = db.query(query, [email]);
+    const results = await new Promise((resolve, reject) => {
+      db.query(query, [email], (err, res) => {
+        if (err) { reject(err); }
+        else { resolve(res); }
+      });
+    });
     if (results.length <= 0) {
-      return res.status(401).json({ success: false, message: 'Incorrect Email or Password.' });
+      return res.json({ success: false, message: 'Incorrect Email or Password.' });
     }
     bcrypt.compare(password, results[0].password, (err, match) => {
       if (err) {
         return res.status(500).json({ success: false, message: 'An error occured while checking credentials.' });
       }
       if (!match) {
-        return res.status(401).json({ success: false, message: 'Incorrect Email or Password.' });
+        console.log(results[0].password, password);
+        return res.json({ success: false, message: 'Incorrect Email or Password.' });
       }
       const token = jwt.sign({ id: results[0].id }, process.env.ACCESS_TOKEN, { expiresIn: '8h' });
       return res.status(200).json({ success: true, token: token });
@@ -77,7 +95,7 @@ router.post('/login', (req, res) => {
   }
 });
 
-router.get('/getAll', protect, (req, res) => {
+router.get('/getAll', protect, async (req, res) => {
   var query = "select id, userName, email from users";
   try {
     const results = db.query(query);
@@ -87,7 +105,7 @@ router.get('/getAll', protect, (req, res) => {
   }
 });
 
-router.get('/getUser', protect, (req, res) => {
+router.get('/getUser', protect, async (req, res) => {
   const { user } = req;
   var query = "select userName, pic, favGenre, nowRead from users where id = ?";
   try {
@@ -101,7 +119,7 @@ router.get('/getUser', protect, (req, res) => {
   }
 });
 
-router.patch('/update', protect, (req, res) => {
+router.patch('/update', protect, async (req, res) => {
   let { user } = req;
   var query = "update user set pic=?,favGenre=?,nowRead=? where id=?";
   try {
@@ -115,7 +133,17 @@ router.patch('/update', protect, (req, res) => {
   }
 });
 
-router.get('/libraries', protect, (req, res) => {
+router.delete('/remove', protect, async (req, res) => {
+  const userId = req;
+  var query = "delete from users where id = ?";
+  try {
+    const results = db.query
+  } catch {
+
+  }
+})
+
+router.get('/libraries', protect, async (req, res) => {
   const { user } = req;
   var ownedBooks;
   var wishedBooks;

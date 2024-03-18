@@ -56,7 +56,7 @@ router.patch('/read', (req, res) => {
     try {
         const results = db.query(query, [notif.notifRead, notif.userId]);
         if (results.affectedRows == 0) {
-            return res.status(404).json({ success: false, message: "Notification not found." });
+            return res.json({ success: false, message: "Notification not found." });
         }
         return res.status(200).json({ success: true, status: notif.notifRead });
     } catch {
@@ -70,7 +70,7 @@ router.delete('/delete/:id', (req, res) => {
     try {
         const results = db.query(query, [id]);
         if (results.affectedRows == 0) {
-            return res.status(404).json({ success: false, message: "Notification not found." });
+            return res.json({ success: false, message: "Notification not found." });
         }
         return res.status(200).json({ success: true, message: "Notification Deleted Successfully." });
     } catch {

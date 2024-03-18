@@ -3,13 +3,14 @@ import './login-register.css';
 import Popup from 'reactjs-popup';
 import axios from 'axios';
 import { userBack } from '../../backendRoutes';
+import Cookies from 'js-cookie';
+import { jwtDecode } from "jwt-decode";
 
-const Register = ({ onClose, onSign, setUser }) => {
+const Register = ({ onClose, onSign, updateUserId }) => {
     const [typedPass, setTypedPass] = useState('');
     const [valid, setValid] = useState('');
 
     const compPass = (reTyped) => {
-        console.log(typedPass, reTyped);
         if (reTyped === typedPass) {
             setValid("");
         }
@@ -18,7 +19,7 @@ const Register = ({ onClose, onSign, setUser }) => {
         }
     }
 
-    const submitForm = (e) => {
+    const submitForm = async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
         const data = {
@@ -27,12 +28,13 @@ const Register = ({ onClose, onSign, setUser }) => {
             password: formData.get('pw'),
         }
         
-        const response = axios.post(`${userBack}/register`, data);
-        console.log(response);
-        // setValid(response[0].message);
-        // if(response[0].success) {
-        //     onClose;
-        // }
+        const response = await axios.post(`${userBack}/register`, data);
+        setValid(response.data.message);
+        if(response.data.success) {
+            Cookies.set('token', response.data.token, {expires: 8});
+            updateUserId(jwtDecode(response.data.token));
+            onClose;
+        }
     }
 
     return (

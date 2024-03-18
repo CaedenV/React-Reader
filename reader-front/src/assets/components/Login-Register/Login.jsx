@@ -1,24 +1,27 @@
-import {React, useState} from 'react'
+import { React, useState } from 'react'
 import './login-register.css';
 import Popup from 'reactjs-popup';
 import { userBack } from '../../backendRoutes';
 import axios from 'axios';
+import Cookies from 'js-cookie';
+import { jwtDecode } from 'jwt-decode';
 
-const Login = ({ onClose, setUser }) => {
+const Login = ({ onClose, updateUserId }) => {
     const [valid, setValid] = useState('');
-    const submitForm = (e) => {
+    const submitForm = async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
         const data = {
             email: formData.get('email'),
             password: formData.get('pw'),
         }
-        const response = axios.post(`${userBack}/login` , data);
-        console.log(response);
-        // setValid(response[0].message);
-        // if(response[0].success) {
-        //     onClose;
-        // }
+        const response = await axios.post(`${userBack}/login`, data);
+        setValid(response.data.message);
+        if (response.data.success) {
+            Cookies.set('token', response.data.token, { expires: 8 });
+            updateUserId(jwtDecode(response.data.token));
+            onClose;
+        }
     }
 
     return (
