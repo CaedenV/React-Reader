@@ -6,7 +6,7 @@ import Login from '../Login-Register/Login';
 import Register from '../Login-Register/Register';
 import { Link } from 'react-router-dom';
 import Cookies from 'js-cookie';
-import axios from 'axios';
+import NotifList from '../NotifDisplay/NotifList';
 
 const NavBar = ({ userId, updateUserId }) => {
     const [loginPopOpen, setLoginPopOpen] = useState(false);
@@ -55,13 +55,7 @@ const NavBar = ({ userId, updateUserId }) => {
 
                     </Popup>
                     {userId ? (
-                        <Popup trigger={<button><i className="fa-solid fa-bell"></i></button>} position="bottom center" className='userOptions'>
-                            <div className="userNotifs">
-                                <a href="/">Book 1</a>
-                                <a href="">Book 2</a>
-                                <a href="">Book 3</a>
-                            </div>
-                        </Popup>
+                        <NotifList userId={userId}></NotifList>
                     ) : (
                         <></>
                     )}

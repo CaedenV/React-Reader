@@ -12,7 +12,6 @@ import useUser from './assets/hooks/useUser';
 
 function App() {
   const [userId, setUserId] = useState(useUser());
-  const backend = "http://localhost:8000";
   const user = useUser();
 
   useEffect(() => {
@@ -24,12 +23,12 @@ function App() {
       <NavBar userId={userId} updateUserId={setUserId} />
       <div className="appRoutes container">
         <Routes>
-          <Route exact path="/" element={userId !== null ? <UserDash backend={backend} userId={userId} /> : <DefaultHome />} />
-          <Route path="/store/:sParams/:sQuery" element={userId !== null ? <Store backend={backend} userId={userId} /> : <DefaultHome />} />
-          <Route path="/store" element={<Store backend={backend} userId={userId} />} />
-          <Route path="/:userId/profile" element={userId !== null ? <Profile backend={backend} userId={userId} /> : <DefaultHome />} />
+          <Route exact path="/" element={userId !== null ? <UserDash  userId={userId} /> : <DefaultHome />} />
+          <Route path="/store/:sParams/:sQuery" element={userId !== null ? <Store userId={userId} /> : <DefaultHome />} />
+          <Route path="/store" element={<Store userId={userId} />} />
+          <Route path="/:userId/profile" element={userId !== null ? <Profile userId={userId} /> : <DefaultHome />} />
           <Route path="/:bookId" element={userId !== null ? <Single userId={userId} /> : <DefaultHome />} />
-          <Route path="/:userId/library" element={userId !== null ? <Libraries backend={backend} userId={userId} /> : <DefaultHome />} />
+          <Route path="/:userId/library" element={userId !== null ? <Libraries userId={userId} /> : <DefaultHome />} />
           <Route path="/read/:bookId" element={userId !== null ? <Read /> : <DefaultHome />} />
         </Routes>
       </div>

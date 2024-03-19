@@ -1,0 +1,48 @@
+.make {
+    padding-top: 10;
+    margin: 0px 25px 40px 25px;
+}
+
+.makeReview {
+    position: relative;
+}
+
+.userName {
+    color: rgb(119, 91, 175);
+    font-size: 25px;
+}
+
+.reviewIcon {
+    width: 25px;
+    height: 25px;
+    color: rgb(174, 152, 219);
+}
+
+.revInput {
+    font-size: 30px;
+    border: none;
+    padding: 10px;
+    color: mediumpurple;
+    background-color: transparent;
+}
+
+.revInput:focus {
+    outline: none;
+}
+
+.revText {
+    font-size: 20px;
+    font-family: 'Lora', serif;
+    color: rgb(104, 76, 161);
+    width: 70vw;
+    height: 150;
+}
+
+.revSubmit {
+    height: 30px;
+    width: 30px;
+    margin-left: 100px;
+    font-size: larger;
+    color: mediumpurple;
+    cursor: pointer;
+}

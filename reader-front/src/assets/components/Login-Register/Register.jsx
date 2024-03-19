@@ -31,7 +31,7 @@ const Register = ({ onClose, onSign, updateUserId }) => {
         const response = await axios.post(`${userBack}/register`, data);
         setValid(response.data.message);
         if(response.data.success) {
-            Cookies.set('token', response.data.token, {expires: 8});
+            Cookies.set('token', response.data.token, {expires: 3});
             updateUserId(jwtDecode(response.data.token));
             onClose;
         }

@@ -1,0 +1,26 @@
+.notif .msg {
+    font-size: large;
+    color: mediumpurple;
+}
+
+.bookLink {
+    color: rgb(109, 85, 158);
+    font-size: large;
+}
+
+.bookPic {
+    border-radius: 2px;
+    height: 20px;
+    width: 10px;
+}
+
+.senderPic {
+    border-radius: 50%;
+    width: 4px;
+    height: 4px;
+}
+
+.notifBtn {
+    font-size: large;
+    color: mediumpurple;
+}

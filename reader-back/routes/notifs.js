@@ -2,59 +2,60 @@ const express = require('express');
 const db = require('../server');
 const router = express.Router();
 
-// Verify the JWT token
-router.use((req, res, next) => {
-    const token = req.header('Authorization').replace('Bearer ', '');
-    if (!token) {
-        return res.status(401).json({ success: false, message: 'No token provided' });
-    }
-    try {
-        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN);
-        req.user = decoded;
-        next();
-    } catch (err) {
-        return res.status(400).json({ success: false, message: 'Invalid token' });
-    }
-});
-
-router.post('/add', (req, res) => {
+router.post('/add', async (req, res) => {
     let { notif } = req;
     var query = "insert into notifs (senderId, receiverId, bookId, notifRead) values (?,?,?, '0')";
     try {
-        const results = db.query(query, [notif.sender, notif.receiver, notif.bookId]);
+        const results = await new Promise((resolve, reject) => {
+            db.query(query, [notif.sender, notif.receiver, notif.bookId], (err, res) => {
+                if (err) { reject(err); } else { resolve(res); }
+            });
+        });
         return res.status(200).json({ success: true, message: "Recommendation Sent Successfully." });
     } catch {
         return res.status(500).json({ success: false, message: 'Something went wrong sending the recommendation. Please try again later.' });
     }
 });
 
-router.get('/getByUser', (req, res) => {
+router.get('/getByUser', async (req, res) => {
     const { user } = req;
     var query = "select senderId, bookId, notifRead from notifs where receiverId = ?";
     try {
-        const results = db.query(query, [user.id]);
+        const results = await new Promise((resolve, reject) => {
+            db.query(query, [user.id], (err, res) => {
+                if (err) { reject(err); } else { resolve(res); }
+            });
+        });
         return res.status(200).json({ success: true, notifs: results[0] });
     } catch {
         return res.status(500).json({ success: false, message: 'Something went wrong retrieving notifications. Please try again later.' });
     }
 });
 
-router.get('/getNumByUser', (req, res) => {
+router.get('/getNumByUser', async (req, res) => {
     const { user } = req;
     var query = "select count(*) from notifs where receiverId = ?";
     try {
-        const results = db.query(query, [user.id]);
+        const results = await new Promise((resolve, reject) => {
+            db.query(query, [user.id], (err, res) => {
+                if (err) { reject(err); } else { resolve(res); }
+            });
+        });
         return res.status(200).json({ success: true, notifs: results[0] });
     } catch {
         return res.status(500).json({ success: false, message: 'Something went wrong retrieving notifications. Please try again later.' });
     }
 })
 
-router.patch('/read', (req, res) => {
+router.patch('/read', async (req, res) => {
     const { notif } = req;
     var query = "update notifs set notifRead = ? where receriverId = ?";
     try {
-        const results = db.query(query, [notif.notifRead, notif.userId]);
+        const results = await new Promise((resolve, reject) => {
+            db.query(query, [notif.notifRead, notif.userId], (err, res) => {
+                if (err) { reject(err); } else { resolve(res); }
+            });
+        });
         if (results.affectedRows == 0) {
             return res.json({ success: false, message: "Notification not found." });
         }
@@ -64,11 +65,15 @@ router.patch('/read', (req, res) => {
     }
 });
 
-router.delete('/delete/:id', (req, res) => {
+router.delete('/delete/:id', async (req, res) => {
     const id = req.params.id;
     var query = "delete from notifs where id = ?";
     try {
-        const results = db.query(query, [id]);
+        const results = await new Promise((resolve, reject) => {
+            db.query(query, [id], (err, res) => {
+                if (err) { reject(err); } else { resolve(res); }
+            });
+        });
         if (results.affectedRows == 0) {
             return res.json({ success: false, message: "Notification not found." });
         }

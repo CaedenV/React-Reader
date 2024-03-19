@@ -18,7 +18,7 @@ const Login = ({ onClose, updateUserId }) => {
         const response = await axios.post(`${userBack}/login`, data);
         setValid(response.data.message);
         if (response.data.success) {
-            Cookies.set('token', response.data.token, { expires: 8 });
+            Cookies.set('token', response.data.token, { expires: 8, path:'/', domain: 'localhost:5173', secure: false});
             updateUserId(jwtDecode(response.data.token));
             onClose;
         }

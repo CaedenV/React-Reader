@@ -1,0 +1,32 @@
+.review{
+    margin: 0px 25px 40px 25px;
+    display: flex;
+    flex-direction: column;
+}
+
+.reviewTitle{
+    font-family: 'Merriweather', serif;
+    font-size: 30px;
+    font-weight: bold;
+    color: mediumpurple;
+}
+
+.reviewIcon{
+    margin-left: 5px;
+}
+.reviewDate{
+    font-weight: lighter;
+    color: rgb(174, 133, 255);
+    font-style: italic;
+}
+
+.revDesc{
+    font-family: 'Lora', serif;
+    font-size: 18px;
+    color: rgb(104, 76, 161);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+}
