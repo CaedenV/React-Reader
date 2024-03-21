@@ -3,7 +3,6 @@ import './login-register.css';
 import Popup from 'reactjs-popup';
 import axios from 'axios';
 import { userBack } from '../../backendRoutes';
-import Cookies from 'js-cookie';
 import { jwtDecode } from "jwt-decode";
 
 const Register = ({ onClose, onSign, updateUserId }) => {
@@ -31,7 +30,7 @@ const Register = ({ onClose, onSign, updateUserId }) => {
         const response = await axios.post(`${userBack}/register`, data);
         setValid(response.data.message);
         if(response.data.success) {
-            Cookies.set('token', response.data.token, {expires: 3});
+            localStorage.setItem('token', response.data.token);
             updateUserId(jwtDecode(response.data.token));
             onClose;
         }

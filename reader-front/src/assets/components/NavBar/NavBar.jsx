@@ -23,7 +23,7 @@ const NavBar = ({ userId, updateUserId }) => {
         setLoginPopOpen(true);
     }
     const handleLogOutClick = () => {
-        Cookies.remove('token');
+        localStorage.clear();
         updateUserId(null);
     }
 

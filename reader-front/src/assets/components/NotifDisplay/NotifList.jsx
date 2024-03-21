@@ -7,11 +7,15 @@ import axios from 'axios';
 
 const NotifList = ({ userId }) => {
     const [notifs, setNotifs] = useState({});
+    const token = localStorage.getItem('token');
 
     useEffect(() => {
         async function getNotifs() {
-            axios.get(`${notifBack}/${userId}`)
-                .then((response) => {setNotifs(response.data.notifs);});
+            console.log(userId, token);
+            axios.get(`${notifBack}/getByUser`, {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+                .then((response) => { setNotifs(response.data.notifs); });
         }
 
         getNotifs();

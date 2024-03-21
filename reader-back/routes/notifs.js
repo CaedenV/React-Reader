@@ -1,79 +1,65 @@
 const express = require('express');
-const db = require('../server');
 const router = express.Router();
+const db = require('../db');
+const verifyJWT = require('./verify');
 
-router.post('/add', async (req, res) => {
-    let { notif } = req;
-    var query = "insert into notifs (senderId, receiverId, bookId, notifRead) values (?,?,?, '0')";
+router.post('/add', verifyJWT, async (req, res) => {
+    const { sender, receiver, bookId } = req.body;
     try {
-        const results = await new Promise((resolve, reject) => {
-            db.query(query, [notif.sender, notif.receiver, notif.bookId], (err, res) => {
-                if (err) { reject(err); } else { resolve(res); }
-            });
-        });
+        let query = "insert into notifs (senderId, receiverId, bookId, notifRead) values (?,?,?, '0')";
+        await db.queryDatabase(query, [sender, receiver, bookId]);
         return res.status(200).json({ success: true, message: "Recommendation Sent Successfully." });
-    } catch {
+    } catch (err) {
+        console.log(err);
         return res.status(500).json({ success: false, message: 'Something went wrong sending the recommendation. Please try again later.' });
     }
 });
 
-router.get('/getByUser', async (req, res) => {
-    const { user } = req;
-    var query = "select senderId, bookId, notifRead from notifs where receiverId = ?";
+router.get('/getByUser', verifyJWT, async (req, res) => {
+    const id = req.user;
     try {
-        const results = await new Promise((resolve, reject) => {
-            db.query(query, [user.id], (err, res) => {
-                if (err) { reject(err); } else { resolve(res); }
-            });
-        });
-        return res.status(200).json({ success: true, notifs: results[0] });
-    } catch {
+        let query = 'SELECT senderId, bookName, notifRead FROM notifs WHERE receiverId = ?';
+        const results = await db.queryDatabase(query, [id]);
+        if (results.length === 0) {
+          return res.status(200).json({ success: true, notifs: [] });
+        }
+        return res.status(200).json({ success: true, notifs: results });
+      } catch (err) {
+        console.log(err);
         return res.status(500).json({ success: false, message: 'Something went wrong retrieving notifications. Please try again later.' });
-    }
+      }
 });
 
-router.get('/getNumByUser', async (req, res) => {
-    const { user } = req;
-    var query = "select count(*) from notifs where receiverId = ?";
+router.get('/getNumByUser', verifyJWT, async (req, res) => {
+    const id = req.user;
     try {
-        const results = await new Promise((resolve, reject) => {
-            db.query(query, [user.id], (err, res) => {
-                if (err) { reject(err); } else { resolve(res); }
-            });
-        });
+        let query = "select count(*) from notifs where receiverId = ?";
+        const results = await db.queryDatabase(query, [id]);
         return res.status(200).json({ success: true, notifs: results[0] });
     } catch {
         return res.status(500).json({ success: false, message: 'Something went wrong retrieving notifications. Please try again later.' });
     }
 })
 
-router.patch('/read', async (req, res) => {
-    const { notif } = req;
-    var query = "update notifs set notifRead = ? where receriverId = ?";
+router.patch('/read', verifyJWT, async (req, res) => {
+    const { notifRead } = req.body;
     try {
-        const results = await new Promise((resolve, reject) => {
-            db.query(query, [notif.notifRead, notif.userId], (err, res) => {
-                if (err) { reject(err); } else { resolve(res); }
-            });
-        });
+        let query = "update notifs set notifRead = ? where receriverId = ?";
+        const results = await db.queryDatabase(query, [notifRead, req.user]);
         if (results.affectedRows == 0) {
             return res.json({ success: false, message: "Notification not found." });
         }
-        return res.status(200).json({ success: true, status: notif.notifRead });
+        return res.status(200).json({ success: true, status: notifRead });
     } catch {
         return res.status(500).json({ success: false, message: 'Error occured updating the status. Please try again later.' });
     }
 });
 
-router.delete('/delete/:id', async (req, res) => {
+router.delete('/delete/:id', verifyJWT, async (req, res) => {
     const id = req.params.id;
-    var query = "delete from notifs where id = ?";
     try {
-        const results = await new Promise((resolve, reject) => {
-            db.query(query, [id], (err, res) => {
-                if (err) { reject(err); } else { resolve(res); }
-            });
-        });
+        let query = "delete from notifs where id = ?";
+        const results = await db.queryDatabase(query, [id]);
         if (results.affectedRows == 0) {
             return res.json({ success: false, message: "Notification not found." });
         }
