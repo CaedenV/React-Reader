@@ -16,7 +16,6 @@ async function getUserByEmail(email) {
   try {
     const query = 'select userName, password, id from users where email = ?';
     const res = await db.queryDatabase(query, [email]);
-    console.log(res[0]);
     return res[0];
   }
   catch (err) {
