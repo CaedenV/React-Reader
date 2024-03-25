@@ -3,9 +3,8 @@ import { Link } from "react-router-dom";
 import LibWrap from "../LibraryWrapper/LibWrap";
 import React from 'react';
 
-const BookWDesc = ({ cover, title, pubDate, auth, avgRate, genres, desc, id, libraries, userId }) => {
+const BookWDesc = ({ cover, title, pubDate, auth, avgRate, genres, desc, id, lib, user }) => {
     const single = `/view/${id}`;
-    const store = `/store`;
 
     return (
         <div className="libBooks">
@@ -18,7 +17,7 @@ const BookWDesc = ({ cover, title, pubDate, auth, avgRate, genres, desc, id, lib
 
             <div className="bookInfo">
                 <div className="bookGenre">
-                    <Link className="link" to={`${store}/genre/${genres}`} >
+                    <Link className="link" to={`/store/subject/${genres}`} >
                         <span className="bookGenre">{genres}</span>
                     </Link>
                 </div>
@@ -26,15 +25,12 @@ const BookWDesc = ({ cover, title, pubDate, auth, avgRate, genres, desc, id, lib
                     <span className="bookTitle">{title} </span>
                 </Link>
                 <span className="Pub_Auth">
-                    <Link className="link" to={`${store}/author/${auth}`}>{auth}</Link> | {pubDate}</span>
+                    <Link className="link" to={`/store/inauthor/${auth}`}>{auth}</Link> | {pubDate}</span>
                 <div className="iconContainer">
                     <span className="ratingNum">{avgRate}
                         <i className="reviewIcon fa-solid fa-star-half-stroke"></i>
                     </span>
-                    {len ?
-                        (<span className="len">{len}<i className="singleLen fa-solid fa-scroll"></i></span>) : (<></>)
-                    }
-                    {userId ? (<LibWrap bookId={id} libraries={libraries} />) : (<></>)}
+                    {user ? (<LibWrap bookId={id} libraries={lib} />) : (<></>)}
                 </div>
                 <span className="bookDesc">
                     {desc}

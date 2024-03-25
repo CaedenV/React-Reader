@@ -11,7 +11,6 @@ const NotifList = ({ userId }) => {
 
     useEffect(() => {
         async function getNotifs() {
-            console.log(userId, token);
             axios.get(`${notifBack}/getByUser`, {
                 headers: { Authorization: `Bearer ${token}` }
             })

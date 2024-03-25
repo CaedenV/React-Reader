@@ -134,9 +134,9 @@ router.delete('/remove', verifyJWT, async (req, res) => {
 router.get('/libraries', verifyJWT, async (req, res) => {
   const id = req.user;
   try {
-    const ownedBooksQuery = "SELECT bookId FROM ownedbooks WHERE id=?";
-    const wishedBooksQuery = "SELECT bookId FROM wishedbooks WHERE id=?";
-    const favBooksQuery = "SELECT bookId, bookRank FROM favbooks WHERE id=?";
+    const ownedBooksQuery = "SELECT bookId FROM ownedbooks WHERE userId=?";
+    const wishedBooksQuery = "SELECT bookId FROM wishedbooks WHERE userId=?";
+    const favBooksQuery = "SELECT bookId, bookRank FROM favbooks WHERE userId=?";
 
     const ownedBooks = await db.queryDatabase(ownedBooksQuery, [id]);
     const wishedBooks = await db.queryDatabase(wishedBooksQuery, [id]);

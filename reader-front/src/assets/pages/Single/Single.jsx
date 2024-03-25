@@ -3,58 +3,68 @@ import { useParams } from 'react-router-dom';
 import MakeRev from '../../components/Reviews/MakeRev';
 import ShowRevs from '../../components/Reviews/ShowRevs';
 import ShareBtn from '../../components/ShareBtn/ShareBtn';
-import { bookBack, userBack } from '../../backendRoutes';
+import { bookBack, friendBack, userBack } from '../../backendRoutes';
+import LibWrap from '../../components/LibraryWrapper/LibWrap';
+import axios from 'axios';
 
 const Single = ({ userId }) => {
-  const bookId = useParams();
+  const { bookId } = useParams();
+  const token = localStorage.getItem('token');
+
   const [bookInfo, setBookInfo] = useState({});
   const [friends, setFriends] = useState([]);
+  const [userLib, setLib] = useState({});
 
 
   useEffect(() => {
+    console.log(bookId);
     async function FetchAllInfo() {
-      axios.get(`${bookBack}/${bookId}`)
+      axios.get(`${bookBack}/getById/${bookId}`)
         .then((response) => {
-          setBookInfo(response.data[0]);
+          setBookInfo(response.data.book);
         });
 
-      axios.get(`${userBack}${userId}/friends-list`)
+      axios.get(`${friendBack}/get`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
         .then((response) => {
           setFriends(response.data.friends);
         });
+      axios.get(`${userBack}/libraries`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+        .then((response) => { setLib(response.data.library); console.log(response.data.library); });
 
     }
     FetchAllInfo();
   }, [bookId, userId]);
-  const { BookCoverLink, BookTitle, BookAuthor, BookPubDate, BookAvgRating, BookDesc } = bookInfo;
 
   return (
     <div className="mainContents">
       <span className="bookCoverTitle">
-        <img src={BookCoverLink}
+        <img src={bookInfo.cover}
           alt="Book Cover"
           className="singleBookCover"
         />
         <span className="bookDetails">
-          <h1 className="singleBookTitle"> {BookTitle}
+          <h1 className="singleBookTitle"> {bookInfo.title}
             {userId ? <div className="singleBookOpt">
-              {/* <AddOwnButton bookId={bookId} />
-                <AddWishButton bookId={bookId} /> */}
+              <LibWrap bookId={bookId} libraries={userLib} />
               <ShareBtn bookId={bookId} friends={friends} />
             </div> : <></>}
           </h1>
           <div className="singleBookInfo">
-            <span className="singleAuthor">Author: <b>{BookAuthor} </b></span>
+            <span className="singleAuthor">Author: <b>{bookInfo.author} </b></span>
             <span className="split">|</span>
-            <span className="singlePub">{BookPubDate}</span>
+            <span className="singlePub">{bookInfo.pubDate}</span>
             <span className="split">|</span>
-            <i className="singleLen fa-solid fa-scroll"></i>
+            <span className="singleGenre">{bookInfo.genre}</span>
             <span className="split">|</span>
-            <span className="ratingNum">{BookAvgRating || 0}</span>
+            <span className="ratingNum">{bookInfo.avgRating}</span>
             <i className="reviewIcon fa-solid fa-star-half-stroke"></i>
           </div>
           <p className="singleBookDesc">
-            {BookDesc}
+            {bookInfo.desc}
           </p>
         </span>
       </span>
@@ -64,7 +74,7 @@ const Single = ({ userId }) => {
             Reviews
           </h>
         </div>
-        <MakeRev bookId={bookId} userId={userId} bookAvgRating={BookAvgRating || "NA"} />
+        <MakeRev bookId={bookId} userId={userId} bookAvgRating={bookInfo.avgRating || "NA"} />
         <ShowRevs bookId={bookId} />
       </div>
     </div>

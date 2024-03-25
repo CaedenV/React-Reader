@@ -8,7 +8,7 @@ const ShowRevs = ({bookId}) => {
 
     useEffect(() => {
       async function getReviews() {
-        axios.get(`${revBack}/${bookId}`)
+        axios.get(`${revBack}/getByBook`,bookId)
         .then((response) => {
           setReviews(response.data);
         });

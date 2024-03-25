@@ -18,7 +18,7 @@ router.post('/add', verifyJWT, async (req, res) => {
 router.get('/getByUser', verifyJWT, async (req, res) => {
     const id = req.user;
     try {
-        let query = 'SELECT senderId, bookName, notifRead FROM notifs WHERE receiverId = ?';
+        let query = 'SELECT notifs.senderId, books.title, notifs.notifRead FROM notifs JOIN books on notifs.bookId = books.id WHERE receiverId = ?';
         const results = await db.queryDatabase(query, [id]);
         if (results.length === 0) {
           return res.status(200).json({ success: true, notifs: [] });

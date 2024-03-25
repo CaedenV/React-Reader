@@ -24,10 +24,10 @@ function App() {
       <div className="appRoutes container">
         <Routes>
           <Route exact path="/" element={userId !== null ? <UserDash  userId={userId} /> : <DefaultHome />} />
-          <Route path="/store/:sParams/:sQuery" element={userId !== null ? <Store userId={userId} /> : <DefaultHome />} />
+          <Route path="/store/:sParams/:sQuery" element={<Store userId={userId} />} />
           <Route path="/store" element={<Store userId={userId} />} />
           <Route path="/:userId/profile" element={userId !== null ? <Profile userId={userId} /> : <DefaultHome />} />
-          <Route path="/:bookId" element={userId !== null ? <Single userId={userId} /> : <DefaultHome />} />
+          <Route path="/view/:bookId" element={userId !== null ? <Single userId={userId} /> : <DefaultHome />} />
           <Route path="/:userId/library" element={userId !== null ? <Libraries userId={userId} /> : <DefaultHome />} />
           <Route path="/read/:bookId" element={userId !== null ? <Read /> : <DefaultHome />} />
         </Routes>

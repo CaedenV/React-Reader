@@ -15,7 +15,7 @@ router.post('/add', verifyJWT, async (req, res) => {
     }
 });
 
-router.get('/getById/:id', verifyJWT, async (req, res, next) => {
+router.get('/get', verifyJWT, async (req, res, next) => {
     const id = req.user;
     try {
         let query = "SELECT u.userName FROM friendusers f JOIN users u ON f.friendId = u.id WHERE f.userId = ?";

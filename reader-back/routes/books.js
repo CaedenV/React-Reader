@@ -3,13 +3,19 @@ const router = express.Router();
 const db = require('../db');
 
 router.post('/add', async (req, res) => {
-  const { cover, title, author, pubDate, genre, desc, avgRating, wordCount } = req.body;
+  const { id, cover, title, author, pubDate, genre, desc, avgRating } = req.body;
+  //console.log(id);
   try {
-    let query = "insert into books (cover, title, author, pubDate, genre, desc, avgRating, wordCount) values (?,?,?,?,?,?,?,?)";
-    await db.queryDatabase(query, [cover, title, author, pubDate, genre, desc, avgRating, wordCount]);
-    return res.status(200).json({ success: true, message: "Book Added Successfully." });
-  } catch {
-    return res.status(500).json({ success: false, message: 'Error occured adding the book. Please try again later.' });
+    const check = 'select * from books where id = ?';
+    const [book] = await db.queryDatabase(check, [id]); //check if book already in db
+    if (book) {
+      return res.json({ success: false, message: 'Book already exists in the table.' });
+    }
+    const query = 'insert into books (id, cover, title, author, pubDate, genre, `desc`, avgRating) values (?,?,?,?,?,?,?,?)';
+    await db.queryDatabase(query, [id, cover, title, author, pubDate, genre, desc, avgRating]);
+    return res.status(200).json({ success: true, message: 'Book added successfully.' });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Error occured adding the book:' + err });
   }
 });
 
@@ -31,7 +37,7 @@ router.get('/getByParam/:sParam/:sQuery', async (req, res) => {
 router.get('/getById/:id', async (req, res) => {
   const id = req.params.id;
   try {
-    let query = "select cover, title, author, pubDate, genre, desc, avgRating, wordCount from books where id = ?";
+    let query = "select * from books where id = ?";
     const results = await db.queryDatabase(query, [id]);
     return res.status(200).json({ success: true, book: results[0] });
   } catch {

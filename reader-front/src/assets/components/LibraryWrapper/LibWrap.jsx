@@ -10,13 +10,13 @@ const LibWrap = ({libraries, bookId }) => {
     let isOwned = false;
     let favRank = 0;
 
-    if (libraries.wish.length > 0) {
-        for( const id of wish) {
+    if (libraries.wished) {
+        for( const id of libraries.wished) {
             if(bookId == id) {isWished = true;}
         }
     }
-    if (libraries.own.length > 0) {
-        for( const id of own) {
+    if (libraries.owned) {
+        for( const id of libraries.owned) {
             if(bookId == id) {isOwned = true;}
         }
     }
@@ -27,7 +27,7 @@ const LibWrap = ({libraries, bookId }) => {
     // }
 
     return (
-        <Popup trigger={<button>+</button>} position="bottom center" className='libOptions'>
+        <Popup trigger={<button className='display'> + </button>} position="middle left" className='libOptions'>
             <span className="btns">
                 <FavBtn bookId={bookId} favRank={favRank}/>
                 <WishBtn bookId={bookId} isWished={isWished}/>

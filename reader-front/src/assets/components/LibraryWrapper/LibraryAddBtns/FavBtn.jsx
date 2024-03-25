@@ -34,7 +34,7 @@ const FavBtn = ({ bookId, favRank }) => {
                 :
                 (
                     <>
-                        <button className="fav" onClick={getRank}> <i class="fa-regular fa-heart"></i> </button>
+                        <button className="add fav" onClick={getRank}> <i class="fa-regular fa-heart"></i> </button>
                         {isFav ?
                             (<input type="integer" className="Fav Rank" value={"0"} onChange={setFavorite} />)
                             :

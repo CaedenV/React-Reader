@@ -1,0 +1,10 @@
+.btns {
+    display: flex;
+    margin-right: 10px;
+}
+.display {
+    padding-left: 2px;
+    padding-right: 2px;
+    color: mediumpurple;
+    font-size: 16px;
+}

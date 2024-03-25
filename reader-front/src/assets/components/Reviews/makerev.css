@@ -46,3 +46,50 @@
     color: mediumpurple;
     cursor: pointer;
 }
+
+.star-rating {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.star-rating i {
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.star-rating i:hover,
+.star-rating i:focus {
+  color: #ffb900;
+}
+
+.star-rating i.active {
+  color: #ffb900;
+}
+
+.star-rating i.half-active {
+  color: #ffb900;
+  transition: color 0.2s;
+}
+
+.star-rating i.half {
+  transition: color 0.2s;
+}
+
+.star-rating i.half {
+  &:before,
+  &:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    background-color: #ffb900;
+  }
+
+  &:after {
+    left: 50%;
+  }
+}
