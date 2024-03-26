@@ -18,7 +18,6 @@ const Login = ({ onClose, updateUserId }) => {
         setValid(response.data.message);
         if (response.data.success) {
             localStorage.setItem('token', response.data.token);
-            console.log(jwtDecode(response.data.token));
             updateUserId(jwtDecode(response.data.token).id);
             onClose;
         }

@@ -20,11 +20,11 @@ const LibWrap = ({libraries, bookId }) => {
             if(bookId == id) {isOwned = true;}
         }
     }
-    // if (libraries.fav.length > 0) {
-    //     for( const id of fav) {
-    //         if(bookId == id) {isWished = true;}
-    //     }
-    // }
+    if (libraries.fav) {
+        for( const obj of fav) {
+            if(bookId == obj.id) {favRank = obj.rank;}
+        }
+    }
 
     return (
         <Popup trigger={<button className='display'> + </button>} position="middle left" className='libOptions'>

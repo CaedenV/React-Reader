@@ -1,20 +1,25 @@
 import './addbtns.css';
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { ownBack } from '../../../backendRoutes';
+import { ownBack, userBack } from '../../../backendRoutes';
 
 const OwnBtn = ({ bookId, isOwned }) => {
+    const token = localStorage.getItem('token');
+
     const purchaseBook = async () => {
         await axios.post(`${ownBack}/add`, {
-            bookId: bookId,
-        });
+            body: {bookId: bookId},
+            headers: { Authorization: `Bearer ${token}` }
+          });
+        
         isOwned = true;
     };
 
     const setCurrentRead = async () => {
-        await axios.put(`http://localhost:8000/user/${userId}/read`, {
-            bookId: bookId
+        await axios.put(`${userBack}/nowRead`, {
+            body: {bookId: bookId},
+            headers: { Authorization: `Bearer ${token}` }
         });
     }
 

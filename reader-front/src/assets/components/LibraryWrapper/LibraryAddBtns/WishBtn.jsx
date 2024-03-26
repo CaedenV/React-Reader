@@ -1,23 +1,28 @@
 import './addbtns.css';
-import React from 'react';
+import React, { useState } from 'react';
 import { wishBack } from '../../../backendRoutes';
 
 const WishBtn = ({ bookId, isWished }) => {
+  const token = localStorage.getItem('token');
+  const [wished, setWished] = useState(isWished || false);
+
   const addToWish = async () => {
-    axios.post(`${wishBack}/add`, {
-      bookId: bookId
+    await axios.post(`${wishBack}/add`, {
+      body: {bookId: bookId},
+      headers: { Authorization: `Bearer ${token}` }
     });
-    isWished = true;
+    setWished(true);
   }
   const rmvFromWish = async () => {
-    axios.delete(`${wishBack}/delete`, {
-      bookId: bookId,
+    await axios.delete(`${wishBack}/delete`, {
+      body: {bookId: bookId},
+      headers: { Authorization: `Bearer ${token}` }
     });
-    isWished = false;
+    setWished(false);
   }
   return (
     <button className="add wish" >
-      {isWished ? <i className="singleIcon fa-solid fa-list" onClick={rmvFromWish} ></i> : <i className="wishIcon fa-solid fa-list-check" onClick={addToWish}></i>}
+      {wished ? <i className="singleIcon fa-solid fa-list" onClick={rmvFromWish} ></i> : <i className="wishIcon fa-solid fa-list-check" onClick={addToWish}></i>}
     </button>
   )
 }

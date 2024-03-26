@@ -1,0 +1,69 @@
+.topCategory {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    font-size: xx-large;
+}
+
+
+.settingsProfPic {
+    display: flex;
+    align-items: center;
+    margin-top: 10px 0;
+}
+.settingsProfPic>img {
+    width: 500px;
+    height: 500px;
+    border-radius: 20px;
+    object-fit: cover;
+}
+
+
+.unFriends .uName {
+    color: rgba(90, 7, 255, 0.959);
+    font-size: 72px;
+}
+.unFriends>button {
+    font-size: xx-large;
+    color: mediumpurple;
+    background-color: rgb(255, 248, 220);
+    border: 1px solid mediumpurple;
+    border-radius: 8px;
+    margin-left: 50px;
+    padding: 2px;
+}
+
+
+.favGenre {
+    margin-top: 25px;
+}
+.favGenre .title {
+    color: rgba(90, 7, 255, 0.959);
+}
+.favGenre>label {
+    margin-left: 10px;
+}
+
+
+.libNums {
+    display: flex;
+    justify-content: center;
+    margin-top: 25px;
+
+}
+.lib {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 2px solid mediumpurple;
+    border-top: none;
+    padding: 3px;
+    background-color: rgba(255, 248, 220, 0.911);
+    margin-right: 5px;
+}
+.lib .cat {
+    color: rgba(90, 7, 255, 0.959);
+}
+.lib .value {
+    font-size: x-large;
+}

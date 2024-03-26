@@ -85,9 +85,24 @@ router.get('/getAll', verifyJWT, async (req, res) => {
   }
 });
 
-// Get a specific user
-router.get('/getUser', verifyJWT, async (req, res) => {
+// Get self
+router.get('/getMe', verifyJWT, async (req, res) => {
   const id = req.user;
+  try {
+    const query = "SELECT userName, pic, favGenre, nowRead FROM users WHERE id = ?";
+    const results = await db.queryDatabase(query, [id]);
+    if (results.length <= 0) {
+      return res.status(404).json({ success: false, message: 'User not found.' });
+    }
+    return res.status(200).json({ success: true, user: results[0] });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+// Get specific user
+router.get('/getUser', verifyJWT, async (req, res) => {
+  const id = req.body;
   try {
     const query = "SELECT userName, pic, favGenre, nowRead FROM users WHERE id = ?";
     const results = await db.queryDatabase(query, [id]);
@@ -104,12 +119,27 @@ router.get('/getUser', verifyJWT, async (req, res) => {
 router.patch('/update', verifyJWT, async (req, res) => {
   const id = req.user;
   try {
-    const query = "UPDATE users SET pic=?, favGenre=?, nowRead=? WHERE id=?";
-    const results = await db.queryDatabase(query, [user.pic, user.favGenre, user.nowRead, id]);
+    const query = "UPDATE users SET userName=?, pic=?, favGenre=? WHERE id=?";
+    const results = await db.queryDatabase(query, [user.un, user.pic, user.favGenre, id]);
     if (results.affectedRows === 0) {
       return res.status(404).json({ success: false, message: 'User ID does not exist.' });
     }
     return res.status(200).json({ success: true, message: 'User updated successfully' });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+router.patch('/nowRead', verifyJWT, async (req, res) => {
+  const id = req.user;
+  const bookId = req.body;
+  try {
+    const query = "UPDATE users SET nowRead=? WHERE id=?";
+    await db.queryDatabase(query, [bookId, id]);
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ success: false, message: 'User ID does not exist.' });
+    }
+    return res.status(200).json({ success: true, message: 'Successfully started reading' });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -143,6 +173,28 @@ router.get('/libraries', verifyJWT, async (req, res) => {
     const favBooks = await db.queryDatabase(favBooksQuery, [id]);
 
     const data = { owned: ownedBooks, wished: wishedBooks, faved: favBooks };
+    return res.status(200).json({ success: true, library: data });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+router.get('/selfLibCount', verifyJWT, async (req, res) => {
+  const id = req.user;
+  try {
+    const ownedBooksQuery = "SELECT count(*) FROM ownedbooks WHERE userId=?";
+    const wishedBooksQuery = "SELECT count(*) FROM wishedbooks WHERE userId=?";
+    const favBooksQuery = "SELECT count(*) FROM favbooks WHERE userId=?";
+
+    const ownNum = await db.queryDatabase(ownedBooksQuery, [id]);
+    const wishNum = await db.queryDatabase(wishedBooksQuery, [id]);
+    const favNum = await db.queryDatabase(favBooksQuery, [id]);
+
+    const own = ownNum[0]['count(*)'];
+    const wish = wishNum[0]['count(*)'];
+    const fav = favNum[0]['count(*)'];
+
+    const data = { owned: own, wished: wish, faved: fav };
     return res.status(200).json({ success: true, library: data });
   } catch (error) {
     return res.status(500).json({ error: error.message });
