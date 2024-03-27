@@ -25,7 +25,8 @@ async function getUserByEmail(email) {
 
 router.post('/register', async (req, res) => {
   req.withCredentials = true;
-  const { userName, email, password } = req.body;
+  const { userName, email, password, pic } = req.body;
+  console.log(pic);
 
   if (!userName || !email || !password) {
     console.log("Not all fields");
@@ -36,8 +37,8 @@ router.post('/register', async (req, res) => {
     if (exist) { return res.json({ success: false, message: 'Account already exists. Please sign in.' }); }
 
     const hashedPassword = hashPassword(password);
-    let query = "insert into users (userName, email, password) values (?,?,?)";
-    const results = await db.queryDatabase(query, [userName, email, hashedPassword]);
+    let query = "insert into users (userName, email, password, pic) values (?,?,?,?)";
+    const results = await db.queryDatabase(query, [userName, email, hashedPassword, pic]);
     const token = jwt.sign({ id: results[0].insertId }, process.env.ACCESS_TOKEN, { expiresIn: '3h' });
     return res.status(200).json({ success: true, message: "Login Successful!", token: token });
   }
@@ -118,15 +119,16 @@ router.get('/getUser', verifyJWT, async (req, res) => {
 // Update user profile
 router.patch('/update', verifyJWT, async (req, res) => {
   const id = req.user;
+  const {userName, favGenre, pic} = req.body.userInfo;
   try {
     const query = "UPDATE users SET userName=?, pic=?, favGenre=? WHERE id=?";
-    const results = await db.queryDatabase(query, [user.un, user.pic, user.favGenre, id]);
+    const results = await db.queryDatabase(query, [userName, pic, favGenre, id]);
     if (results.affectedRows === 0) {
       return res.status(404).json({ success: false, message: 'User ID does not exist.' });
     }
     return res.status(200).json({ success: true, message: 'User updated successfully' });
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message, message: 'Something went wrong. Please try again later.' });
   }
 });
 

@@ -4,6 +4,7 @@ import Popup from 'reactjs-popup';
 import axios from 'axios';
 import { userBack } from '../../backendRoutes';
 import { jwtDecode } from "jwt-decode";
+import profPic from '../../profPic.png';
 
 const Register = ({ onClose, onSign, updateUserId }) => {
     const [typedPass, setTypedPass] = useState('');
@@ -25,6 +26,7 @@ const Register = ({ onClose, onSign, updateUserId }) => {
             userName: formData.get('userName'),
             email: formData.get('email'),
             password: formData.get('pw'),
+            pic: profPic,
         }
         
         const response = await axios.post(`${userBack}/register`, data);

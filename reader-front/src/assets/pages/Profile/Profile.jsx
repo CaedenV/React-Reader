@@ -3,13 +3,14 @@ import React from 'react';
 import Popup from 'reactjs-popup';
 import { useState, useEffect, useRef } from "react";
 import { userBack, friendBack } from '../../backendRoutes';
+import profPic from '../../profPic.png';
 import axios from "axios";
 
 const Profile = ({ userId }) => {
   const [user, setUser] = useState({});
   const [friends, setFriends] = useState([]);
   const [libNums, setLibNums] = useState({});
-  const [editMode, setEditMode] = useState(false);
+  const [editResponse, setEditResponse] = useState("");
   const inputRef = useRef(null);
   const token = localStorage.getItem('token');
 
@@ -41,9 +42,12 @@ const Profile = ({ userId }) => {
     }
 
     GetAllInfo();
-    console.log("friends", friends);
-    console.log("user", user);
   }, [userId]);
+
+  const handleFriendsBtn = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
 
   const handleAddFriend = (e) => {
     e.preventDefault();
@@ -67,9 +71,6 @@ const Profile = ({ userId }) => {
       });
   };
 
-  const changeMode = () => {
-    setEditMode(true);
-  };
 
   const handleFileClick = () => {
     inputRef.current.click();
@@ -89,32 +90,33 @@ const Profile = ({ userId }) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const info = {
-      userName: formData.get('userName'),
-      favGenre: formData.get('genre'),
-      pic: formData.get('profPic'),
+      userName: formData.get('userName') || user.userName,
+      favGenre: formData.get('genre') || user.userFavGenre,
+      pic: formData.get('profPic') || user.userPicLink,
     }
 
     axios.patch(`${userBack}/update`, {
-      body: { userInfo: info },
-      headers: { Authorization: `Bearer ${token}` }
+      userInfo: info
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }).then((response) => {
+      setEditResponse(response.data.message);
     });
   };
 
   return (
-    <form className="topCategory" onSubmit={handleSubmit}>
-      <div className="settingsProfPic" onClick={handleFileClick}>
+    <div className="topCategory">
+      <div className="settingsProfPic">
         <img className="topProfile"
-          src={(user.userPicLink) || "https://static.vecteezy.com/system/resources/previews/000/348/518/original/vector-books-icon.jpg"} />
-        <input type="file" accept="image/*" name='profPic' onChange={handleFileChange} ref={inputRef} style={{ display: "none" }} />
+          src={(user.userPicLink) || profPic} />
       </div>
       <div className="data">
         <div className="unFriends">
-          {editMode ? <input type="text" value={user.userName} className='uName' /> :
-            <label className='uName'>{user.userName}</label>
-          }
-
-          <Popup trigger={<button className="friends">Friends</button>} position="bottom center">
-            <ul>
+          <label className='uName'>{user.userName}</label>
+          <Popup trigger={<button className="friends" onClick={handleFriendsBtn}>Friends</button>} position="bottom center">
+            <ul className='friendsList'>
               {friends.map((friend) => (
                 <li key={friend.friendId}>
                   {friend.friendId}
@@ -123,7 +125,7 @@ const Profile = ({ userId }) => {
               ))}
             </ul>
             <Popup trigger={<button className="addF" >Add Friend</button>}
-              modal nested>
+              position="bottom center">
               {<div className='modal'>
                 <form className="enterName" onSubmit={handleAddFriend}>
                   <label className="enterLbl">Enter Username:</label>
@@ -132,13 +134,26 @@ const Profile = ({ userId }) => {
               </div>}
             </Popup>
           </Popup>
-          {editMode ? <button type='submit' ><i className="settings fa-regular fa-square-check"></i></button> :
-            <button onClick={changeMode}><i className="settings fa-solid fa-gears"></i></button>}
+
+          <Popup trigger={<button><i className="settings fa-solid fa-gears" /></button>} modal nested>
+            <form className='edit' onSubmit={handleSubmit}>
+              <div className="smallPic" onClick={handleFileClick}>
+                <img src={(user.userPicLink) || profPic} />
+                <input type="file" accept="image/*" name='profPic' onChange={handleFileChange} ref={inputRef} style={{ display: "none" }} />
+              </div>
+              <div className="changeText">
+                <input type="text" className='top' name='userName' placeholder={user.userName || "UserName"} />
+                <input type="text" name='genre' placeholder={user.userFavGenre || "Favorite Genre"} />
+                <button type='submit'>Save</button>
+              </div>
+              <label>{editResponse}</label>
+            </form>
+          </Popup>
+
         </div>
         <div className="favGenre">
           <label className='title'>Favorite Genre:</label>
-          {editMode ? <input name='genre'
-            type="text" placeholder={user.userFavGenre || 'Tell us your favorite genre'} /> : <label>{user.userFavGenre || " This user hasn't set their favorite genre."}</label>}
+          <label>{user.userFavGenre || " This user hasn't set their favorite genre."}</label>
         </div>
         <div className="libNums">
           <div className="lib owns">
@@ -155,7 +170,7 @@ const Profile = ({ userId }) => {
           </div>
         </div>
       </div>
-    </form>
+    </div>
 
   )
 }

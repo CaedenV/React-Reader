@@ -15,7 +15,7 @@
     width: 500px;
     height: 500px;
     border-radius: 20px;
-    object-fit: cover;
+    object-fit: fill;
 }
 
 
@@ -66,4 +66,56 @@
 }
 .lib .value {
     font-size: x-large;
+}
+
+
+
+.smallPic>img {
+    width: 120px;
+    height: 120px;
+    border-radius: 20px;
+    object-fit: fill;
+}
+
+.changeText>input {
+    font-size: xx-large;
+    color: rgb(116, 57, 235);
+    border: 2px solid rgb(116, 57, 235);
+    padding-left: 5px;
+}
+.changeText .top {
+    border-radius: 8px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.changeText>input::placeholder {
+    color: rgb(116, 57, 235);
+}
+.changeText>button {
+    color: rgb(116, 57, 235);
+    font-size: xx-large;
+    background-color: bisque;
+    border: 2px solid rgb(116, 57, 235);
+    border-radius: 8px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.edit {
+    background-color: rgba(171, 148, 218, 0.836);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 40px;
+    border: 5px solid rgb(116, 57, 235);
+    border-radius: 8px;
+}
+.edit .changeText {
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+}
+.edit>label{
+    color: aliceblue;
+    font-size: xx-large;
 }
