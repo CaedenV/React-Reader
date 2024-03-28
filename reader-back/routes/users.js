@@ -4,6 +4,9 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const verifyJWT = require('./verify');
 const db = require('../db');
+const multer = require('multer');
+const upload = multer({dest: '/ProfPicStorage'})
+const fs = require('fs');
 
 // Create the Hashed Password
 const hashPassword = (password) => {
@@ -117,18 +120,40 @@ router.get('/getUser', verifyJWT, async (req, res) => {
 });
 
 // Update user profile
-router.patch('/update', verifyJWT, async (req, res) => {
+router.patch('/update', verifyJWT, upload.single('image'), async (req, res) => {
   const id = req.user;
-  const {userName, favGenre, pic} = req.body.userInfo;
-  try {
-    const query = "UPDATE users SET userName=?, pic=?, favGenre=? WHERE id=?";
-    const results = await db.queryDatabase(query, [userName, pic, favGenre, id]);
-    if (results.affectedRows === 0) {
-      return res.status(404).json({ success: false, message: 'User ID does not exist.' });
+  const {userName, favGenre} = req.body;
+
+  if(req.file) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const newFName = req.file.originalname.replace('.','-' + uniqueSuffix + '.');
+    fs.rename(req.file.path, `ProfPicStorage/${newFName}`, function (err) {
+      if(err) {return res.status(500).json({error: err.message, message: 'Something went wrong. Please try again later.'});}
+    });
+
+    const pic = `/ProfPicStorage/${newFName}`;
+    try {
+      const query = "UPDATE users SET userName=?, pic=?, favGenre=? WHERE id=?";
+      const results = await db.queryDatabase(query, [userName, pic, favGenre, id]);
+      if (results.affectedRows === 0) {
+        return res.status(404).json({ success: false, message: 'User ID does not exist.' });
+      }
+      return res.status(200).json({ success: true, message: 'User updated successfully' });
+    } catch (error) {
+      return res.status(500).json({ error: error.message, message: 'Something went wrong. Please try again later.' });
     }
-    return res.status(200).json({ success: true, message: 'User updated successfully' });
-  } catch (error) {
-    return res.status(500).json({ error: error.message, message: 'Something went wrong. Please try again later.' });
+  }
+  else {
+    try {
+      const query = "UPDATE users SET userName=?, favGenre=? WHERE id=?";
+      const results = await db.queryDatabase(query, [userName, favGenre, id]);
+      if (results.affectedRows === 0) {
+        return res.status(404).json({ success: false, message: 'User ID does not exist.' });
+      }
+      return res.status(200).json({ success: true, message: 'User updated successfully' });
+    } catch (error) {
+      return res.status(500).json({ error: error.message, message: 'Something went wrong. Please try again later.' });
+    }
   }
 });
 

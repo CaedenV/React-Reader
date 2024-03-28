@@ -11,6 +11,7 @@ const Profile = ({ userId }) => {
   const [friends, setFriends] = useState([]);
   const [libNums, setLibNums] = useState({});
   const [editResponse, setEditResponse] = useState("");
+  const [file, setFile] = useState(null);
   const inputRef = useRef(null);
   const token = localStorage.getItem('token');
 
@@ -77,7 +78,7 @@ const Profile = ({ userId }) => {
   };
 
   const handleFileChange = (event) => {
-    var file = event.target.files[0]
+    setFile(event.target.files[0]);
     const reader = new FileReader();
     reader.onload = (e) => {
       const imageData = e.target.result; // base64 encoded image data
@@ -89,16 +90,16 @@ const Profile = ({ userId }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    const info = {
-      userName: formData.get('userName') || user.userName,
-      favGenre: formData.get('genre') || user.userFavGenre,
-      pic: formData.get('profPic') || user.userPicLink,
-    }
 
-    axios.patch(`${userBack}/update`, {
-      userInfo: info
-    }, {
+    if (file) {
+      formData.append('image', imageFile);
+    }
+    formData.append('userName', formData.get('userName') || user.userName);
+    formData.append('favGenre', formData.get('genre') || user.userFavGenre)
+
+    axios.patch(`${userBack}/update`, formData, {
       headers: {
+        'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${token}`
       }
     }).then((response) => {
@@ -139,7 +140,7 @@ const Profile = ({ userId }) => {
             <form className='edit' onSubmit={handleSubmit}>
               <div className="smallPic" onClick={handleFileClick}>
                 <img src={(user.userPicLink) || profPic} />
-                <input type="file" accept="image/*" name='profPic' onChange={handleFileChange} ref={inputRef} style={{ display: "none" }} />
+                <input type="file" accept="image/*" name='image' onChange={handleFileChange} ref={inputRef} style={{ display: "none" }} />
               </div>
               <div className="changeText">
                 <input type="text" className='top' name='userName' placeholder={user.userName || "UserName"} />
