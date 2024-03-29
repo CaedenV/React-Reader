@@ -3,18 +3,28 @@ require('dotenv').config();
 
 
 const verifyJWT = (req, res, next) => {
-    const token = req.headers.authorization?.split(' ')[1]; // Assuming token in Authorization header
-    if (!token) {
-        return res.status(401).json({ message: 'Unauthorized: No Token' });
-    }
+    const authorization = req.headers.authorization;
 
-    jwt.verify(token, process.env.ACCESS_TOKEN, (err, decoded) => {
-        if (err) {
-            return res.status(401).json({ message: 'Unauthorized: Problem Decoding' });
-        }
-        req.user = decoded.id; // Attach decoded user data to the request object
-        next();
+  if (!authorization) {
+    return res.status(401).json({
+      error: 'Missing authorization header.',
+      message: 'Please provide a valid authorization header.'
     });
+  }
+
+  const token = authorization.split(' ')[1];
+
+  try {
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN);
+    req.user = decoded.id;
+
+    next();
+  } catch (err) {
+    return res.status(403).json({
+      error: err.message,
+      message: 'Forbidden. Invalid token.'
+    });
+  }
 };
 
 module.exports = verifyJWT;

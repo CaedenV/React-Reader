@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { userBack, friendBack } from '../../backendRoutes';
 import profPic from '../../profPic.png';
 import axios from "axios";
+import { Link } from 'react-router-dom';
 
 const Profile = ({ userId }) => {
   const [user, setUser] = useState({});
@@ -40,6 +41,7 @@ const Profile = ({ userId }) => {
           };
           setLibNums(data);
         });
+      console.log(user);
     }
 
     GetAllInfo();
@@ -82,22 +84,25 @@ const Profile = ({ userId }) => {
     const reader = new FileReader();
     reader.onload = (e) => {
       const imageData = e.target.result; // base64 encoded image data
-      setUser({ ...user, userPicLink: imageData });
+      setUser({ ...user, pic: imageData });
     };
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(event.target.files[0]);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
 
     if (file) {
-      formData.append('image', imageFile);
+      formData.set('image', file);
     }
-    formData.append('userName', formData.get('userName') || user.userName);
-    formData.append('favGenre', formData.get('genre') || user.userFavGenre)
+    formData.set('userName', formData.get('userName') || user.userName);
+    formData.set('favGenre', formData.get('favGenre') || user.favGenre);
 
-    axios.patch(`${userBack}/update`, formData, {
+    for (const [key, value] of formData.entries()) {
+      console.log(`${key}: ${value}`);
+    }
+    await axios.patch(`${userBack}/update`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${token}`
@@ -111,7 +116,7 @@ const Profile = ({ userId }) => {
     <div className="topCategory">
       <div className="settingsProfPic">
         <img className="topProfile"
-          src={(user.userPicLink) || profPic} />
+          src={ `${user.pic}` || profPic} />
       </div>
       <div className="data">
         <div className="unFriends">
@@ -137,39 +142,42 @@ const Profile = ({ userId }) => {
           </Popup>
 
           <Popup trigger={<button><i className="settings fa-solid fa-gears" /></button>} modal nested>
-            <form className='edit' onSubmit={handleSubmit}>
+            <form className='edit' onSubmit={handleSubmit} encType="multipart/form-data" >
               <div className="smallPic" onClick={handleFileClick}>
-                <img src={(user.userPicLink) || profPic} />
-                <input type="file" accept="image/*" name='image' onChange={handleFileChange} ref={inputRef} style={{ display: "none" }} />
+                <img src={(user.pic) || profPic} />
+                <input type="file" accept="image/*" name="image" onChange={handleFileChange} ref={inputRef} style={{ display: "none" }} />
               </div>
               <div className="changeText">
-                <input type="text" className='top' name='userName' placeholder={user.userName || "UserName"} />
-                <input type="text" name='genre' placeholder={user.userFavGenre || "Favorite Genre"} />
+                <input type="text" className='top' name="userName" placeholder={user.userName || "UserName"} />
+                <input type="text" name="favGenre" placeholder={user.favGenre || "Favorite Genre"} />
+                <label>{editResponse}</label>
                 <button type='submit'>Save</button>
               </div>
-              <label>{editResponse}</label>
             </form>
           </Popup>
 
         </div>
         <div className="favGenre">
           <label className='title'>Favorite Genre:</label>
-          <label>{user.userFavGenre || " This user hasn't set their favorite genre."}</label>
+          <label>{user.favGenre || " This user hasn't set their favorite genre."}</label>
         </div>
-        <div className="libNums">
-          <div className="lib owns">
-            <label className='cat'> Owns </label>
-            <label className='value'> {libNums.own} </label>
+        <Link to={`/${userId}/library`}>
+          <div className="libNums">
+            <div className="lib owns">
+              <label className='cat'> Owns </label>
+              <label className='value'> {libNums.own} </label>
+            </div>
+            <div className="lib favs">
+              <label className='cat'> Favorites </label>
+              <label className='value'> {libNums.fav} </label>
+            </div>
+            <div className="lib wishes">
+              <label className='cat'> Wishlist </label>
+              <label className='value'> {libNums.wish} </label>
+            </div>
           </div>
-          <div className="lib favs">
-            <label className='cat'> Favorites </label>
-            <label className='value'> {libNums.fav} </label>
-          </div>
-          <div className="lib wishes">
-            <label className='cat'> Wishlist </label>
-            <label className='value'> {libNums.wish} </label>
-          </div>
-        </div>
+        </Link>
+
       </div>
     </div>
 
