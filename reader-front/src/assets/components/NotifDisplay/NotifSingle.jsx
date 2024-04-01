@@ -1,15 +1,32 @@
 import './notifsingle.css';
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-const NotifSingle = ({sender, bookTitle, bookCover, senderPic, time}) => {
+const NotifSingle = ({ friend, book, time, read, message, type }) => {
+    const {cover, title, bookId} = book;
+    const {pic, userName, friendId} = friend;
+    const [status, setStatus] = useState(false);
+    
+    onAccept = () => {
+        //Add pair to friends table
+        setStatus(true);
+    }
+
     return (
         <div className='notif'>
             <div className="pics">
-                <img src={bookCover} alt={bookTitle} className='bookPic'/>
-                <img src={senderPic} alt={sender} className='senderPic'/>
+                <img src={cover} alt={title} className='bookPic' />
+                <img src={pic} alt={userName} className='senderPic' />
             </div>
-            <label className="msg">{sender} recommends <Link to={`${bookId}`} className='bookLink'>{bookTitle}</Link></label>
+            {type === 'book' && <label className="msg">{userName} recommends <Link to={`/view/${bookId}`} className='links'>{title}!</Link> {read}</label>}
+            {type === 'friend' &&
+                <div className="friend">
+                    <label className="msg"><Link to={`/${friendId}/profile`} className='links'>{userName}</Link> would like to be your friend! {read}</label>
+                    { !status && <button onClick={onAccept}><i class="fa-solid fa-circle-check"/></button>}
+                </div>
+            }
+            {type === 'sys' && <label className="msg">{message} {read}</label>}
+
             <label>{time}</label>
         </div>
     )

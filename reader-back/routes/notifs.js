@@ -18,26 +18,30 @@ router.post('/add', verifyJWT, async (req, res) => {
 router.get('/getByUser', verifyJWT, async (req, res) => {
     const id = req.user;
     try {
-        let query = 'SELECT notifs.senderId, books.title, notifs.notifRead FROM notifs JOIN books on notifs.bookId = books.id WHERE receiverId = ?';
-        const results = await db.queryDatabase(query, [id]);
-        if (results.length === 0) {
-          return res.status(200).json({ success: true, notifs: [] });
-        }
+        let bQuery = "SELECT senderId, createdAt, notifRead, book, notifType FROM notifs WHERE receiverId = ? AND notifType = 'book'";
+        let fQuery = "SELECT senderId, createdAt, notifRead, friendRequest, notifType FROM notifs WHERE receiverId = ? AND notifType = 'friend'";
+        let sQuery = "SELECT senderId, createdAt, notifRead, message, notifType FROM notifs WHERE receiverId = ? AND notifType = 'sys'";
+        const reccs = await db.queryDatabase(bQuery, [id]);
+        const friends = await db.queryDatabase(fQuery, [id]);
+        const sys = await db.queryDatabase(sQuery, [id]);
+        const results = {reccs: reccs, friendReq: friends, sysMessage: sys};
+
         return res.status(200).json({ success: true, notifs: results });
       } catch (err) {
         console.log(err);
-        return res.status(500).json({ success: false, message: 'Something went wrong retrieving notifications. Please try again later.' });
+        return res.status(500).json({ success: false, message: 'Something went wrong retrieving notifications. Please try again later.', error: err });
       }
 });
 
 router.get('/getNumByUser', verifyJWT, async (req, res) => {
     const id = req.user;
     try {
-        let query = "select count(*) from notifs where receiverId = ?";
+        let query = "select count(*) from notifs where receiverId = ? AND notifRead = 1";
         const results = await db.queryDatabase(query, [id]);
-        return res.status(200).json({ success: true, notifs: results[0] });
-    } catch {
-        return res.status(500).json({ success: false, message: 'Something went wrong retrieving notifications. Please try again later.' });
+        const count = results[0]['count(*)'];
+        return res.status(200).json({ success: true, notifs: count });
+    } catch (err) {
+        return res.status(500).json({ success: false, message: 'Something went wrong retrieving notifications. Please try again later.', error: err });
     }
 })
 

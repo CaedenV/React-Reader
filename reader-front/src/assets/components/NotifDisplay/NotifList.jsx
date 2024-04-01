@@ -1,4 +1,4 @@
-import './notifsingle.css';
+import './notiflist.css';
 import React, { useEffect, useState } from 'react';
 import Popup from 'reactjs-popup';
 import { notifBack } from '../../backendRoutes';
@@ -7,6 +7,7 @@ import axios from 'axios';
 
 const NotifList = ({ userId }) => {
     const [notifs, setNotifs] = useState({});
+    const [tab, setTab] = useState(0);
     const token = localStorage.getItem('token');
 
     useEffect(() => {
@@ -22,23 +23,63 @@ const NotifList = ({ userId }) => {
     }, [userId]);
 
     return (
-        <Popup trigger={<button><i className="notifsBtn fa-solid fa-bell"></i></button>} position="bottom center">
-            <div className="userNotifs">
-                {notifs.length > 0 ? (
-                    <ul>
-                        <li>{notifs.map((notif, i) => (
-                            <NotifSingle
-                                key={i}
-                                sender={notif.sender}
-                                senderPic={notif.senderPic}
-                                bookTitle={notif.bookTitle}
-                                bookCover={notif.cover}
-                                time={notif.time}
-                            />))}</li>
-                    </ul>
-                ) : (
-                    <></>
-                )}
+        <Popup trigger={<button><i className="notifsBtn fa-solid fa-bell"></i></button>} position="bottom center" >
+            <div className='userNotifs'>
+                {notifs.reccs && notifs.friendReq && notifs.sysMessage ?
+                    <div className="tabs">
+                        <div className="tabBtns">
+                            <button onClick={() => setTab(0)} className={tab === 0 ? 'active' : 'tab'}>Books</button>
+                            <button onClick={() => setTab(1)} className={tab === 1 ? 'active' : 'tab'}>Friends</button>
+                            <button onClick={() => setTab(2)} className={tab === 2 ? 'active' : 'tab'}>Other</button>
+                        </div>
+                        <div className="tab-content">
+                            {tab === 0 ? notifs.reccs.length > 0 ?
+                                <ul>
+                                    <li>{notifs.reccs.map((notif, i) => (
+                                        <NotifSingle
+                                            key={i}
+                                            friend={notif.friendRequest}
+                                            book={notif.book}
+                                            time={notif.createdAt}
+                                            read={notif.notifRead}
+                                            type={notif.type}
+                                        />))}</li>
+                                </ul> : <label>No Book notifications.</label>
+                                :
+                                <></>
+                            }
+                            {tab === 1 ? notifs.friendReq.length > 0 ?
+                                <ul>
+                                    <li>{notifs.friendReq.map((notif, i) => (
+                                        <NotifSingle
+                                            key={i}
+                                            friend={notif.friendRequest}
+                                            read={notif.notifRead}
+                                            time={notif.createdAt}
+                                            type={notif.type}
+                                        />))}</li>
+                                </ul> : <label>0 Active Friend Requests.</label>
+                                :
+                                <></>
+                            }
+                            {tab === 2 ? notifs.sysMessage.length > 0 ?
+                                <ul>
+                                    <li>{notifs.sysMessage.map((notif, i) => (
+                                        <NotifSingle
+                                            key={i}
+                                            message={notif.message}
+                                            read={notif.notifRead}
+                                            time={notif.createdAt}
+                                            type={notif.type}
+                                        />))}</li>
+                                </ul> : <label>Nothing to report!</label>
+                                :
+                                <></>
+                            }
+
+                        </div>
+                    </div>
+                    : <></>}
             </div>
         </Popup>
     )

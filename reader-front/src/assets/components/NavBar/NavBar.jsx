@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import './navbar.css';
 import logo from '../../../assets/logo.png';
 import Popup from 'reactjs-popup';
 import Login from '../Login-Register/Login';
 import Register from '../Login-Register/Register';
 import { Link } from 'react-router-dom';
-import Cookies from 'js-cookie';
 import NotifList from '../NotifDisplay/NotifList';
 
 const NavBar = ({ userId, updateUserId }) => {

@@ -27,12 +27,24 @@ router.post('/add', verifyJWT, async (req, res) => {
     }
 });
 
-router.get('/get', verifyJWT, async (req, res) => {
-    const id = req.user;
+router.get('/getUser', verifyJWT, async (req, res) => {
+    const {id} = req.body;
     try {
         let query = "SELECT u.userName FROM friendusers f JOIN users u ON f.friendId = u.id WHERE f.userId = ?";
         const results = await db.queryDatabase(query, [id]);
         return res.status(200).json({ success: true, friends: results });
+    } catch {
+        return res.status(500).json({ success: false, message: 'Error occured when getting your friends. Please try again later.' });
+    }
+});
+
+router.get('/getNum', verifyJWT, async (req, res) => {
+    const {id} = req.body;
+    try {
+        let query = "SELECT count(*) FROM friendusers f WHERE f.userId = ?";
+        const results = await db.queryDatabase(query, [id]);
+        const count = results[0]['count(*)'];
+        return res.status(200).json({ success: true, num: count });
     } catch {
         return res.status(500).json({ success: false, message: 'Error occured when getting your friends. Please try again later.' });
     }

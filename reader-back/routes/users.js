@@ -116,7 +116,9 @@ router.get('/getUser', verifyJWT, async (req, res) => {
     if (results.length <= 0) {
       return res.status(404).json({ success: false, message: 'User not found.' });
     }
-    return res.status(200).json({ success: true, user: results[0] });
+    const user = results[0];
+    user.pic = `http://localhost:8080${results[0].pic}`;
+    return res.status(200).json({ success: true, user });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -142,7 +144,7 @@ router.patch('/update', verifyJWT, type, async (req, res) => {
       if (results.affectedRows === 0) {
         return res.json({ success: false, message: 'User ID does not exist.' });
       } 
-      return res.json({ success: true, message: 'User updated successfully' });
+      return res.json({ success: true, message: 'User updated successfully. Please refresh.' });
     } catch (error) {
       return res.status(500).json({ error: error.message, message: 'Something went wrong. Please try again later.' });
     }
@@ -154,7 +156,7 @@ router.patch('/update', verifyJWT, type, async (req, res) => {
       if (results.affectedRows === 0) {
         return res.json({ success: false, message: 'User ID does not exist.' });
       }
-      return res.json({ success: true, message: 'User updated successfully' });
+      return res.json({ success: true, message: 'User updated successfully. Please refresh. ' });
     } catch (error) {
       return res.status(500).json({ error: error.message, message: 'Something went wrong. Please try again later.' });
     }

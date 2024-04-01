@@ -5,24 +5,35 @@ import { useState, useEffect } from "react";
 import { userBack, friendBack } from '../../backendRoutes';
 import axios from "axios";
 import { useParams } from 'react-router-dom';
+import FriendList from '../../components/FriendList/FriendList';
 
-const OtherProfile = () => {
-    const [user, setUser] = useState({});
-    const [friends, setFriends] = useState([]);
+const OtherProfile = ({ userId }) => {
+    const [other, setUser] = useState({});
+    const [otherFriends, setFriends] = useState([]);
     const [userFriends, setUserFriends] = useState([]);
+
+
     const [libNums, setLibNums] = useState({});
     const token = localStorage.getItem('token');
     const { profileId } = useParams();
 
     useEffect(() => {
         async function GetAllInfo() {
-            await axios.get(`${friendBack}/get`, {
+            await axios.get(`${friendBack}/getUser`, {
                 body: { id: profileId },
                 headers: { Authorization: `Bearer ${token}` }
             })
                 .then((response) => {
                     setFriends(response.data.friends);
                 });
+            await axios.get(`${friendBack}/getUser`, {
+                body: { id: userId },
+                headers: { Authorization: `Bearer ${token}` }
+            })
+                .then((response) => {
+                    setUserFriends(response.data.friends);
+                });
+
             await axios.get(`${userBack}/getUser`, {
                 body: { id: profileId },
                 headers: { Authorization: `Bearer ${token}` }
@@ -43,59 +54,49 @@ const OtherProfile = () => {
         }
 
         GetAllInfo();
-        //TO DO: Add dependency on the viewed profile's Id AND userId
     }, [userId]);
 
-    const handleAdd = () => {
-        //TO DO: get name from li item
-        axios.post(`${friendBack}/add`, {
-            body: { friend: friendName },
-            headers: { Authorization: `Bearer ${token}` }
-        }).then((response) => {
-            setUserFriends(response.data.friends);
-        });
-        //TO DO: get name from li item
-    }
 
     return (
         <form className="topCategory" >
             <div className="settingsProfPic">
                 <img className="topProfile"
-                    src={(user.userPicLink) || "https://static.vecteezy.com/system/resources/previews/000/348/518/original/vector-books-icon.jpg"} />
+                    src={(other.userPicLink) || "https://static.vecteezy.com/system/resources/previews/000/348/518/original/vector-books-icon.jpg"} />
             </div>
             <div className="data">
                 <div className="unFriends">
-                    <label className='uName'>{user.userName}</label>
+                    <label className='uName'>{other.userName}</label>
 
                     <Popup trigger={<button className="friends">Friends</button>} position="bottom center">
                         <ul>
-                            {friends.map((friend, i) => (
-                                <li key={i}>
-                                    {friend.name} <button className='add' onClick={handleAdd}>+</button>
-                                    {/* determine whether in both user's and viewed profile's */}
-                                </li>
-                            ))}
+                            <FriendList userFriends={userFriends} otherFriends={otherFriends} />
                         </ul>
                     </Popup>
                 </div>
                 <div className="favGenre">
                     <label className='title'>Favorite Genre:</label>
-                    <label>{user.userFavGenre || " This user hasn't set their favorite genre."}</label>
+                    <label>{other.userFavGenre || " This user hasn't set their favorite genre."}</label>
                 </div>
-                <div className="libNums">
-                    <div className="lib owns">
-                        <label className='cat'> Owns </label>
-                        <label className='value'> {libNums.own} </label>
+                <Link to={`/${userId}/library`}>
+                    <div className="libNums">
+                        {other.nowRead ? <div className="nowRead">
+                            <label className='cat'>Currently Reading:</label>
+                            <SmallBook bookId={other.nowRead} />
+                        </div> : <></>}
+                        <div className="lib owns">
+                            <label className='cat'> Owns </label>
+                            <label className='value'> {libNums.own} </label>
+                        </div>
+                        <div className="lib favs">
+                            <label className='cat'> Favorites </label>
+                            <label className='value'> {libNums.fav} </label>
+                        </div>
+                        <div className="lib wishes">
+                            <label className='cat'> Wishlist </label>
+                            <label className='value'> {libNums.wish} </label>
+                        </div>
                     </div>
-                    <div className="lib favs">
-                        <label className='cat'> Favorites </label>
-                        <label className='value'> {libNums.fav} </label>
-                    </div>
-                    <div className="lib wishes">
-                        <label className='cat'> Wishlist </label>
-                        <label className='value'> {libNums.wish} </label>
-                    </div>
-                </div>
+                </Link>
             </div>
         </form>
     )

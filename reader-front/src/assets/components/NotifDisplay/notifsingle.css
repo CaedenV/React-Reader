@@ -1,11 +1,9 @@
 .notif .msg {
-    font-size: large;
-    color: mediumpurple;
+    color: rgb(98, 41, 212);
 }
 
-.bookLink {
+.links {
     color: rgb(109, 85, 158);
-    font-size: large;
 }
 
 .bookPic {
@@ -20,7 +18,9 @@
     height: 4px;
 }
 
-.notifBtn {
-    font-size: large;
+.friend>button {
+    background-color: transparent;
     color: mediumpurple;
+    border: none;
+    font-size: large;
 }

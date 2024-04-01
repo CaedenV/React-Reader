@@ -6,10 +6,12 @@ import { userBack, friendBack } from '../../backendRoutes';
 import profPic from '../../profPic.png';
 import axios from "axios";
 import { Link } from 'react-router-dom';
+import SmallBook from '../../components/BookDisplay/SmallBook/SmallBook';
 
 const Profile = ({ userId }) => {
   const [user, setUser] = useState({});
   const [friends, setFriends] = useState([]);
+  const [fNum, setFNum] = useState(0);
   const [libNums, setLibNums] = useState({});
   const [editResponse, setEditResponse] = useState("");
   const [file, setFile] = useState(null);
@@ -18,12 +20,16 @@ const Profile = ({ userId }) => {
 
   useEffect(() => {
     async function GetAllInfo() {
-      await axios.get(`${friendBack}/get`, {
+      await axios.get(`${friendBack}/getUser`, {
+        body: { id: userId },
         headers: { Authorization: `Bearer ${token}` }
       })
-        .then((response) => {
-          setFriends(response.data.friends);
-        });
+        .then((response) => { setFriends(response.data.friends); });
+
+      await axios.get(`${friendBack}/getNum`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+        .then((response) => { setFNum(response.data.num); });
 
       await axios.get(`${userBack}/getMe`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -52,10 +58,10 @@ const Profile = ({ userId }) => {
     e.stopPropagation();
   };
 
-  const handleAddFriend = (e) => {
+  const handleAddFriend = async (e) => {
     e.preventDefault();
     const friendName = e.target.value;
-    axios.post(`${friendBack}/add`, {
+    await axios.post(`${friendBack}/add`, {
       body: { friend: friendName },
       headers: { Authorization: `Bearer ${token}` }
     })
@@ -64,8 +70,8 @@ const Profile = ({ userId }) => {
       });
   };
 
-  const handleRemoveFriend = (friend) => {
-    axios.delete(`${friendBack}/delete`, {
+  const handleRemoveFriend = async (friend) => {
+    await axios.delete(`${friendBack}/delete`, {
       body: { friend: friend },
       headers: { Authorization: `Bearer ${token}` }
     })
@@ -116,17 +122,17 @@ const Profile = ({ userId }) => {
     <div className="topCategory">
       <div className="settingsProfPic">
         <img className="topProfile"
-          src={ `${user.pic}` || profPic} />
+          src={`${user.pic}` || profPic} />
       </div>
       <div className="data">
         <div className="unFriends">
           <label className='uName'>{user.userName}</label>
-          <Popup trigger={<button className="friends" onClick={handleFriendsBtn}>Friends</button>} position="bottom center">
+          <Popup trigger={<button className="friends" onClick={handleFriendsBtn}> {fNum} Friends</button>} position="bottom center">
             <ul className='friendsList'>
               {friends.map((friend) => (
-                <li key={friend.friendId}>
-                  {friend.friendId}
-                  <button onClick={() => handleRemoveFriend(friend.friendId, user.userId)}>Remove</button>
+                <li key={friend}>
+                  {friend}
+                  <button onClick={() => handleRemoveFriend(friend)}>Remove</button>
                 </li>
               ))}
             </ul>
@@ -161,8 +167,13 @@ const Profile = ({ userId }) => {
           <label className='title'>Favorite Genre:</label>
           <label>{user.favGenre || " This user hasn't set their favorite genre."}</label>
         </div>
-        <Link to={`/${userId}/library`}>
-          <div className="libNums">
+
+        <div className="libNums">
+          {user.nowRead ? <div className="nowRead">
+            <label className='cat'>Currently Reading:</label>
+            <SmallBook bookId={user.nowRead} />
+          </div> : <></>}
+          <Link className='libNums' to={`/${userId}/library`}>
             <div className="lib owns">
               <label className='cat'> Owns </label>
               <label className='value'> {libNums.own} </label>
@@ -175,11 +186,10 @@ const Profile = ({ userId }) => {
               <label className='cat'> Wishlist </label>
               <label className='value'> {libNums.wish} </label>
             </div>
-          </div>
-        </Link>
-
+          </Link>
+        </div>
       </div>
-    </div>
+    </div >
 
   )
 }

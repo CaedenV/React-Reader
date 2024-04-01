@@ -1,0 +1,32 @@
+
+.userNotifs {
+    width: 300px;
+    padding: 5px;
+    max-height: 400px;
+    color: rgb(35, 23, 59);
+}
+.tabBtns {
+    border: 2px solid rgba(147, 112, 216, 0.89);
+    border-top: none;
+    border-left: none;
+    border-right: none;
+}
+
+.tabBtns .active {
+    background-color: bisque;
+    font-size: large;
+    color: rgb(76, 20, 189);
+    padding: 5px;
+    border: 2px solid rgba(147, 112, 216, 0.726);
+    border-radius: 8px;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+    border-bottom: none;
+}
+.tabBtns .tab {
+    background-color: transparent;
+    font-size: medium;
+    color: rgb(107, 83, 155);
+    border: none;
+    padding: 5px;
+}

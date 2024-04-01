@@ -39,13 +39,12 @@ nav ul li {
     display: flex;
     flex-direction: column;
     border-radius: 8px;
-    width: 100px;
     align-items: center;
     padding-bottom: 8px;
 }
 .userNotifs {
-    background-color: rgb(250, 198, 135);
-    border: 1px solid rgb(172, 146, 223);
+    border: 2px solid rgb(172, 146, 223);
+    background-color: rgb(255, 210, 155);
     display: flex;
     flex-direction: column;
     border-radius: 8px;
