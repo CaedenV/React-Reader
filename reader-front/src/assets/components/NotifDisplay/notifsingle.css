@@ -24,3 +24,9 @@
     border: none;
     font-size: large;
 }
+.notif {
+    border: 1px solid bisque;
+    border-top: 0px;
+    border-left: 0px;
+    border-right: 0px;
+}

@@ -22,7 +22,7 @@ async function getUserByEmail(email) {
     return res[0];
   }
   catch (err) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(500).json({ success: false, message: err.message });
   }
 }
 

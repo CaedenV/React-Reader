@@ -2,7 +2,7 @@ import './profile.css';
 import React from 'react';
 import Popup from 'reactjs-popup';
 import { useState, useEffect, useRef } from "react";
-import { userBack, friendBack } from '../../backendRoutes';
+import { userBack, friendBack, notifBack } from '../../backendRoutes';
 import profPic from '../../profPic.png';
 import axios from "axios";
 import { Link } from 'react-router-dom';
@@ -19,18 +19,8 @@ const Profile = ({ userId }) => {
   const token = localStorage.getItem('token');
 
   useEffect(() => {
-    async function GetAllInfo() {
-      await axios.get(`${friendBack}/getUser`, {
-        body: { id: userId },
-        headers: { Authorization: `Bearer ${token}` }
-      })
-        .then((response) => { setFriends(response.data.friends); });
-
-      await axios.get(`${friendBack}/getNum`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-        .then((response) => { setFNum(response.data.num); });
-
+    // Retrieve info from the users table
+    async function GetPersonalInfo() {
       await axios.get(`${userBack}/getMe`, {
         headers: { Authorization: `Bearer ${token}` }
       })
@@ -49,27 +39,41 @@ const Profile = ({ userId }) => {
         });
       console.log(user);
     }
+    //Retrieve info from the userFriends table 
+    async function getFriends() {
+      await axios.get(`${friendBack}/getUser`, {
+        body: { id: userId },
+        headers: { Authorization: `Bearer ${token}` }
+      })
+        .then((response) => { setFriends(response.data.friends); });
 
-    GetAllInfo();
+      await axios.get(`${friendBack}/getNum`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+        .then((response) => { setFNum(response.data.num); });
+    }
+    GetPersonalInfo();
+    setInterval(getFriends, 60000);
   }, [userId]);
 
+  //Keeps all the edited information if Friends button clicked.
   const handleFriendsBtn = (e) => {
     e.preventDefault();
     e.stopPropagation();
   };
 
+  // Sends the request to the receiver's notification box (posts request in notifs table)
   const handleAddFriend = async (e) => {
     e.preventDefault();
-    const friendName = e.target.value;
-    await axios.post(`${friendBack}/add`, {
-      body: { friend: friendName },
+    const fd = new FormData(e.target);
+    const friendName = fd.get('friendName');
+    console.log(friendName);
+    await axios.post(`${notifBack}/sendFriend/`, { friendName: friendName }, {
       headers: { Authorization: `Bearer ${token}` }
-    })
-      .then((response) => {
-        setFriends(response.data.friends);
-      });
+    });
   };
 
+  // Handles the removal of a friend
   const handleRemoveFriend = async (friend) => {
     await axios.delete(`${friendBack}/delete`, {
       body: { friend: friend },
@@ -80,11 +84,12 @@ const Profile = ({ userId }) => {
       });
   };
 
-
+  //updates the mini image in the 'update user' box
   const handleFileClick = () => {
     inputRef.current.click();
   };
 
+  //updates the user useState with the proper image file
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
     const reader = new FileReader();
@@ -95,6 +100,7 @@ const Profile = ({ userId }) => {
     reader.readAsDataURL(event.target.files[0]);
   };
 
+  //Submits all data, updated and not.
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -128,23 +134,28 @@ const Profile = ({ userId }) => {
         <div className="unFriends">
           <label className='uName'>{user.userName}</label>
           <Popup trigger={<button className="friends" onClick={handleFriendsBtn}> {fNum} Friends</button>} position="bottom center">
-            <ul className='friendsList'>
-              {friends.map((friend) => (
-                <li key={friend}>
-                  {friend}
-                  <button onClick={() => handleRemoveFriend(friend)}>Remove</button>
-                </li>
-              ))}
-            </ul>
-            <Popup trigger={<button className="addF" >Add Friend</button>}
-              position="bottom center">
-              {<div className='modal'>
+            <div className="listPop">
+              <div className='addPop'>
                 <form className="enterName" onSubmit={handleAddFriend}>
-                  <label className="enterLbl">Enter Username:</label>
-                  <input type="text" className="fName" name='userName' placeholder="Friend UserName" />
+                  <label className="enterLbl">Add a Friend: </label>
+                  <input type="text" className="fName" name='friendName' placeholder="UserName" />
+                  <button className="addF" type='submit'>+</button>
                 </form>
-              </div>}
-            </Popup>
+              </div>
+
+              {friends ? friends.length > 0 ?
+                <ul className='friendsList'>
+                  {friends.map((friend) => (
+                    <li key={friend}>
+                      {friend}
+                      <button onClick={() => handleRemoveFriend(friend)}>-</button>
+                    </li>
+                  ))}
+                </ul> : <label>Currently 0 friends</label>
+                : <></>}
+            </div>
+
+
           </Popup>
 
           <Popup trigger={<button><i className="settings fa-solid fa-gears" /></button>} modal nested>

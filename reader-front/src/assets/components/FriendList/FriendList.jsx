@@ -63,7 +63,7 @@ const FriendList = ({userFriends, otherFriends}) => {
         ))}
         {uniqueFriends.other.map(friend => (
           <div key={friend}>
-            <span>{friend} <button onClick={() => addOrRemoveFriend(friend, 'add')}>+</button></span>
+            <span>{friend}<button onClick={() => addOrRemoveFriend(friend, 'add')}>+</button></span>
           </div>
         ))}
       </div>

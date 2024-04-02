@@ -35,9 +35,9 @@ const NotifList = ({ userId }) => {
                         <div className="tab-content">
                             {tab === 0 ? notifs.reccs.length > 0 ?
                                 <ul>
-                                    <li>{notifs.reccs.map((notif, i) => (
+                                    <li>{notifs.reccs.map((notif) => (
                                         <NotifSingle
-                                            key={i}
+                                            key={notif.id}
                                             friend={notif.friendRequest}
                                             book={notif.book}
                                             time={notif.createdAt}
@@ -50,9 +50,9 @@ const NotifList = ({ userId }) => {
                             }
                             {tab === 1 ? notifs.friendReq.length > 0 ?
                                 <ul>
-                                    <li>{notifs.friendReq.map((notif, i) => (
+                                    <li>{notifs.friendReq.map((notif) => (
                                         <NotifSingle
-                                            key={i}
+                                            key={notif.id}
                                             friend={notif.friendRequest}
                                             read={notif.notifRead}
                                             time={notif.createdAt}
@@ -64,9 +64,9 @@ const NotifList = ({ userId }) => {
                             }
                             {tab === 2 ? notifs.sysMessage.length > 0 ?
                                 <ul>
-                                    <li>{notifs.sysMessage.map((notif, i) => (
+                                    <li>{notifs.sysMessage.map((notif) => (
                                         <NotifSingle
-                                            key={i}
+                                            key={notif.id}
                                             message={notif.message}
                                             read={notif.notifRead}
                                             time={notif.createdAt}

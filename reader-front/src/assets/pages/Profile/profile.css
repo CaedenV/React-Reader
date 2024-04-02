@@ -33,6 +33,48 @@
     padding: 2px;
 }
 
+.listPop {
+    padding: 8px;
+    background-color: rgb(255, 212, 148);
+    color: rgb(116, 57, 235);
+    border: 2px solid mediumpurple;
+    border-radius: 5px;
+    align-items: center;
+    font-size: larger;
+    display: flex;
+    flex-direction: column;
+}
+.addPop {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 3px;
+    border-bottom: 1px solid mediumpurple;
+    
+}
+.enterName>input {
+    background-color: bisque;
+    color: mediumpurple;
+    border: 1px solid mediumpurple;
+    margin-right: 5px;
+    border-radius: 5px;
+    padding-left: 2px;
+    font-size: medium;
+    width: 125px;
+}
+.enterName>input::placeholder {
+    color: mediumpurple;
+}
+.enterName .addF {
+    color: bisque;
+    background-color: mediumpurple;
+    border: none;
+    border-radius: 5px;
+    font-size: larger;
+    padding-left: 5px;
+    padding-right: 5px;
+}
 
 .favGenre {
     margin-top: 25px;
