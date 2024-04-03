@@ -1,6 +1,5 @@
-
 .userNotifs {
-    width: 300px;
+    min-width: 400px;
     padding: 5px;
     max-height: 400px;
     color: rgb(35, 23, 59);

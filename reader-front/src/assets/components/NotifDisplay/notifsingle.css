@@ -1,9 +1,12 @@
-.notif .msg {
-    color: rgb(98, 41, 212);
-}
-
 .links {
     color: rgb(109, 85, 158);
+    text-decoration: underline;
+}
+
+.pics {
+    margin-right: 10px;
+    margin-top: 5px;
+    margin-left: 5px;
 }
 
 .bookPic {
@@ -14,8 +17,8 @@
 
 .senderPic {
     border-radius: 50%;
-    width: 4px;
-    height: 4px;
+    height: 40px;
+    width: 40px;
 }
 
 .friend>button {
@@ -24,9 +27,31 @@
     border: none;
     font-size: large;
 }
-.notif {
-    border: 1px solid bisque;
-    border-top: 0px;
-    border-left: 0px;
-    border-right: 0px;
+.old {
+    border-bottom: 1px solid bisque;
+    color: rgb(140, 83, 255);
+    display: flex;
+    flex-direction: row;
+    font-size: small;
+}
+.fresh {
+    border-bottom: 1px solid bisque;
+    background-color: bisque;
+    color: rgb(73, 32, 156);
+    font-size: small;
+    display: flex;
+    flex-direction: row;
+}
+
+.time {
+    font-size: small;
+    margin-left: 5px;
+}
+.remove {
+    background-color: transparent;
+    border: none;
+    padding: 2px;
+}
+.remove:hover {
+    background-color: bisque;
 }

@@ -18,31 +18,31 @@ router.post('/add', verifyJWT, async (req, res) => {
     const {friendName} = req.body;
     const userId = req.user;
     try {
-        const friendId = getUserByUN(friendName);
+        const friend = await getUserByUN(friendName);
         let query = "insert into friendusers (userId, friendId) values (?,?)";
-        await db.queryDatabase(query, [userId, friendId]);
+        await db.queryDatabase(query, [userId, friend.id]);
         return res.status(200).json({ success: true, message: "Friend Added Successfully." });
-    } catch {
-        return res.status(500).json({ success: false, message: 'Error occured while adding friend. Please try again later.' });
+    } catch (err){
+        return res.status(500).json({ success: false, message: 'Error occured while adding friend. Please try again later.', error: err });
     }
 });
 
-router.get('/getUser', verifyJWT, async (req, res) => {
-    const {id} = req.body;
+router.get('/getUser/:id', verifyJWT, async (req, res) => {
+    const {id} = req.params;
     try {
-        let query = "SELECT u.userName FROM friendusers f JOIN users u ON f.friendId = u.id WHERE f.userId = ?";
-        const results = await db.queryDatabase(query, [id]);
+        let query = "SELECT u.userName, u.pic FROM friendUsers f JOIN users u ON f.friendId = u.id WHERE f.userId = ? UNION SELECT u.userName, u.pic FROM friendUsers f JOIN users u ON f.userId = u.id WHERE f.friendId = ?";
+        const results = await db.queryDatabase(query, [id, id]);
         return res.status(200).json({ success: true, friends: results });
     } catch {
         return res.status(500).json({ success: false, message: 'Error occured when getting your friends. Please try again later.' });
     }
 });
 
-router.get('/getNum', verifyJWT, async (req, res) => {
-    const {id} = req.body;
+router.get('/getNum/:id', verifyJWT, async (req, res) => {
+    const {id} = req.params;
     try {
-        let query = "SELECT count(*) FROM friendusers f WHERE f.userId = ?";
-        const results = await db.queryDatabase(query, [id]);
+        let query = "SELECT count(*) FROM friendusers WHERE userId = ? OR friendId = ?";
+        const results = await db.queryDatabase(query, [id, id]);
         const count = results[0]['count(*)'];
         return res.status(200).json({ success: true, num: count });
     } catch {

@@ -1,47 +1,73 @@
 import './notifsingle.css';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { friendBack, notifBack } from '../../backendRoutes';
+import { friendBack, notifBack, backend } from '../../backendRoutes';
+import axios from 'axios';
 
-const NotifSingle = ({ friend, book, time, read, message, type, key}) => {
+const NotifSingle = ({ friend, book, time, read, message, type, id }) => {
     const { cover, title, bookId } = book || {};
-    const { pic, userName, friendId } = friend || {};
+    const { userName, friendId } = friend || {};
     const [reqAccept, setReqAccept] = useState(friend.accept);
     const [status, setStatus] = useState(read);
     const token = localStorage.getItem('token');
 
+    const getTime = (timestamp) => {
+        const givenTimestamp = new Date(Date.parse(timestamp));
+        const diffInMilliseconds = Date.now() - givenTimestamp.getTime();
+        const diffInSeconds = Math.floor(diffInMilliseconds / 1000);
+        const diffInMinutes = Math.floor(diffInSeconds / 60);
+        const diffInHours = Math.floor(diffInMinutes / 60);
+        const diffInDays = Math.floor(diffInHours / 24);
+        const diffInWeeks = Math.floor(diffInDays / 7);
+        const diffInMonths = Math.floor(diffInDays / 30);
+        const diffInYears = Math.floor(diffInMonths / 12);
+
+        if (diffInYears > 0) {
+            return `${diffInYears} years ago`;
+        } else if (diffInMonths > 0) {
+            return `${diffInMonths} months ago`;
+        } else if (diffInWeeks > 0) {
+            return `${diffInDays} week(s) ago`;
+        } else if (diffInDays > 0) {
+            return `${diffInDays} days ago`;
+        } else if (diffInHours > 0) {
+            return `${diffInHours} hour(s) ago`;
+        } else if (diffInMinutes > 0) {
+            return `${diffInMinutes} min(s)  ago`;
+        } else {
+            return `${diffInSeconds} sec(s) ago`;
+        }
+    };
+
     const onAccept = async () => {
         //Add pair to friends table
         friend.accept = true;
-        await axios.post(`${friendBack}/add`, {
-            body: { friend: friend.id },
+        await axios.post(`${friendBack}/add`, { friendName: userName }, {
             headers: { Authorization: `Bearer ${token}` }
         });
-        await axios.patch(`${notifBack}/acceptFriend/${key}`, {
-            body: friend,
+        await axios.patch(`${notifBack}/acceptFriend/${id}`, { friend: friend }, {
             headers: { Authorization: `Bearer ${token}` }
-        })
-        setReqAccept(!reqAccept);
+        });
+        setReqAccept(true);
     }
     const handleRemove = async () => {
-        await axios.post(`${notifBack}/delete/${key}`, {
+        await axios.delete(`${notifBack}/delete/${id}`, {
             headers: { Authorization: `Bearer ${token}` }
         });
     }
     const handleRead = async () => {
-        await axios.post(`${notifBack}/read/${key}`, {
-            body: { notifRead: true },
+        await axios.patch(`${notifBack}/read/${id}`, { notifRead: !status }, {
             headers: { Authorization: `Bearer ${token}` }
         }).then((response) => {
-            setStatus(response.body.status);
+            setStatus(response.data.status);
         });
     }
 
     return (
         <div className={status ? 'old' : 'fresh'} onClick={handleRead}>
             <div className="pics">
-                {book && <img src={cover} alt={title} className='bookPic' />}
-                <img src={pic} alt={userName} className='senderPic' />
+                {book && <img src={`${backend}${cover}`} alt={title} className='bookPic' />}
+                <img src={`${backend}${friend.pic}`} className='senderPic' />
             </div>
             {type === 'book' && book && <label className="msg">{userName} recommends <Link to={`/view/${bookId}`} className='links'>{title}!</Link></label>}
             {type === 'friend' && friend &&
@@ -49,17 +75,15 @@ const NotifSingle = ({ friend, book, time, read, message, type, key}) => {
                     {!reqAccept ?
                         <>
                             <label className="msg"><Link to={`/${friendId}/profile`} className='links'>{userName}</Link> would like to be your friend!</label>
-                            <button onClick={onAccept}><i class="fa-solid fa-circle-check" /></button>
+                            <button onClick={onAccept}><i className="fa-solid fa-circle-check" /></button>
                         </> :
                         <label className="msg">You and <Link to={`/${friendId}/profile`} className='links'>{userName}</Link> are now friends!</label>
                     }
                 </div>
             }
-            {type === 'sys' &&  message && <label className="msg">{message}</label>}
-            <div className="extra">
-                <label>{time}</label>
-                <button className="remove" onClick={handleRemove}>X</button>
-            </div>
+            {type === 'sys' && message && <label className="msg">{message}</label>}
+            <label className='time'>{getTime(time)}</label>
+            <button className="remove" onClick={handleRemove}>X</button>
         </div>
     )
 }

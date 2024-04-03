@@ -25,8 +25,21 @@ async function getUserIdByName(name) {
     }
 }
 
+async function getNowTimeStamp() {
+    const now = new Date();
+    const year = now.getFullYear().toString().padStart(4, '0');
+    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+    const day = now.getDate().toString().padStart(2, '0');
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const seconds = now.getSeconds().toString().padStart(2, '0');
+    const milliseconds = now.getMilliseconds().toString().padStart(3, '0');
+  
+    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}Z`;
+  };
+
 router.post('/sendBook', verifyJWT, async (req, res) => {
-    const {friendName} = req.body;
+    const { friendName } = req.body;
     const receiver = await getUserIdByName(friendName);
     const book = req.body.book;
     const sender = await getUserById(req.user);
@@ -44,8 +57,8 @@ router.post('/sendBook', verifyJWT, async (req, res) => {
 router.post('/sendFriend', verifyJWT, async (req, res) => {
     const receiverName = req.body.friendName;
     const receiver = await getUserIdByName(receiverName);
-    //receiver.accept = false;
     const sender = await getUserById(req.user);
+    sender.accept = false;
     console.log(sender);
     try {
         let query = "insert into notifs (senderId, receiverId, friendRequest) values (?,?,?)";
@@ -65,6 +78,9 @@ router.get('/getByUser', verifyJWT, async (req, res) => {
         let sQuery = "SELECT id, senderId, createdAt, notifRead, message, notifType FROM notifs WHERE receiverId = ? AND notifType = 'sys' order by createdAt ASC";
         const reccs = await db.queryDatabase(bQuery, [id]);
         const friends = await db.queryDatabase(fQuery, [id]);
+        
+
+
         const sys = await db.queryDatabase(sQuery, [id]);
         const results = { reccs: reccs, friendReq: friends, sysMessage: sys };
 
@@ -103,10 +119,10 @@ router.patch('/read/:id', verifyJWT, async (req, res) => {
 });
 router.patch('/acceptFriend/:id', verifyJWT, async (req, res) => {
     const { id } = req.params;
-    const { friends } = req.body;
+    const { friend } = req.body;
     try {
-        let query = "update notifs set friendRequest = ? where id = ? ";
-        const results = await db.queryDatabase(query, [friends, id]);
+        let query = "update notifs set friendRequest=? where id = ? ";
+        const results = await db.queryDatabase(query, [JSON.stringify(friend), id]);
         if (results.affectedRows == 0) {
             return res.json({ success: false, message: "Notification not found." });
         }

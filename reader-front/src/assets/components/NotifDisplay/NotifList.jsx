@@ -34,45 +34,45 @@ const NotifList = ({ userId }) => {
                         </div>
                         <div className="tab-content">
                             {tab === 0 ? notifs.reccs.length > 0 ?
-                                <ul>
-                                    <li>{notifs.reccs.map((notif) => (
-                                        <NotifSingle
-                                            key={notif.id}
-                                            friend={notif.friendRequest}
-                                            book={notif.book}
-                                            time={notif.createdAt}
-                                            read={notif.notifRead}
-                                            type={notif.type}
-                                        />))}</li>
-                                </ul> : <label>No Book notifications.</label>
+                                <span>{notifs.reccs.map((notif, i) => (
+                                    <NotifSingle
+                                        key={i}
+                                        friend={JSON.parse(notif.friendRequest)}
+                                        book={notif.book}
+                                        time={notif.createdAt}
+                                        read={notif.notifRead}
+                                        type={notif.notifType}
+                                        id={notif.id}
+                                    />))}
+                                </span> : <label>No Book notifications.</label>
                                 :
                                 <></>
                             }
                             {tab === 1 ? notifs.friendReq.length > 0 ?
-                                <ul>
-                                    <li>{notifs.friendReq.map((notif) => (
-                                        <NotifSingle
-                                            key={notif.id}
-                                            friend={notif.friendRequest}
-                                            read={notif.notifRead}
-                                            time={notif.createdAt}
-                                            type={notif.type}
-                                        />))}</li>
-                                </ul> : <label>0 Active Friend Requests.</label>
+                                <span>{notifs.friendReq.map((notif, i) => (
+                                    <NotifSingle
+                                        key={i}
+                                        friend={JSON.parse(notif.friendRequest)}
+                                        read={notif.notifRead}
+                                        time={notif.createdAt}
+                                        type={notif.notifType}
+                                        id={notif.id}
+                                    />))}
+                                </span> : <label>0 Active Friend Requests.</label>
                                 :
                                 <></>
                             }
                             {tab === 2 ? notifs.sysMessage.length > 0 ?
-                                <ul>
-                                    <li>{notifs.sysMessage.map((notif) => (
-                                        <NotifSingle
-                                            key={notif.id}
-                                            message={notif.message}
-                                            read={notif.notifRead}
-                                            time={notif.createdAt}
-                                            type={notif.type}
-                                        />))}</li>
-                                </ul> : <label>Nothing to report!</label>
+                                <span>{notifs.sysMessage.map((notif,i) => (
+                                    <NotifSingle
+                                        key={i}
+                                        message={notif.message}
+                                        read={notif.notifRead}
+                                        time={notif.createdAt}
+                                        type={notif.notifType}
+                                        id={notif.id}
+                                    />))}
+                                </span> : <label>Nothing to report!</label>
                                 :
                                 <></>
                             }

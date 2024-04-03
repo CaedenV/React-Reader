@@ -8,37 +8,33 @@ import { useParams } from 'react-router-dom';
 import FriendList from '../../components/FriendList/FriendList';
 
 const OtherProfile = ({ userId }) => {
-    const [other, setUser] = useState({});
-    const [otherFriends, setFriends] = useState([]);
-    const [userFriends, setUserFriends] = useState([]);
-
-
+    const { profileName } = useParams();
+    const [other, setOther] = useState({});
+    const [otherFriends, setOtherFriends] = useState([]);
     const [libNums, setLibNums] = useState({});
+
+    const [userFriends, setUserFriends] = useState([]);
     const token = localStorage.getItem('token');
-    const { profileId } = useParams();
 
     useEffect(() => {
         async function GetAllInfo() {
-            await axios.get(`${friendBack}/getUser`, {
-                body: { id: profileId },
+            await axios.get(`${friendBack}/getOther`, { name: profileName }, {
                 headers: { Authorization: `Bearer ${token}` }
             })
                 .then((response) => {
-                    setFriends(response.data.friends);
+                    setOtherFriends(response.data.friends);
                 });
-            await axios.get(`${friendBack}/getUser`, {
-                body: { id: userId },
+            await axios.get(`${friendBack}/getUser`, { id: userId }, {
                 headers: { Authorization: `Bearer ${token}` }
             })
                 .then((response) => {
                     setUserFriends(response.data.friends);
                 });
 
-            await axios.get(`${userBack}/getUser`, {
-                body: { id: profileId },
+            await axios.get(`${userBack}/getOther`, { name: profileName }, {
                 headers: { Authorization: `Bearer ${token}` }
             })
-                .then((response) => { setUser(response.data.user); });
+                .then((response) => { setOther(response.data.user); });
             await axios.get(`${userBack}/selfLibCount`, {
                 body: { id: profileId },
                 headers: { Authorization: `Bearer ${token}` }

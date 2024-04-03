@@ -33,16 +33,47 @@
     padding: 2px;
 }
 
+.friendsList .miniF {
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+    object-fit: cover;
+    margin-right: 5px;
+    border: 1px solid rgb(255, 166, 56);
+}
+.friendsList .namePic {
+    margin-top: 3px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.friendsList .fItem {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+.fItem>button {
+    background-color: transparent;
+    padding-left: 5px;
+    padding-right: 5px;
+    font-size: 16px;
+    border: 1px solid mediumpurple;
+    border-radius: 50%;
+    color: mediumpurple;
+}
+.fItem>button:hover {
+    background-color: mediumpurple;
+    color: bisque;
+}
+
 .listPop {
     padding: 8px;
     background-color: rgb(255, 212, 148);
     color: rgb(116, 57, 235);
     border: 2px solid mediumpurple;
     border-radius: 5px;
-    align-items: center;
     font-size: larger;
-    display: flex;
-    flex-direction: column;
 }
 .addPop {
     display: flex;

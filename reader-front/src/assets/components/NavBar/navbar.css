@@ -48,8 +48,6 @@ nav ul li {
     display: flex;
     flex-direction: column;
     border-radius: 8px;
-    width: 100px;
-    align-items: center;
 }
 .userOptions a {
     margin-top: 5px;

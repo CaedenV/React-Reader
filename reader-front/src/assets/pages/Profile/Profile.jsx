@@ -2,7 +2,7 @@ import './profile.css';
 import React from 'react';
 import Popup from 'reactjs-popup';
 import { useState, useEffect, useRef } from "react";
-import { userBack, friendBack, notifBack } from '../../backendRoutes';
+import { userBack, friendBack, notifBack, backend } from '../../backendRoutes';
 import profPic from '../../profPic.png';
 import axios from "axios";
 import { Link } from 'react-router-dom';
@@ -37,22 +37,23 @@ const Profile = ({ userId }) => {
           };
           setLibNums(data);
         });
-      console.log(user);
     }
     //Retrieve info from the userFriends table 
     async function getFriends() {
-      await axios.get(`${friendBack}/getUser`, {
-        body: { id: userId },
+      await axios.get(`${friendBack}/getUser/${userId}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
         .then((response) => { setFriends(response.data.friends); });
 
-      await axios.get(`${friendBack}/getNum`, {
+      await axios.get(`${friendBack}/getNum/${userId}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
         .then((response) => { setFNum(response.data.num); });
     }
+
     GetPersonalInfo();
+    getFriends();
+
     setInterval(getFriends, 60000);
   }, [userId]);
 
@@ -67,7 +68,6 @@ const Profile = ({ userId }) => {
     e.preventDefault();
     const fd = new FormData(e.target);
     const friendName = fd.get('friendName');
-    console.log(friendName);
     await axios.post(`${notifBack}/sendFriend/`, { friendName: friendName }, {
       headers: { Authorization: `Bearer ${token}` }
     });
@@ -144,14 +144,19 @@ const Profile = ({ userId }) => {
               </div>
 
               {friends ? friends.length > 0 ?
-                <ul className='friendsList'>
-                  {friends.map((friend) => (
-                    <li key={friend}>
-                      {friend}
+                <div className='friendsList'>
+                  {friends.map((friend, i) => (
+                    <div className="fItem" key={i}>
+                      <p className='namePic'>
+                        <img src={`${backend}${friend.pic}`} className='miniF' />
+                        <Link to={`/profile/${friend.userName}`} > {friend.userName} </Link>
+
+                      </p>
                       <button onClick={() => handleRemoveFriend(friend)}>-</button>
-                    </li>
+                    </div>
+
                   ))}
-                </ul> : <label>Currently 0 friends</label>
+                </div> : <label>Currently 0 friends</label>
                 : <></>}
             </div>
 

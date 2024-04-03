@@ -29,7 +29,6 @@ async function getUserByEmail(email) {
 router.post('/register', async (req, res) => {
   req.withCredentials = true;
   const { userName, email, password, pic } = req.body;
-  console.log(pic);
 
   if (!userName || !email || !password) {
     console.log("Not all fields");
