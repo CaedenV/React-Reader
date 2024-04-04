@@ -17,7 +17,6 @@ const NotifList = ({ userId }) => {
             })
                 .then((response) => { setNotifs(response.data.notifs); });
         }
-
         getNotifs();
         setInterval(getNotifs, 60000);
     }, [userId]);
@@ -25,7 +24,7 @@ const NotifList = ({ userId }) => {
     return (
         <Popup trigger={<button><i className="notifsBtn fa-solid fa-bell"></i></button>} position="bottom center" >
             <div className='userNotifs'>
-                {notifs.reccs && notifs.friendReq && notifs.sysMessage ?
+                {notifs.recs && notifs.friendReq && notifs.sysMessage ?
                     <div className="tabs">
                         <div className="tabBtns">
                             <button onClick={() => setTab(0)} className={tab === 0 ? 'active' : 'tab'}>Books</button>
@@ -33,16 +32,16 @@ const NotifList = ({ userId }) => {
                             <button onClick={() => setTab(2)} className={tab === 2 ? 'active' : 'tab'}>Other</button>
                         </div>
                         <div className="tab-content">
-                            {tab === 0 ? notifs.reccs.length > 0 ?
-                                <span>{notifs.reccs.map((notif, i) => (
+                            {tab === 0 ? notifs.recs.length > 0 ?
+                                <span>{notifs.recs.map((notif, i) => (
                                     <NotifSingle
                                         key={i}
                                         friend={JSON.parse(notif.friendRequest)}
-                                        book={notif.book}
+                                        book={JSON.parse(notif.book)}
                                         time={notif.createdAt}
                                         read={notif.notifRead}
                                         type={notif.notifType}
-                                        id={notif.id}
+                                        notifId={notif.id}
                                     />))}
                                 </span> : <label>No Book notifications.</label>
                                 :
@@ -56,7 +55,7 @@ const NotifList = ({ userId }) => {
                                         read={notif.notifRead}
                                         time={notif.createdAt}
                                         type={notif.notifType}
-                                        id={notif.id}
+                                        notifId={notif.id}
                                     />))}
                                 </span> : <label>0 Active Friend Requests.</label>
                                 :
@@ -70,7 +69,7 @@ const NotifList = ({ userId }) => {
                                         read={notif.notifRead}
                                         time={notif.createdAt}
                                         type={notif.notifType}
-                                        id={notif.id}
+                                        notifId={notif.id}
                                     />))}
                                 </span> : <label>Nothing to report!</label>
                                 :

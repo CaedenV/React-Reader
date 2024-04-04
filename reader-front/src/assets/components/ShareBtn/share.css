@@ -1,12 +1,54 @@
+.list {
+    background-color: rgb(253, 205, 146);
+    border: 1px solid mediumpurple;
+    border-radius: 5px;
+}
 .share {
     background-color: transparent;
     color: rgb(119, 93, 172);
     border: none;
     font-size: large;
 }
+.sendTo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 3px;
+    border-bottom: 1px solid bisque;
+}
+
+.sendTo:hover {
+    background-color: rgb(206, 166, 117);
+}
+
 .friend {
     background-color: transparent;
     color: rgb(119, 93, 172);
     border: none;
     font-size: large;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding-right: 10px;
+}
+.miniF {
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+    object-fit: cover;
+    margin-right: 5px;
+    border: 1px solid rgb(255, 166, 56);
+}
+.namePic {
+    margin-top: 3px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.fItem {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 }

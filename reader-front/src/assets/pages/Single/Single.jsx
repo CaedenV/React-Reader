@@ -1,3 +1,4 @@
+import './single.css';
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom';
 import MakeRev from '../../components/Reviews/MakeRev';
@@ -17,14 +18,13 @@ const Single = ({ userId }) => {
 
 
   useEffect(() => {
-    console.log(bookId);
     async function FetchAllInfo() {
       axios.get(`${bookBack}/getById/${bookId}`)
         .then((response) => {
           setBookInfo(response.data.book);
         });
 
-      axios.get(`${friendBack}/get`, {
+      axios.get(`${friendBack}/getUser`, {
         headers: { Authorization: `Bearer ${token}` }
       })
         .then((response) => {
@@ -33,7 +33,7 @@ const Single = ({ userId }) => {
       axios.get(`${userBack}/libraries`, {
         headers: { Authorization: `Bearer ${token}` }
       })
-        .then((response) => { setLib(response.data.library); console.log(response.data.library); });
+        .then((response) => { setLib(response.data.library); });
 
     }
     FetchAllInfo();
@@ -50,7 +50,7 @@ const Single = ({ userId }) => {
           <h1 className="singleBookTitle"> {bookInfo.title}
             {userId ? <div className="singleBookOpt">
               <LibWrap bookId={bookId} libraries={userLib} />
-              <ShareBtn bookId={bookId} friends={friends} />
+              <ShareBtn book={bookInfo} friends={friends} />
             </div> : <></>}
           </h1>
           <div className="singleBookInfo">
@@ -70,9 +70,9 @@ const Single = ({ userId }) => {
       </span>
       <div className="revSection">
         <div className="revHeader">
-          <h>
+          <h1>
             Reviews
-          </h>
+          </h1>
         </div>
         <MakeRev bookId={bookId} userId={userId} bookAvgRating={bookInfo.avgRating || "NA"} />
         <ShowRevs bookId={bookId} />

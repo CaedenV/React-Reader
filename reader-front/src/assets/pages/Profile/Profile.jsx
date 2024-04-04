@@ -7,6 +7,7 @@ import profPic from '../../profPic.png';
 import axios from "axios";
 import { Link } from 'react-router-dom';
 import SmallBook from '../../components/BookDisplay/SmallBook/SmallBook';
+import FriendList from '../../components/FriendList/FriendList';
 
 const Profile = ({ userId }) => {
   const [user, setUser] = useState({});
@@ -40,12 +41,12 @@ const Profile = ({ userId }) => {
     }
     //Retrieve info from the userFriends table 
     async function getFriends() {
-      await axios.get(`${friendBack}/getUser/${userId}`, {
+      await axios.get(`${friendBack}/getUser`, {
         headers: { Authorization: `Bearer ${token}` }
       })
         .then((response) => { setFriends(response.data.friends); });
 
-      await axios.get(`${friendBack}/getNum/${userId}`, {
+      await axios.get(`${friendBack}/getNum`, {
         headers: { Authorization: `Bearer ${token}` }
       })
         .then((response) => { setFNum(response.data.num); });
@@ -56,12 +57,6 @@ const Profile = ({ userId }) => {
 
     setInterval(getFriends, 60000);
   }, [userId]);
-
-  //Keeps all the edited information if Friends button clicked.
-  const handleFriendsBtn = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
 
   // Sends the request to the receiver's notification box (posts request in notifs table)
   const handleAddFriend = async (e) => {
@@ -133,7 +128,7 @@ const Profile = ({ userId }) => {
       <div className="data">
         <div className="unFriends">
           <label className='uName'>{user.userName}</label>
-          <Popup trigger={<button className="friends" onClick={handleFriendsBtn}> {fNum} Friends</button>} position="bottom center">
+          <Popup trigger={<button className="friends"> {fNum} Friends</button>} position="bottom center">
             <div className="listPop">
               <div className='addPop'>
                 <form className="enterName" onSubmit={handleAddFriend}>
@@ -144,19 +139,7 @@ const Profile = ({ userId }) => {
               </div>
 
               {friends ? friends.length > 0 ?
-                <div className='friendsList'>
-                  {friends.map((friend, i) => (
-                    <div className="fItem" key={i}>
-                      <p className='namePic'>
-                        <img src={`${backend}${friend.pic}`} className='miniF' />
-                        <Link to={`/profile/${friend.userName}`} > {friend.userName} </Link>
-
-                      </p>
-                      <button onClick={() => handleRemoveFriend(friend)}>-</button>
-                    </div>
-
-                  ))}
-                </div> : <label>Currently 0 friends</label>
+                <FriendList userFriends={friends}  userId={userId} /> : <label>Currently 0 friends</label>
                 : <></>}
             </div>
 

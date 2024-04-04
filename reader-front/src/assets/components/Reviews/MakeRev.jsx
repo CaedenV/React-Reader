@@ -33,19 +33,18 @@ const MakeRev = ({ bookId, userId }) => {
                 <div className="makeRevGrp">
                     <input type="text" name='title' placeholder="How about a title?" className="revInput" autoFocus={true}
                     />
-                    <div class="star-rating">
-                        <i class="fa-solid fa-star" data-star-index="1"></i>
-                        <i class="fa-solid fa-star" data-star-index="2"></i>
-                        <i class="fa-solid fa-star" data-star-index="3"></i>
-                        <i class="fa-solid fa-star" data-star-index="4"></i>
-                        <i class="fa-solid fa-star" data-star-index="5"></i>
+                    <div className="star-rating">
+                        <i className="fa-solid fa-star" data-star-index="1"></i>
+                        <i className="fa-solid fa-star" data-star-index="2"></i>
+                        <i className="fa-solid fa-star" data-star-index="3"></i>
+                        <i className="fa-solid fa-star" data-star-index="4"></i>
+                        <i className="fa-solid fa-star" data-star-index="5"></i>
                     </div>
-                    <hr />
+                    <button className='revSubmit' type='submit'><i className=" fa-solid fa-pen-nib"></i></button>
                 </div>
                 <div className="makeRevText">
                     <textarea name='text' placeholder="How was it? Let us know in more detail..." type="text" className="revInput revText"></textarea>
                 </div>
-                <button className='revSubmit' type='submit'><i class=" fa-solid fa-pen-nib"></i></button>
             </form>
         </div>
     )

@@ -4,9 +4,9 @@ import { Link } from 'react-router-dom';
 import { friendBack, notifBack, backend } from '../../backendRoutes';
 import axios from 'axios';
 
-const NotifSingle = ({ friend, book, time, read, message, type, id }) => {
-    const { cover, title, bookId } = book || {};
-    const { userName, friendId } = friend || {};
+const NotifSingle = ({ friend, book, time, read, message, type, notifId }) => {
+    const { cover, title, id } = book || {};
+    const { userName } = friend || {};
     const [reqAccept, setReqAccept] = useState(friend.accept);
     const [status, setStatus] = useState(read);
     const token = localStorage.getItem('token');
@@ -45,18 +45,18 @@ const NotifSingle = ({ friend, book, time, read, message, type, id }) => {
         await axios.post(`${friendBack}/add`, { friendName: userName }, {
             headers: { Authorization: `Bearer ${token}` }
         });
-        await axios.patch(`${notifBack}/acceptFriend/${id}`, { friend: friend }, {
+        await axios.patch(`${notifBack}/acceptFriend/${notifId}`, { friend: friend }, {
             headers: { Authorization: `Bearer ${token}` }
         });
         setReqAccept(true);
     }
     const handleRemove = async () => {
-        await axios.delete(`${notifBack}/delete/${id}`, {
+        await axios.delete(`${notifBack}/delete/${notifId}`, {
             headers: { Authorization: `Bearer ${token}` }
         });
     }
     const handleRead = async () => {
-        await axios.patch(`${notifBack}/read/${id}`, { notifRead: !status }, {
+        await axios.patch(`${notifBack}/read/${notifId}`, { notifRead: !status }, {
             headers: { Authorization: `Bearer ${token}` }
         }).then((response) => {
             setStatus(response.data.status);
@@ -74,10 +74,10 @@ const NotifSingle = ({ friend, book, time, read, message, type, id }) => {
                 <div className="friend">
                     {!reqAccept ?
                         <>
-                            <label className="msg"><Link to={`/${friendId}/profile`} className='links'>{userName}</Link> would like to be your friend!</label>
+                            <label className="msg"><Link to={`/profile/${userName}`} className='links'>{userName}</Link> would like to be your friend!</label>
                             <button onClick={onAccept}><i className="fa-solid fa-circle-check" /></button>
                         </> :
-                        <label className="msg">You and <Link to={`/${friendId}/profile`} className='links'>{userName}</Link> are now friends!</label>
+                        <label className="msg">You and <Link to={`/profile/${userName}`} className='links'>{userName}</Link> are now friends!</label>
                     }
                 </div>
             }

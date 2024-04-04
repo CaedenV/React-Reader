@@ -26,6 +26,16 @@ async function getUserByEmail(email) {
   }
 }
 
+async function getIdByName(name) {
+  try {
+    const query = "select id from users where userName = ?";
+    const res = await db.queryDatabase(query, name);
+    return res[0];
+  } catch (err) {
+    return err.message;
+  }
+}
+
 router.post('/register', async (req, res) => {
   req.withCredentials = true;
   const { userName, email, password, pic } = req.body;
@@ -107,10 +117,11 @@ router.get('/getMe', verifyJWT, async (req, res) => {
 });
 
 // Get specific user
-router.get('/getUser', verifyJWT, async (req, res) => {
-  const id = req.body;
+router.get('/getOther/:profileName', verifyJWT, async (req, res) => {
+  const {profileName} = req.params;
+  const {id} = await getIdByName(profileName);
   try {
-    const query = "SELECT userName, pic, favGenre, nowRead FROM users WHERE id = ?";
+    const query = "SELECT pic, favGenre, nowRead FROM users WHERE id = ?";
     const results = await db.queryDatabase(query, [id]);
     if (results.length <= 0) {
       return res.status(404).json({ success: false, message: 'User not found.' });
@@ -213,6 +224,29 @@ router.get('/libraries', verifyJWT, async (req, res) => {
 
 router.get('/selfLibCount', verifyJWT, async (req, res) => {
   const id = req.user;
+  try {
+    const ownedBooksQuery = "SELECT count(*) FROM ownedbooks WHERE userId=?";
+    const wishedBooksQuery = "SELECT count(*) FROM wishedbooks WHERE userId=?";
+    const favBooksQuery = "SELECT count(*) FROM favbooks WHERE userId=?";
+
+    const ownNum = await db.queryDatabase(ownedBooksQuery, [id]);
+    const wishNum = await db.queryDatabase(wishedBooksQuery, [id]);
+    const favNum = await db.queryDatabase(favBooksQuery, [id]);
+
+    const own = ownNum[0]['count(*)'];
+    const wish = wishNum[0]['count(*)'];
+    const fav = favNum[0]['count(*)'];
+
+    const data = { owned: own, wished: wish, faved: fav };
+    return res.status(200).json({ success: true, library: data });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+router.get('/libCount/:name', verifyJWT, async (req, res) => {
+  const {name} = req.params;
+  const {id} = await getIdByName(name);
   try {
     const ownedBooksQuery = "SELECT count(*) FROM ownedbooks WHERE userId=?";
     const wishedBooksQuery = "SELECT count(*) FROM wishedbooks WHERE userId=?";

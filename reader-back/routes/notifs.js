@@ -39,15 +39,14 @@ async function getNowTimeStamp() {
   };
 
 router.post('/sendBook', verifyJWT, async (req, res) => {
-    const { friendName } = req.body;
-    const receiver = await getUserIdByName(friendName);
-    const book = req.body.book;
-    const sender = await getUserById(req.user);
+    const { data } = req.body;
+    const book = data.book;
+    const friend = data.friend;
     //sender is always user. 
     try {
-        let query = "insert into notifs (senderId, receiverId, book, friendRequest) values (?,?,?,?)";
-        await db.queryDatabase(query, [req.user, receiver.id, JSON.stringify(book), JSON.stringify(sender)]);
-        return res.status(200).json({ success: true, message: "Recommendation Sent Successfully." });
+        let query = "insert into notifs (senderId, receiverId, book, friendRequest, notifType) values (?,?,?,?, 'book')";
+        await db.queryDatabase(query, [req.user, friend.id, JSON.stringify(book), JSON.stringify(friend)]);
+        return res.status(200).json({ success: true, message: "Sent!" });
     } catch (err) {
         console.log(err);
         return res.status(500).json({ success: false, message: 'Something went wrong sending the recommendation. Please try again later.' });
@@ -61,7 +60,7 @@ router.post('/sendFriend', verifyJWT, async (req, res) => {
     sender.accept = false;
     console.log(sender);
     try {
-        let query = "insert into notifs (senderId, receiverId, friendRequest) values (?,?,?)";
+        let query = "insert into notifs (senderId, receiverId, friendRequest, notifType) values (?,?,?, 'friend')";
         await db.queryDatabase(query, [sender.id, receiver.id, JSON.stringify(sender)]);
         return res.status(200).json({ success: true, message: "Recommendation Sent Successfully." });
     } catch (err) {
@@ -73,16 +72,14 @@ router.post('/sendFriend', verifyJWT, async (req, res) => {
 router.get('/getByUser', verifyJWT, async (req, res) => {
     const id = req.user;
     try {
-        let bQuery = "SELECT id, senderId, createdAt, notifRead, book, notifType FROM notifs WHERE receiverId = ? AND notifType = 'book' order by createdAt ASC";
+        let bQuery = "SELECT id, senderId, createdAt, notifRead, book, friendRequest notifType FROM notifs WHERE receiverId = ? AND notifType = 'book' order by createdAt ASC";
         let fQuery = "SELECT id, senderId, createdAt, notifRead, friendRequest, notifType FROM notifs WHERE receiverId = ? AND notifType = 'friend' order by createdAt ASC";
         let sQuery = "SELECT id, senderId, createdAt, notifRead, message, notifType FROM notifs WHERE receiverId = ? AND notifType = 'sys' order by createdAt ASC";
-        const reccs = await db.queryDatabase(bQuery, [id]);
+        const recs = await db.queryDatabase(bQuery, [id]);
         const friends = await db.queryDatabase(fQuery, [id]);
-        
-
-
         const sys = await db.queryDatabase(sQuery, [id]);
-        const results = { reccs: reccs, friendReq: friends, sysMessage: sys };
+
+        const results = { recs: recs, friendReq: friends, sysMessage: sys };
 
         return res.status(200).json({ success: true, notifs: results });
     } catch (err) {

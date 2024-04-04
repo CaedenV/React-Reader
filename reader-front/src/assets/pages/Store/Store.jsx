@@ -26,7 +26,7 @@ const Store = ({ userId }) => {
       axios.get(`${userBack}/libraries`, {
         headers: { Authorization: `Bearer ${token}` }
       })
-        .then((response) => { setUserLib(response.data.library);console.log(response.data.library); });
+        .then((response) => { setUserLib(response.data.library); });
     }
     if (sQuery) {
       const apiKey = "check env";

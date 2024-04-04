@@ -9,6 +9,7 @@ import Single from './assets/pages/Single/Single';
 import Store from './assets/pages/Store/Store';
 import UserDash from './assets/pages/UserDash/UserDash';
 import useUser from './assets/hooks/useUser';
+import OtherProfile from './assets/pages/Profile/OtherProfile';
 
 function App() {
   const [userId, setUserId] = useState(useUser());
@@ -27,6 +28,7 @@ function App() {
           <Route path="/store/:sParams/:sQuery" element={<Store userId={userId} />} />
           <Route path="/store" element={<Store userId={userId} />} />
           <Route path="/:userId/profile" element={userId !== null ? <Profile userId={userId} /> : <DefaultHome />} />
+          <Route path="/profile/:userName" element={userId !== null ? <OtherProfile userId={userId} /> : <DefaultHome />} />
           <Route path="/view/:bookId" element={<Single userId={userId} />} />
           <Route path="/:userId/library" element={userId !== null ? <Libraries userId={userId} /> : <DefaultHome />} />
           <Route path="/read/:bookId" element={userId !== null ? <Read /> : <DefaultHome />} />
