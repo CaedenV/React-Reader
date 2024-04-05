@@ -2,7 +2,7 @@ import './profile.css';
 import React from 'react';
 import Popup from 'reactjs-popup';
 import { useState, useEffect, useRef } from "react";
-import { userBack, friendBack, notifBack, backend } from '../../backendRoutes';
+import { userBack, friendBack, notifBack } from '../../backendRoutes';
 import profPic from '../../profPic.png';
 import axios from "axios";
 import { Link } from 'react-router-dom';
@@ -139,7 +139,7 @@ const Profile = ({ userId }) => {
               </div>
 
               {friends ? friends.length > 0 ?
-                <FriendList userFriends={friends}  userId={userId} /> : <label>Currently 0 friends</label>
+                <FriendList userFriends={friends} otherFriends={friends} /> : <label>Currently 0 friends</label>
                 : <></>}
             </div>
 

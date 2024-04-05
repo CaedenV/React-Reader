@@ -3,10 +3,11 @@ import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom';
 import MakeRev from '../../components/Reviews/MakeRev';
 import ShowRevs from '../../components/Reviews/ShowRevs';
-import ShareBtn from '../../components/ShareBtn/ShareBtn';
+import Popup from 'reactjs-popup';
 import { bookBack, friendBack, userBack } from '../../backendRoutes';
 import LibWrap from '../../components/LibraryWrapper/LibWrap';
 import axios from 'axios';
+import ShareFriend from '../../components/ShareBtn/ShareFriend';
 
 const Single = ({ userId }) => {
   const { bookId } = useParams();
@@ -46,11 +47,17 @@ const Single = ({ userId }) => {
           alt="Book Cover"
           className="singleBookCover"
         />
-        <span className="bookDetails">
+        <div className="bookDetails">
           <h1 className="singleBookTitle"> {bookInfo.title}
             {userId ? <div className="singleBookOpt">
               <LibWrap bookId={bookId} libraries={userLib} />
-              <ShareBtn book={bookInfo} friends={friends} />
+              <Popup trigger={<button className='share'><i className="fa-regular fa-share-from-square" /></button>} position='bottom center'>
+                <div className="list">
+                  {friends ? friends.map((friend, i) => (
+                    <ShareFriend friend={friend} book={bookInfo} key={i}/>
+                  )) : <label className='friend'>Add more friends to share books with!</label>}
+                </div>
+              </Popup>
             </div> : <></>}
           </h1>
           <div className="singleBookInfo">
@@ -66,7 +73,7 @@ const Single = ({ userId }) => {
           <p className="singleBookDesc">
             {bookInfo.desc}
           </p>
-        </span>
+        </div>
       </span>
       <div className="revSection">
         <div className="revHeader">

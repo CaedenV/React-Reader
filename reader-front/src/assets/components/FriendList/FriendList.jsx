@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { notifBack, friendBack, backend } from '../../backendRoutes';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
+import FriendItem from './FriendItem';
 
-const FriendList = ({ userFriends, otherFriends, userId }) => {
+const FriendList = ({ userFriends, otherFriends, pendingFriends, onPendingChange }) => {
   const [commonFriends, setCommonFriends] = useState([]);
   const [uniqueFriends, setUniqueFriends] = useState([]);
-  const [friends, setFriends] = useState(userFriends);
-  const token = localStorage.getItem('token');
 
   useEffect(() => {
     if (otherFriends) {
-      otherFriends = otherFriends.filter(friend => friend.id !== userId);
       // Identify common friends
       const common = userFriends.filter(userFriend =>
         otherFriends.some(otherFriend => otherFriend.id === userFriend.id)
@@ -28,46 +23,16 @@ const FriendList = ({ userFriends, otherFriends, userId }) => {
     else {
       setCommonFriends(userFriends);
     }
-  }, [friends, otherFriends]);
+  }, [userFriends, otherFriends, pendingFriends]);
 
-  const addOrRemoveFriend = async (friend, operation) => {
-    try {
-      if (operation === 'add') {
-        await axios.post(`${notifBack}/sendFriend/`, { friendName: friend.userName }, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-      } else {
-        await axios.delete(`${friendBack}/delete`, {
-          body: { friend: friend },
-          headers: { Authorization: `Bearer ${token}` }
-        }).then((response) => {
-          setFriends(response.data.friends);
-        });
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   return (
     <div className='friendsList'>
-      {commonFriends ? commonFriends.map((friend, i) => (
-        <div className="fItem" key={i}>
-          <p className='namePic'>
-            <Link to={`/profile/${friend.userName}`} > <img src={`${backend}${friend.pic}`} className='miniF' /> </Link>
-            <Link to={`/profile/${friend.userName}`} > {friend.userName} </Link>
-          </p>
-          <button onClick={() => addOrRemoveFriend(friend, 'remove')}>-</button>
-        </div>
+      {commonFriends? commonFriends.map((friend) => (
+        <FriendItem friend={friend} relationship={"-"} key={friend.id}/>
       )) : <></>}
-      {uniqueFriends ? uniqueFriends.map((friend, i) => (
-        <div className="fItem" key={i}>
-          <p className='namePic'>
-            <Link to={`/profile/${friend.userName}`} > <img src={`${backend}${friend.pic}`} className='miniF' /> </Link>
-            <Link to={`/profile/${friend.userName}`} > {friend.userName} </Link>
-          </p>
-          <button onClick={() => addOrRemoveFriend(friend, 'add')}>+</button>
-        </div>
+      {uniqueFriends? uniqueFriends.map((friend) => (
+        <FriendItem friend={friend} relationship={"+"} key={friend.id} pending={pendingFriends.find(f => f.id === friend.id)?.pending} onPendingChange={onPendingChange} />
       )) : <></>}
     </div>
   );

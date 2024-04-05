@@ -1,10 +1,19 @@
 .btns {
     display: flex;
+    flex-direction: row;
     margin-right: 10px;
+    align-items: center;
 }
 .display {
     padding-left: 2px;
     padding-right: 2px;
     color: mediumpurple;
     font-size: 16px;
+}
+.wrap {
+    display: flex;
+    flex-direction: row;
+    margin-right: 10px;
+    align-items: center;
+    
 }

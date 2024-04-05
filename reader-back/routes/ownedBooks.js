@@ -10,8 +10,8 @@ router.post('/add', verifyJWT, async (req, res) => {
     const query = "insert into ownedbooks (userId, bookId) values (?,?)";
     await db.queryDatabase(query, [userId, bookId]);
     return res.status(200).json({ success: true, message: "Book Owned Successfully." });
-  } catch {
-    return res.status(500).json({ success: false, message: 'An error occured getting adding to your Wished Books. Please try again later.' });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'An error occured getting adding to your Wished Books. Please try again later.', error: err.message });
   }
 });
 
@@ -25,8 +25,8 @@ router.delete('/remove', verifyJWT, async (req, res) => {
       return res.status(404).json({ success: false, message: 'Book not on the list.' });
     }
     return res.status(200).json({ success: true, message: 'Book removed successfully' });
-  } catch {
-    return res.status(500).json({ success: false, message: 'An error occured while removing your book.' });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'An error occured while removing your book.', error: err.message });
   }
 });
 
@@ -36,8 +36,8 @@ router.get('/getByUser/:id', verifyJWT, async (req, res) => {
   try {
     const results = await db.queryDatabase(query, [id]);
     return res.status(200).json({ success: true, wished: results });
-  } catch {
-    return res.status(500).json({ success: false, message: 'An error occured getting your Wished Books. Please try again later.' });
+  } catch(err) {
+    return res.status(500).json({ success: false, message: 'An error occured getting your Wished Books. Please try again later.', error: err.message });
   }
 });
 

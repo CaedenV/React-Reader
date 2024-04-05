@@ -3,42 +3,8 @@
     background-color: mediumpurple;
     border-radius: 5px;
     border-color: transparent;
-    cursor: pointer;
     margin-left: 5px;
-    padding: 2px;
-}
-.wish {
-    color: white;
-    background-color: mediumpurple;
-    border-radius: 5px;
-    border-color: transparent;
-    cursor: pointer;
-    margin-left: 5px;
+    padding: 1px;
+    font-size: small;
 }
 
-.buy {
-    color: white;
-    background-color: mediumpurple;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-    margin-left: 5px;
-}
-
-.read {
-    color: white;
-    background-color: mediumpurple;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-    margin-left: 5px;
-}
-
-.fav {
-    color: white;
-    background-color: mediumpurple;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-    margin-left: 5px;
-}

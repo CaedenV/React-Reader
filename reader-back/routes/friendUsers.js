@@ -30,7 +30,7 @@ router.post('/add', verifyJWT, async (req, res) => {
 router.get('/getUser', verifyJWT, async (req, res) => {
     const id = req.user;
     try {
-        let query = "SELECT u.id, u.userName, u.pic FROM friendUsers f JOIN users u ON f.friendId = u.id WHERE f.userId = ? UNION SELECT u.id, u.userName, u.pic FROM friendUsers f JOIN users u ON f.userId = u.id WHERE f.friendId = ?";
+        let query = "SELECT f.friendUsersId, u.id, u.userName, u.pic FROM friendUsers f JOIN users u ON f.friendId = u.id WHERE f.userId = ? UNION SELECT f.friendUsersId, u.id, u.userName, u.pic FROM friendUsers f JOIN users u ON f.userId = u.id WHERE f.friendId = ?";
         const results = await db.queryDatabase(query, [id, id]);
         return res.status(200).json({ success: true, friends: results });
     } catch (err) {
@@ -43,7 +43,7 @@ router.get('/getOther/:name', verifyJWT, async (req, res) => {
     try {
         let query = "select id from users where userName = ?";
         const results = await db.queryDatabase(query, [name]);
-        let otherQ = "SELECT u.id, u.userName, u.pic FROM friendUsers f JOIN users u ON f.friendId = u.id WHERE f.userId = ? UNION SELECT u.id, u.userName, u.pic FROM friendUsers f JOIN users u ON f.userId = u.id WHERE f.friendId = ?";
+        let otherQ = "SELECT f.friendUsersId, u.id, u.userName, u.pic FROM friendUsers f JOIN users u ON f.friendId = u.id WHERE f.userId = ? UNION SELECT f.friendUsersId, u.id, u.userName, u.pic FROM friendUsers f JOIN users u ON f.userId = u.id WHERE f.friendId = ?";
         const friends = await db.queryDatabase(otherQ, [results[0].id, results[0].id]);
         return res.status(200).json({success: true, friends: friends});
     } catch (err) {
@@ -63,17 +63,11 @@ router.get('/getNum', verifyJWT, async (req, res) => {
     }
 });
 
-router.delete('/delete', verifyJWT, async (req, res) => {
-    const {friendName} = req.body;
-    const userId = req.user;
+router.delete('/delete/:id', verifyJWT, async (req, res) => {
+    const {id} = req.params;
     try {
-        const friendId = getUserByUN(friendName);
-
-        let query = "delete from friendusers where userId = ? and friendId = ?";
-        const results = await db.queryDatabase(query, [userId, friendId]);
-        if (results.affectedRows == 0) {
-            return res.status(404).json({ success: false, message: "Friend not found." });
-        }
+        let query = "delete from friendusers where friendUsersId = ?";
+        await db.queryDatabase(query, [id]);
         return res.status(200).json({ success: true, message: "Friend Removed Successfully" });
     } catch (err) {
         return res.status(500).json({ success: false, message: 'Error occured removing your friend. Please try again later.', error: err.message });

@@ -23,7 +23,7 @@ const Store = ({ userId }) => {
 
   useEffect(() => {
     async function getLib() {
-      axios.get(`${userBack}/libraries`, {
+      await axios.get(`${userBack}/libraries`, {
         headers: { Authorization: `Bearer ${token}` }
       })
         .then((response) => { setUserLib(response.data.library); });

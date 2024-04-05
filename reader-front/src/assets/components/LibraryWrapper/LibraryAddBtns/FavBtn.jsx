@@ -1,6 +1,7 @@
 import './addbtns.css';
 import React, { useState } from 'react';
 import { favBack } from '../../../backendRoutes';
+import axios from 'axios';
 
 const FavBtn = ({ bookId, favRank }) => {
     const [isFav, setIsFav] = useState(false);
@@ -23,8 +24,11 @@ const FavBtn = ({ bookId, favRank }) => {
     const setFavorite = async (e) => {
         e.preventDefault();
         setRank(e.target.value);
-        await axios.post(`${favBack}/add`, {
-            body: {bookId: bookId, rank: rank},
+        console.log(rank);
+        const book = {bookId: bookId, rank: rank};
+        console.log(book);
+        await axios.post(`${favBack}/add`, {book: book}, {
+            
             headers: { Authorization: `Bearer ${token}` }
           });
         console.log(rank);
@@ -33,11 +37,11 @@ const FavBtn = ({ bookId, favRank }) => {
     return (
         <div className="button">
             {rank != 0 ?
-                (<button className="fav undo" onClick={unFavorite}><i class="fa-solid fa-heart"> {rank}</i></button>)
+                (<button className="fav undo" onClick={unFavorite}><i className="fa-solid fa-heart"> {rank}</i></button>)
                 :
                 (
                     <>
-                        <button className="add fav" onClick={getRank}> <i class="fa-regular fa-heart"></i> </button>
+                        <button className="add fav" onClick={getRank}> <i className="fa-regular fa-heart" /> </button>
                         {isFav ?
                             (<input type="integer" className="Fav Rank" value={rank} onChange={(e) => setFavorite(e)} />)
                             :

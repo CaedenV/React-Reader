@@ -66,10 +66,10 @@ const NotifSingle = ({ friend, book, time, read, message, type, notifId }) => {
     return (
         <div className={status ? 'old' : 'fresh'} onClick={handleRead}>
             <div className="pics">
-                {book && <img src={`${backend}${cover}`} alt={title} className='bookPic' />}
-                <img src={`${backend}${friend.pic}`} className='senderPic' />
+                {book && <img src={`${cover}`} alt={title} className='bookPic' />}
+                {friend && <img src={`${backend}${friend.pic}`} className='senderPic' />}
             </div>
-            {type === 'book' && book && <label className="msg">{userName} recommends <Link to={`/view/${bookId}`} className='links'>{title}!</Link></label>}
+            {type === 'book' && book && <label className="msg">{userName} recommends <Link to={`/view/${id}`} className='links'>{title}</Link>!</label>}
             {type === 'friend' && friend &&
                 <div className="friend">
                     {!reqAccept ?

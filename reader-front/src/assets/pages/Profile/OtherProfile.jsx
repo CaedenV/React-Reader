@@ -13,7 +13,7 @@ const OtherProfile = ({ userId }) => {
     const [other, setOther] = useState({});
     const [otherFriends, setOtherFriends] = useState([]);
     const [libNums, setLibNums] = useState({});
-
+    const [pendingFriends, setPendingFriends] = useState([]);
     const [userFriends, setUserFriends] = useState([]);
     const token = localStorage.getItem('token');
 
@@ -52,6 +52,19 @@ const OtherProfile = ({ userId }) => {
         setInterval(GetFriends, 60000);
     }, [userId]);
 
+    const handlePendingChange = (friend, pending) => {
+        setPendingFriends(prevPendingFriends => {
+            const newPendingFriends = [...prevPendingFriends];
+            const index = newPendingFriends.findIndex(f => f.id === friend.id);
+            if (index !== -1) {
+                newPendingFriends[index] = { ...newPendingFriends[index], pending };
+            } else {
+                newPendingFriends.push({ ...friend, pending });
+            }
+            return newPendingFriends;
+        });
+    };
+
 
     return (
         <div className="topCategory" >
@@ -65,7 +78,7 @@ const OtherProfile = ({ userId }) => {
 
                     <Popup trigger={<button className="friends">Friends</button>} position="bottom center">
                         <div className="listPop">
-                            <FriendList userFriends={userFriends} otherFriends={otherFriends} userId={userId} />
+                            <FriendList userFriends={userFriends} otherFriends={otherFriends} userId={userId} pendingFriends={pendingFriends} onPendingChange={handlePendingChange} />
                         </div>
                     </Popup>
                 </div>
