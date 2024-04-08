@@ -5,7 +5,7 @@ import axios from 'axios';
 
 const WishBtn = ({ bookId, isWished }) => {
   const token = localStorage.getItem('token');
-  const [wished, setWished] = useState(isWished || false);
+  const [wished, setWished] = useState(isWished);
 
   const addToWish = async () => {
     await axios.post(`${wishBack}/add`, {bookId: bookId}, {
@@ -22,7 +22,7 @@ const WishBtn = ({ bookId, isWished }) => {
   }
   return (
     <button className="add wish" >
-      {wished ? <i className="singleIcon fa-solid fa-list" onClick={rmvFromWish} ></i> : <i className="wishIcon fa-solid fa-list-check" onClick={addToWish}></i>}
+      {wished ? <i className="singleIcon fa-solid fa-bookmark" onClick={rmvFromWish} /> : <i className="wishIcon fa-regular fa-bookmark" onClick={addToWish}></i>}
     </button>
   )
 }

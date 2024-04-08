@@ -50,6 +50,8 @@
 }
 
 .iconContainer {
+    margin-top: 5px;
+    margin-left: 4px;
     display: flex;
     align-items:flex-start;
 }

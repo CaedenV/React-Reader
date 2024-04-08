@@ -9,10 +9,10 @@ const MakeRev = ({ bookId, userId }) => {
         e.preventDefault();
         const formData = new FormData(e.target);
         const rev = {
+            book: bookId,
             title: formData.get('title'),
             text: formData.get('text'),
             rating: formData.get('rating'),
-            userId: userId
         }
         const response = await axios.post(`${revBack}/${bookId}`, rev);
         // const oldAvg = (response.data.oldAvg[0].BookAvgRating) || 0;

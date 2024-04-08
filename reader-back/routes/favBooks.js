@@ -4,10 +4,10 @@ const router = express.Router();
 const verifyJWT = require('./verify');
 
 router.post('/add', verifyJWT, async (req, res) => {
-  const fav = req.body;
+  const fav = req.body.book;
   var query = "insert into favbooks (userId, bookId, bookRank) values (?,?,?)";
   try {
-    await db.queryDatabase(query, [req.user, fav.bookId, fav.Rank]);
+    await db.queryDatabase(query, [req.user, fav.bookId, fav.rank]);
     return res.status(200).json({ success: true, message: "Book Favorited Successfully." });
   } catch (err) {
     return res.status(500).json({ success: false, message: 'An error occured adding to your favorites. Please try again later.', error: err.message });
@@ -15,8 +15,9 @@ router.post('/add', verifyJWT, async (req, res) => {
 });
 
 
-router.delete('/remove', verifyJWT, async (req, res) => {
-  const { bookId } = req.body;
+router.delete('/remove/:bookId', verifyJWT, async (req, res) => {
+  const {bookId} = req.params;
+  console.log(bookId);
   const query = "delete from favbooks where userId = ? and bookId = ?";
   try {
     const results = await db.queryDatabase(query, [req.user, bookId]);

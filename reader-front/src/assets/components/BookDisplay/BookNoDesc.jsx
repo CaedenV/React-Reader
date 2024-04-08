@@ -1,10 +1,13 @@
-import "./bookNoDesc.css"
+import "./booknodesc.css"
 import { Link } from "react-router-dom";
+import React from "react";
+import LibWrap from "../LibraryWrapper/LibWrap";
+import moment from "moment";
 
-
-const BookNoDesc = ({ cover, title, pubDate, auth, avgRate, genres, id, libraries, userId }) => {
+const BookNoDesc = ({ cover, title, pubDate, auth, avgRate, genres, id, lib, user }) => {
     const single = `/view/${id}`;
-    const store = `/store`;
+    const genreStore = `/store/subject/${genres}`;
+    const authStore = `/store/inauthor/${auth}`;
 
     return (
         <div className="libBooks">
@@ -17,7 +20,7 @@ const BookNoDesc = ({ cover, title, pubDate, auth, avgRate, genres, id, librarie
 
             <div className="bookInfo">
                 <div className="bookGenre">
-                    <Link className="link" to={store} >
+                    <Link className="link" to={genreStore} >
                         <span className="bookGenre">{genres}</span>
                     </Link>
                 </div>
@@ -25,16 +28,13 @@ const BookNoDesc = ({ cover, title, pubDate, auth, avgRate, genres, id, librarie
                     <span className="bookTitle">{title} </span>
                 </Link>
                 <div className="auth">
-                    <span className="Pub_Auth"> {auth} | {pubDate}</span>
+                    <span className="Pub_Auth"> <Link className="link" to={authStore}>{auth}</Link> | {moment(pubDate).format('YYYY-MM-DD')}</span>
                 </div>
                 <div className="iconContainer">
                     <span className="ratingNum">{avgRate}
                         <i className="reviewIcon fa-solid fa-star-half-stroke"></i>
                     </span>
-                    {len ? 
-                    (<span className="len">{len}<i className="singleLen fa-solid fa-scroll"></i></span>) : (<></>)
-                    }
-                    {userId ? (<LibWrap bookId={id} libraries={libraries} />) : (<></>)}
+                    {user ? (<LibWrap bookId={id} libraries={lib} />) : (<></>)}
                 </div>
             </div>
         </div>

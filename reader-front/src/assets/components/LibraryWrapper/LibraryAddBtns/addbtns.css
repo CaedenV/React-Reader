@@ -4,7 +4,26 @@
     border-radius: 5px;
     border-color: transparent;
     margin-left: 5px;
-    padding: 1px;
-    font-size: small;
+    padding: 3px;
+    font-size: medium;
+}
+
+.getRank {
+    display: flex;
+    flex-direction: row;
+}
+
+.Rank {
+    width: 20px;
+    margin-left: 5px;
+}
+
+.undo {
+    background-color: mediumpurple;
+    color: white;
+    border: none;
+    padding: 3px;
+    border-radius: 5px;
+    font-size: medium;
 }
 

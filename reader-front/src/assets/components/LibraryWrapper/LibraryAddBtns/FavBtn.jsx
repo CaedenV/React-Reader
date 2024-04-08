@@ -5,14 +5,13 @@ import axios from 'axios';
 
 const FavBtn = ({ bookId, favRank }) => {
     const [isFav, setIsFav] = useState(false);
-    const [rank, setRank] = useState(favRank || 0);
+    const [rank, setRank] = useState(favRank);
     const token = localStorage.getItem('token');
 
     const unFavorite = async () => {
-        await axios.delete(`${favBack}/delete`, {
-            body: {bookId: bookId},
+        await axios.delete(`${favBack}/remove/${bookId}`, {
             headers: { Authorization: `Bearer ${token}` }
-          });
+        });
         setRank(0);
         setIsFav(false);
     };
@@ -23,15 +22,15 @@ const FavBtn = ({ bookId, favRank }) => {
 
     const setFavorite = async (e) => {
         e.preventDefault();
-        setRank(e.target.value);
-        console.log(rank);
-        const book = {bookId: bookId, rank: rank};
+        const formData = new FormData(e.target);
+        const r = formData.get('rank');
+        setRank(r);
+        const book = { bookId: bookId, rank: r };
         console.log(book);
-        await axios.post(`${favBack}/add`, {book: book}, {
-            
+        await axios.post(`${favBack}/add`, { book: book }, {
+
             headers: { Authorization: `Bearer ${token}` }
-          });
-        console.log(rank);
+        });
     }
 
     return (
@@ -40,14 +39,17 @@ const FavBtn = ({ bookId, favRank }) => {
                 (<button className="fav undo" onClick={unFavorite}><i className="fa-solid fa-heart"> {rank}</i></button>)
                 :
                 (
-                    <>
+                    <span className='getRank'>
                         <button className="add fav" onClick={getRank}> <i className="fa-regular fa-heart" /> </button>
                         {isFav ?
-                            (<input type="integer" className="Fav Rank" value={rank} onChange={(e) => setFavorite(e)} />)
+                            (<form onSubmit={setFavorite} >
+                                <input type="integer" className="Fav Rank" name='rank' placeholder={favRank} />
+                            </form>
+                            )
                             :
                             (<></>)
                         }
-                    </>
+                    </span>
                 )}
         </div>
     )

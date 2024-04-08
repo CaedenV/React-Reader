@@ -1,0 +1,64 @@
+.library {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.library>h1{
+    color: mediumpurple;
+    font-size: 50px;
+}
+.ownWrapper>h2,.wishWrapper>h2,.favWrapper>h2{
+    color: mediumpurple;
+    font-size: 32px;
+}
+
+.libWrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    border-top: 1px solid rgb(255, 170, 65);
+}
+
+.ownWrapper,
+.wishWrapper,
+.favWrapper {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.wishList,
+.favList {
+    overflow: hidden;
+    overflow-y: scroll;
+    height: 67vh;
+}
+
+.ownList {
+    overflow-x: auto;
+    /* Enable horizontal scrolling */
+    overflow-y: hidden;
+    /* Hide vertical scrolling */
+    white-space: nowrap;
+    /* Prevent line breaks */
+    padding-bottom: 10px;
+    /* Add padding to accommodate scrollbar */
+}
+
+.ownList>* {
+    display: inline-block;
+    /* Make child elements display inline */
+}
+
+/* Hide scrollbar for Firefox */
+.listWrapper::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for other browsers */
+.listWrapper {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}

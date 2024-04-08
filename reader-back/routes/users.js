@@ -209,7 +209,7 @@ router.get('/libraries', verifyJWT, async (req, res) => {
   try {
     const ownedBooksQuery = "SELECT bookId FROM ownedbooks WHERE userId=?";
     const wishedBooksQuery = "SELECT bookId FROM wishedbooks WHERE userId=?";
-    const favBooksQuery = "SELECT bookId, bookRank FROM favbooks WHERE userId=?";
+    const favBooksQuery = "SELECT bookId, bookRank FROM favbooks WHERE userId=? order by bookRank ASC";
 
     const ownedBooks = await db.queryDatabase(ownedBooksQuery, [id]);
     const wishedBooks = await db.queryDatabase(wishedBooksQuery, [id]);

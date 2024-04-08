@@ -8,6 +8,7 @@ import { bookBack, friendBack, userBack } from '../../backendRoutes';
 import LibWrap from '../../components/LibraryWrapper/LibWrap';
 import axios from 'axios';
 import ShareFriend from '../../components/ShareBtn/ShareFriend';
+import moment from 'moment';
 
 const Single = ({ userId }) => {
   const { bookId } = useParams();
@@ -63,7 +64,7 @@ const Single = ({ userId }) => {
           <div className="singleBookInfo">
             <span className="singleAuthor">Author: <b>{bookInfo.author} </b></span>
             <span className="split">|</span>
-            <span className="singlePub">{bookInfo.pubDate}</span>
+            <span className="singlePub">{moment(bookInfo.pubDate).format('YYYY-MM-DD')}</span>
             <span className="split">|</span>
             <span className="singleGenre">{bookInfo.genre}</span>
             <span className="split">|</span>
@@ -81,7 +82,7 @@ const Single = ({ userId }) => {
             Reviews
           </h1>
         </div>
-        <MakeRev bookId={bookId} userId={userId} bookAvgRating={bookInfo.avgRating || "NA"} />
+        {userId && <MakeRev bookId={bookId} userId={userId} bookAvgRating={bookInfo.avgRating || "NA"} />}
         <ShowRevs bookId={bookId} />
       </div>
     </div>

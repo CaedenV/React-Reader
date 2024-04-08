@@ -4,7 +4,7 @@ const router = express.Router();
 const verifyJWT = require('./verify');
 
 router.post('/add', verifyJWT, async (req, res) => {
-  const bookId = req.body;
+  const {bookId} = req.body;
   const userId = req.user;
   try {
     const query = "insert into wishedbooks (userId, bookId) values (?,?)";

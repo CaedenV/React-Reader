@@ -7,9 +7,11 @@ import axios from 'axios';
 import moment from 'moment';
 
 const Store = ({ userId }) => {
+  const p = useParams();
   const { sCat, sQuery } = useParams();
   const [selectedCat, setSCat] = useState(sCat || 'intitle');
   const [results, setResults] = useState([]);
+  const [isRes, setIsRes] = useState(false);
   const nav = useNavigate();
 
   const token = localStorage.getItem('token');
@@ -28,10 +30,18 @@ const Store = ({ userId }) => {
       })
         .then((response) => { setUserLib(response.data.library); });
     }
+
+    if (userId) {
+      getLib();
+    }
+    //console.log(p);
+  }, [userId]);
+
+  useEffect(() => {
     if (sQuery) {
       const apiKey = "check env";
       const modQ = sQuery.replace(' ', '+');
-      const searchUrl = `https://www.googleapis.com/books/v1/volumes?q=+${selectedCat}:${modQ}&download=epub&filter=ebooks&langRestring=en&printType=books&key=${apiKey}&maxResults=40`;
+      const searchUrl = `https://www.googleapis.com/books/v1/volumes?q=+${selectedCat}:${modQ}&langRestring=en&printType=books&key=${apiKey}&maxResults=40`;
 
       axios.get(searchUrl).then((response) => {
         const formattedResults = response.data.items.map((item) => {
@@ -50,13 +60,16 @@ const Store = ({ userId }) => {
         const filteredResults = formattedResults.filter((item) => {
           return item.cover && item.title && item.pubDate && item.author && item.avgRating && item.genre && item.desc;
         });
-      
-        if (filteredResults.length > 0) { addToDB(filteredResults); }
+
+        if (filteredResults.length > 0) {
+          setIsRes(true);
+          addToDB(filteredResults);
+        }
         setResults(filteredResults);
       });
     }
 
-    getLib();
+
   }, [selectedCat, sQuery]);
 
   const handleSubmit = (e) => {
@@ -82,11 +95,15 @@ const Store = ({ userId }) => {
           <button className="searchIcon" type='submit'><i className="sIcon fa-solid fa-magnifying-glass"></i></button>
         </form>
       </div>
-      <div className="results">
-        {sQuery ? <label>Here's what we found for {sQuery} in '{selectedCat}':</label> : <label>Fill out the search parameters!</label>}
-        {results ? (
+      {sQuery && isRes && (
+        <div className="results">
+          <label> Here's what we found for {sQuery} in
+            {selectedCat === 'intitle' && " 'Titles'"}
+            {selectedCat === 'inauthor' && " 'Authors'"}
+            {selectedCat === 'subject' && " 'Genres'"}:
+          </label>
           <ul className="found">
-            <>{results.map((book, i) => (
+            {results.map((book, i) => (
               <BookWDesc
                 key={i}
                 cover={book.cover}
@@ -99,12 +116,27 @@ const Store = ({ userId }) => {
                 id={book.id}
                 user={userId}
                 lib={userLib}
-              />))}</>
+              />
+            ))}
           </ul>
-        ) : (
-          <></>
-        )}
-      </div>
+        </div>
+      )}
+
+      {sQuery && !isRes && (
+        <div className="results">
+          <label>No results found for {sQuery} in
+            {selectedCat === 'intitle' && " 'Titles'"}
+            {selectedCat === 'inauthor' && " 'Authors'"}
+            {selectedCat === 'subject' && " 'Genres'"}.</label>
+        </div>
+      )}
+
+      {!sQuery && (
+        <div className="results">
+          <label>Please enter a search query.</label>
+        </div>
+      )}
+
     </div>
   )
 }
