@@ -25,18 +25,18 @@ const Single = ({ userId }) => {
         .then((response) => {
           setBookInfo(response.data.book);
         });
-
-      axios.get(`${friendBack}/getUser`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-        .then((response) => {
-          setFriends(response.data.friends);
-        });
-      axios.get(`${userBack}/libraries`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-        .then((response) => { setLib(response.data.library); });
-
+      if (userId) {
+        axios.get(`${friendBack}/getUser`, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+          .then((response) => {
+            setFriends(response.data.friends);
+          });
+        axios.get(`${userBack}/libraries`, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+          .then((response) => { setLib(response.data.library); });
+      }
     }
     FetchAllInfo();
   }, [bookId, userId]);
@@ -68,8 +68,8 @@ const Single = ({ userId }) => {
             <span className="split">|</span>
             <span className="singleGenre">{bookInfo.genre}</span>
             <span className="split">|</span>
-            <span className="ratingNum">{bookInfo.avgRating}</span>
-            <i className="reviewIcon fa-solid fa-star-half-stroke"></i>
+            <span className="ratingNum">{bookInfo.avgRating}/5<i className="reviewIcon fa-solid fa-star-half-stroke" />: {bookInfo.rateCount} review(s)</span>
+            
           </div>
           <p className="singleBookDesc">
             {bookInfo.desc}
@@ -82,7 +82,7 @@ const Single = ({ userId }) => {
             Reviews
           </h1>
         </div>
-        {userId && <MakeRev bookId={bookId} userId={userId} bookAvgRating={bookInfo.avgRating || "NA"} />}
+        {userId && <MakeRev bookId={bookId} />}
         <ShowRevs bookId={bookId} />
       </div>
     </div>

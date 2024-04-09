@@ -8,9 +8,9 @@ const ShowRevs = ({bookId}) => {
 
     useEffect(() => {
       async function getReviews() {
-        axios.get(`${revBack}/getByBook`,bookId)
+        axios.get(`${revBack}/getByBook/${bookId}`)
         .then((response) => {
-          setReviews(response.data);
+          setReviews(response.data.revs);
         });
       } 
       
@@ -21,15 +21,15 @@ const ShowRevs = ({bookId}) => {
     return (
       <div>
         {reviews.length > 0 ? (
-          <ul>
-            <li>{reviews.map((review, i) => (
+          <ul>{reviews.map((review, i) => (
               <SingleRev
                 key={i}
-                user={review.ReviewUserId}
-                revTitle={review.ReviewTitle}
-                revRating={review.ReviewRating}
-                revText={review.ReviewText}
-              />))}</li>
+                id={review.id}
+                user={review.user}
+                revTitle={review.title}
+                revRating={review.rating}
+                revText={review.text}
+              />))}
           </ul>
         ) : (
           <label>No reviews yet...</label>

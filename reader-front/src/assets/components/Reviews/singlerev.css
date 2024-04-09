@@ -24,9 +24,12 @@
     font-family: 'Lora', serif;
     font-size: 18px;
     color: rgb(104, 76, 161);
-    overflow: hidden;
-    text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-line-clamp: 4;
     -webkit-box-orient: vertical;
+    border-top: 1px solid mediumpurple;
+}
+.hide {
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

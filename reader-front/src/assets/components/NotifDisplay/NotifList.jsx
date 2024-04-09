@@ -8,21 +8,28 @@ import axios from 'axios';
 const NotifList = ({ userId }) => {
     const [notifs, setNotifs] = useState({});
     const [tab, setTab] = useState(0);
+    const [fresh, setFresh] = useState(0);
     const token = localStorage.getItem('token');
+
 
     useEffect(() => {
         async function getNotifs() {
-            axios.get(`${notifBack}/getByUser`, {
+            await axios.get(`${notifBack}/getByUser`, {
                 headers: { Authorization: `Bearer ${token}` }
             })
                 .then((response) => { setNotifs(response.data.notifs); });
+
+            await axios.get(`${notifBack}/getNumByUser`, {
+                headers: { Authorization: `Bearer ${token}` }
+            }).then((response) => { setFresh(response.data.notifs); });
+
         }
         getNotifs();
         setInterval(getNotifs, 60000);
     }, [userId]);
 
     return (
-        <Popup trigger={<button><i className="notifsBtn fa-solid fa-bell"></i></button>} position="bottom center" >
+        <Popup trigger={<button className='trigger'><i className="notifsBtn fa-solid fa-bell"/> <label className='num'>{fresh > 0 ? fresh : " "}</label></button>} position="bottom center" >
             <div className='userNotifs'>
                 {notifs.recs && notifs.friendReq && notifs.sysMessage ?
                     <div className="tabs">
@@ -62,7 +69,7 @@ const NotifList = ({ userId }) => {
                                 <></>
                             }
                             {tab === 2 ? notifs.sysMessage.length > 0 ?
-                                <span>{notifs.sysMessage.map((notif,i) => (
+                                <span>{notifs.sysMessage.map((notif, i) => (
                                     <NotifSingle
                                         key={i}
                                         message={notif.message}

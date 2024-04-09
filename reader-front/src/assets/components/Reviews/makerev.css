@@ -59,45 +59,30 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 16px;
+}
+.star-rating>p {
+  font-size: 20px;
+  color: rgb(120, 74, 211);
+  margin-left: 5px;
+  font-weight: bolder;
 }
 
-.star-rating i {
+.star-input {
+  display: none;
+}
+
+.star-label {
+  display: inline-block;
   cursor: pointer;
-  transition: color 0.2s;
+  color: rgb(135, 118, 167);
+  font-size: 20px;
 }
 
-.star-rating i:hover,
-.star-rating i:focus {
-  color: rgb(105, 51, 212);
+.star-label.filled:hover,
+.star-label:hover {
+  color: rgb(137, 78, 255);
 }
 
-.star-rating i.active {
-  color: rgb(105, 51, 212);
-}
-
-.star-rating i.half-active {
-  color: mediumpurple;
-  transition: color 0.2s;
-}
-
-.star-rating i.half {
-  transition: color 0.2s;
-}
-
-.star-rating i.half {
-  &:before,
-  &:after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 50%;
-    height: 100%;
-    color: rgb(105, 51, 212);
-  }
-
-  &:after {
-    left: 50%;
-  }
+.star-label.filled {
+  color: rgb(133, 72, 255);
 }

@@ -4,11 +4,30 @@ const router = express.Router();
 const verifyJWT = require('./verify');
 
 router.post('/add', verifyJWT, async (req, res) => {
-    const { book, rating, title, text } = req.body;
+    const { book, rating, title, text } = req.body.review;
     const user = req.user;
+
     try {
-        let query = "insert into reviews (bookId, rating, title, text, user) values (?,?,?,?,?)";
-        await db.queryDatabase(query, [book, rating, title, text, user]);
+        try {
+            let name = "select userName from users where id=?";
+            const nameData = await db.queryDatabase(name, [req.user]);
+            const userName = nameData[0].userName;
+            let query = "insert into reviews (bookId, rating, title, text, user) values (?,?,?,?,?)";
+            await db.queryDatabase(query, [book, rating, title, text, userName]);
+        } catch (e) {
+            return res.status(200).json({ success: false, message: "Couldn't insert review" + e.message });
+        }
+        try {
+            let numQ = "select rateCount, avgRating from books where id=?";
+            let rates = await db.queryDatabase(numQ, [book]);
+            rates.rateCount += 1;
+            rates.avgRating = (rates.avgRating + rating) / rates.rateCount;
+            let numUpdate = "update books set rateCount=?, avgRating=? where id=?";
+            await db.queryDatabase(numUpdate, [rates.rateCount, rates.avgRating, book]);
+        } catch (e) {
+            return res.status(200).json({ success: false, message: "Error updating book" + e.message });
+        }
+
         return res.status(200).json({ success: true, message: "Review Added Successfully." });
     } catch (error) {
         return res.status(500).json({ success: false, message: 'Error occured when adding review. Please try again later.' + error });
@@ -44,8 +63,8 @@ router.delete('/remove', async (req, res) => {
     }
 });
 
-router.get('/getByBook', async (req, res) => {
-    const { bookId } = req.body;
+router.get('/getByBook/:bookId', async (req, res) => {
+    const { bookId } = req.params;
     let query = "select id, rating, title, text, user from reviews where bookId = ?";
     try {
         const results = await db.queryDatabase(query, [bookId]);

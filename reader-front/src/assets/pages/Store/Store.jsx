@@ -52,6 +52,7 @@ const Store = ({ userId }) => {
             pubDate: moment(volumeInfo.publishedDate).format('YYYY-MM-DD'),
             author: volumeInfo.authors && volumeInfo.authors[0],
             avgRating: volumeInfo.averageRating || 0,
+            rateCount: volumeInfo.ratingsCount || 0,
             genre: volumeInfo.categories && volumeInfo.categories[0],
             desc: volumeInfo.description,
             id: item.id,
@@ -76,7 +77,7 @@ const Store = ({ userId }) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const query = formData.get('query');
-    const redirect = `/store/${selectedCat}/${query}`;
+    const redirect = `/store/${selectedCat}/${query}` || `/store/${selectedCat}/${sQuery}` || `/store/${sCat}/${query}` || `/store/${sCat}/${sQuery}`;
     nav(redirect);
   }
 
@@ -111,6 +112,7 @@ const Store = ({ userId }) => {
                 pubDate={book.pubDate}
                 auth={book.author}
                 avgRate={book.avgRating}
+                rateCount={book.rateCount}
                 genres={book.genre}
                 desc={book.desc}
                 id={book.id}

@@ -3,19 +3,21 @@ const router = express.Router();
 const db = require('../db');
 
 router.post('/add', async (req, res) => {
-  const { id, cover, title, author, pubDate, genre, desc, avgRating } = req.body;
+  const { id, cover, title, author, pubDate, genre, desc, avgRating, rateCount } = req.body;
   //console.log(id);
   try {
     const check = 'select * from books where id = ?';
     const [book] = await db.queryDatabase(check, [id]); //check if book already in db
     if (book) {
-      return res.json({ success: false, message: 'Book already exists in the table.' });
+      let update = "UPDATE books SET cover=?, title=?, author=?, pubDate=?, genre=?, `desc`=?, avgRating=?, rateCount=? WHERE id=?";
+      await db.queryDatabase(update, [cover, title, author, pubDate, genre, desc, avgRating, rateCount, id ]);
+      return res.json({ success: true, message: 'Book updated.' });
     }
-    const query = 'insert into books (id, cover, title, author, pubDate, genre, `desc`, avgRating) values (?,?,?,?,?,?,?,?)';
-    await db.queryDatabase(query, [id, cover, title, author, pubDate, genre, desc, avgRating]);
+    const query = 'insert into books (id, cover, title, author, pubDate, genre, `desc`, avgRating, rateCount) values (?,?,?,?,?,?,?,?,?)';
+    await db.queryDatabase(query, [id, cover, title, author, pubDate, genre, desc, avgRating, rateCount]);
     return res.status(200).json({ success: true, message: 'Book added successfully.' });
   } catch (err) {
-    return res.status(500).json({ success: false, message: 'Error occured adding the book:' + err });
+    return res.status(500).json({ success: false, message: 'Error occured adding the book:' + err.message });
   }
 });
 

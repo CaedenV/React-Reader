@@ -1,9 +1,15 @@
 import './makerev.css';
-import React from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { revBack } from '../../backendRoutes';
 
-const MakeRev = ({ bookId, userId }) => {
+const MakeRev = ({ bookId }) => {
+    const [rating, setRating] = useState(null);
+    const token = localStorage.getItem('token');
+
+    const handleRatingChange = (event) => {
+        setRating(Number(event.target.value));
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -12,19 +18,11 @@ const MakeRev = ({ bookId, userId }) => {
             book: bookId,
             title: formData.get('title'),
             text: formData.get('text'),
-            rating: formData.get('rating'),
+            rating: rating,
         }
-        const response = await axios.post(`${revBack}/${bookId}`, rev);
-        // const oldAvg = (response.data.oldAvg[0].BookAvgRating) || 0;
-        // const numRevs = response.data.numRevs[0].count;
-        // if(numRevs == 0) {
-        //     bookAvgRating = (oldAvg + reviewRating) / 1;
-        // }
-
-        // await axios.put(`http://localhost:8000/books/${bookId}/avgRating`, {newAvg: bookAvgRating})
-        //     .then((response) => console.log(response.data.message)
-        // );
-
+        await axios.post(`${revBack}/add`, { review: rev }, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
     };
 
     return (
@@ -34,11 +32,24 @@ const MakeRev = ({ bookId, userId }) => {
                     <input type="text" name='title' placeholder="How about a title?" className="revInput" autoFocus={true}
                     />
                     <div className="star-rating">
-                        <i className="fa-solid fa-star" data-star-index="1"></i>
-                        <i className="fa-solid fa-star" data-star-index="2"></i>
-                        <i className="fa-solid fa-star" data-star-index="3"></i>
-                        <i className="fa-solid fa-star" data-star-index="4"></i>
-                        <i className="fa-solid fa-star" data-star-index="5"></i>
+                        {[...Array(5)].map((_, index) => (
+                            <label key={index} className={`star-label ${rating > index ? 'filled' : ''}`}>
+                                <input
+                                    type="radio"
+                                    name="rating"
+                                    value={index + 1}
+                                    checked={rating === index + 1}
+                                    onChange={handleRatingChange}
+                                    className="star-input"
+                                />
+                                {rating > index ? (
+                                    <i className="fa-solid fa-star"></i>
+                                ) : (
+                                    <i className="fa-regular fa-star"></i>
+                                )}
+                            </label>
+                        ))}
+                        <p>{rating}</p>
                     </div>
                     <button className='revSubmit' type='submit'><i className=" fa-solid fa-pen-nib"></i></button>
                 </div>

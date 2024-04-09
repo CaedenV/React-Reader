@@ -24,7 +24,13 @@ nav ul li {
     margin: 5px 20px;
     font-size: 20px;
 }
-.profile button{
+.profile {
+    display: flex; 
+    flex-direction: row;
+    align-items: center;
+}
+
+.profile>button{
     color: bisque;
     background-color: mediumpurple;
     font-size: 25px;

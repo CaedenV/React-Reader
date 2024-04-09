@@ -4,7 +4,7 @@ import LibWrap from "../LibraryWrapper/LibWrap";
 import React from 'react';
 import moment from 'moment';
 
-const BookWDesc = ({ cover, title, pubDate, auth, avgRate, genres, desc, id, lib, user }) => {
+const BookWDesc = ({ cover, title, pubDate, auth, avgRate, rateCount, genres, desc, id, lib, user }) => {
     const single = `/view/${id}`;
 
     return (
@@ -27,7 +27,7 @@ const BookWDesc = ({ cover, title, pubDate, auth, avgRate, genres, desc, id, lib
                 <span className="Pub_Auth">
                     <Link className="link" to={`/store/inauthor/${auth}`}>{auth}</Link> | {moment(pubDate).format('YYYY-MM-DD')}</span>
                 <div className="iconContainer">
-                    <span className="ratingNum">{avgRate}
+                    <span className="ratingNum">{avgRate}/5: {rateCount} review(s)
                         <i className="reviewIcon fa-solid fa-star-half-stroke"></i>
                     </span>
                     {user ? (<LibWrap bookId={id} libraries={lib} />) : (<></>)}

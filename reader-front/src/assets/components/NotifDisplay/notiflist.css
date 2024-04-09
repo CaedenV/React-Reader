@@ -29,3 +29,16 @@
     border: none;
     padding: 5px;
 }
+
+.trigger {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+}
+.num {
+    font-size: 19px;
+    color: rgb(132, 85, 226);
+    margin-left: -16px;
+    font-weight: bolder;
+    cursor: pointer;
+}
