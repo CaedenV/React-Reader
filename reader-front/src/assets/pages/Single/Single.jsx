@@ -39,6 +39,7 @@ const Single = ({ userId }) => {
       }
     }
     FetchAllInfo();
+    setInterval(FetchAllInfo, 60000);
   }, [bookId, userId]);
 
   return (

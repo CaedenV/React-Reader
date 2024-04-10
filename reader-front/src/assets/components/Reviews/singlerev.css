@@ -9,6 +9,7 @@
     font-size: 30px;
     font-weight: bold;
     color: mediumpurple;
+    padding-bottom: 3px;
 }
 
 .reviewIcon{
@@ -32,4 +33,15 @@
 .hide {
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.remove {
+    background-color: transparent;
+    color: mediumpurple;
+    font-size: 18px; 
+    margin-right: 5px;
+}
+.remove:hover {
+    border: 1px solid mediumpurple;
+    border-radius: 8px;
 }

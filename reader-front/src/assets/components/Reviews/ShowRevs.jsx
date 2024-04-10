@@ -24,7 +24,6 @@ const ShowRevs = ({bookId}) => {
           <ul>{reviews.map((review, i) => (
               <SingleRev
                 key={i}
-                id={review.id}
                 user={review.user}
                 revTitle={review.title}
                 revRating={review.rating}

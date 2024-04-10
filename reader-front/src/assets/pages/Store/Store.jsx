@@ -55,7 +55,7 @@ const Store = ({ userId }) => {
             rateCount: volumeInfo.ratingsCount || 0,
             genre: volumeInfo.categories && volumeInfo.categories[0],
             desc: volumeInfo.description,
-            id: item.id,
+            id: volumeInfo.industryIdentifiers && volumeInfo.industryIdentifiers[0].identifier,
           };
         });
         const filteredResults = formattedResults.filter((item) => {

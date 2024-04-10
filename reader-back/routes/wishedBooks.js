@@ -15,8 +15,8 @@ router.post('/add', verifyJWT, async (req, res) => {
   }
 });
 
-router.delete('/remove', verifyJWT, async (req, res) => {
-  const bookId = req.body;
+router.delete('/remove/:bookId', verifyJWT, async (req, res) => {
+  const {bookId} = req.params;
   const userId = req.user;
   const query = "delete from wishedbooks where userId = ? and bookId = ?";
   try {

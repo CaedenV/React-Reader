@@ -23,6 +23,8 @@ const MakeRev = ({ bookId }) => {
         await axios.post(`${revBack}/add`, { review: rev }, {
             headers: { Authorization: `Bearer ${token}` }
         });
+        setRating(null);
+        e.target.reset();
     };
 
     return (

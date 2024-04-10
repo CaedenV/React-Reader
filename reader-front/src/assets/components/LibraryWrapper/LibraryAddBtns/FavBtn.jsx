@@ -26,7 +26,6 @@ const FavBtn = ({ bookId, favRank }) => {
         const r = formData.get('rank');
         setRank(r);
         const book = { bookId: bookId, rank: r };
-        console.log(book);
         await axios.post(`${favBack}/add`, { book: book }, {
 
             headers: { Authorization: `Bearer ${token}` }

@@ -14,8 +14,7 @@ const WishBtn = ({ bookId, isWished }) => {
     setWished(true);
   }
   const rmvFromWish = async () => {
-    await axios.delete(`${wishBack}/delete`, {
-      body: {bookId: bookId},
+    await axios.delete(`${wishBack}/remove/${bookId}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     setWished(false);
