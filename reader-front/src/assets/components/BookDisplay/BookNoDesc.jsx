@@ -6,8 +6,8 @@ import moment from "moment";
 
 const BookNoDesc = ({ cover, title, pubDate, auth, avgRate, rateCount, genres, id, lib, user }) => {
     const single = `/view/${id}`;
-    const genreStore = `/store/subject/${genres}`;
-    const authStore = `/store/inauthor/${auth}`;
+    const genreStore = `/store/subject/${genres}/1`;
+    const authStore = `/store/inauthor/${auth}/1`;
 
     return (
         <div className="libBooks">
@@ -31,7 +31,7 @@ const BookNoDesc = ({ cover, title, pubDate, auth, avgRate, rateCount, genres, i
                     <span className="Pub_Auth"> <Link className="link" to={authStore}>{auth}</Link> | {moment(pubDate).format('YYYY-MM-DD')}</span>
                 </div>
                 <div className="iconContainer">
-                    <span className="ratingNum">{avgRate}/5: {rateCount} review(s)
+                    <span className="ratingNum">{avgRate > 0 && `${avgRate}/5 :`} {rateCount} review(s)
                         <i className="reviewIcon fa-solid fa-star-half-stroke"></i>
                     </span>
                     {user ? (<LibWrap bookId={id} libraries={lib} />) : (<></>)}

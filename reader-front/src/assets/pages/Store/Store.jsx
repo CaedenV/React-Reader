@@ -1,18 +1,20 @@
 import './store.css';
 import BookWDesc from '../../components/BookDisplay/BookwDesc';
 import { React, useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { bookBack, userBack } from '../../backendRoutes';
 import axios from 'axios';
 import moment from 'moment';
 
 const Store = ({ userId }) => {
-  const p = useParams();
-  const { sCat, sQuery } = useParams();
+  const { sCat, sQuery, sStart } = useParams();
   const [selectedCat, setSCat] = useState(sCat || 'intitle');
   const [results, setResults] = useState([]);
+  const [totalRes, setTotalRes] = useState();
   const [isRes, setIsRes] = useState(false);
   const nav = useNavigate();
+  const currentPage = sStart || 1;
+  const [resultsPerPage] = useState(10);
 
   const token = localStorage.getItem('token');
   const [userLib, setUserLib] = useState({});
@@ -30,56 +32,86 @@ const Store = ({ userId }) => {
       })
         .then((response) => { setUserLib(response.data.library); });
     }
-
     if (userId) {
       getLib();
     }
-    //console.log(p);
+
+    window.scrollTo({
+      top: 0,
+    });
   }, [userId]);
 
   useEffect(() => {
     if (sQuery) {
-      const apiKey = "check env";
       const modQ = sQuery.replace(' ', '+');
-      const searchUrl = `https://www.googleapis.com/books/v1/volumes?q=+${selectedCat}:${modQ}&langRestring=en&printType=books&key=${apiKey}&maxResults=40`;
+      const searchUrl = `https://www.googleapis.com/books/v1/volumes?q=+${selectedCat}:${modQ}&langRestrict=en&printType=books&maxResults=${resultsPerPage}&startIndex=${(currentPage - 1) * resultsPerPage}&orderBy=relevance`;
 
+      async function getRes() {
+        await axios.get(searchUrl).then((response) => {
+          const formattedResults = response.data.items.map((item) => {
+            const volumeInfo = item.volumeInfo;
+            return {
+              cover: volumeInfo.imageLinks && volumeInfo.imageLinks.thumbnail,
+              title: volumeInfo.title,
+              pubDate: moment(volumeInfo.publishedDate).format('YYYY-MM-DD'),
+              author: volumeInfo.authors && volumeInfo.authors[0],
+              avgRating: volumeInfo.averageRating || 0,
+              rateCount: volumeInfo.ratingsCount || 0,
+              genre: volumeInfo.categories && volumeInfo.categories[0],
+              desc: volumeInfo.description,
+              id: volumeInfo.industryIdentifiers && volumeInfo.industryIdentifiers[0].identifier,
+            };
+          });
+          //console.log(formattedResults);
+          const filteredResults = formattedResults.filter((item) => {
+            return item.cover && item.title && item.pubDate && item.author && item.genre && item.desc;
+          });
+
+          if (filteredResults.length > 0) {
+            setIsRes(true);
+            addToDB(filteredResults);
+          }
+          setResults(filteredResults);
+        });
+      }
+
+      getRes();
       axios.get(searchUrl).then((response) => {
-        const formattedResults = response.data.items.map((item) => {
-          const volumeInfo = item.volumeInfo;
-          return {
-            cover: volumeInfo.imageLinks && volumeInfo.imageLinks.thumbnail,
-            title: volumeInfo.title,
-            pubDate: moment(volumeInfo.publishedDate).format('YYYY-MM-DD'),
-            author: volumeInfo.authors && volumeInfo.authors[0],
-            avgRating: volumeInfo.averageRating || 0,
-            rateCount: volumeInfo.ratingsCount || 0,
-            genre: volumeInfo.categories && volumeInfo.categories[0],
-            desc: volumeInfo.description,
-            id: volumeInfo.industryIdentifiers && volumeInfo.industryIdentifiers[0].identifier,
-          };
-        });
-        const filteredResults = formattedResults.filter((item) => {
-          return item.cover && item.title && item.pubDate && item.author && item.avgRating && item.genre && item.desc;
-        });
-
-        if (filteredResults.length > 0) {
-          setIsRes(true);
-          addToDB(filteredResults);
+        if (response.data.totalItems < 300) {
+          setTotalRes(response.data.totalItems);
         }
-        setResults(filteredResults);
+        else {
+          setTotalRes(300);
+        }
       });
+      //console.log(searchUrl);
     }
-
-
-  }, [selectedCat, sQuery]);
+  }, [selectedCat, sQuery, sStart]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const query = formData.get('query');
-    const redirect = `/store/${selectedCat}/${query}` || `/store/${selectedCat}/${sQuery}` || `/store/${sCat}/${query}` || `/store/${sCat}/${sQuery}`;
+    const redirect = `/store/${selectedCat}/${query}/${currentPage}` ||
+      `/store/${selectedCat}/${sQuery}/${currentPage}` ||
+      `/store/${sCat}/${query}/${currentPage}` ||
+      `/store/${sCat}/${sQuery}/${currentPage}`;
     nav(redirect);
+  };
+
+  const pageNumbers = [];
+  for (let i = 1; i <= Math.ceil(totalRes / resultsPerPage); i++) {
+    pageNumbers.push(i);
   }
+
+  const handlePageClick = (event, pageNumber) => {
+    event.preventDefault();
+    const redirect = `/store/${selectedCat}/${sQuery}/${pageNumber}`;
+    nav(redirect);
+    window.scrollTo({
+      top: 0,
+    });
+  };
 
 
   return (
@@ -93,7 +125,7 @@ const Store = ({ userId }) => {
             <option value="subject">Genre</option>
           </select>
           <input type="text" placeholder={sQuery} className="text" name='query' />
-          <button className="searchIcon" type='submit'><i className="sIcon fa-solid fa-magnifying-glass"></i></button>
+          <button className="searchIcon" type='submit'><i className="sIcon fa-solid fa-magnifying-glass" /></button>
         </form>
       </div>
       {sQuery && isRes && (
@@ -104,22 +136,24 @@ const Store = ({ userId }) => {
             {selectedCat === 'subject' && " 'Genres'"}:
           </label>
           <ul className="found">
-            {results.map((book, i) => (
-              <BookWDesc
-                key={i}
-                cover={book.cover}
-                title={book.title}
-                pubDate={book.pubDate}
-                auth={book.author}
-                avgRate={book.avgRating}
-                rateCount={book.rateCount}
-                genres={book.genre}
-                desc={book.desc}
-                id={book.id}
-                user={userId}
-                lib={userLib}
-              />
-            ))}
+            {results.map((book, i) => {
+              return (
+                <BookWDesc
+                  key={i}
+                  cover={book.cover}
+                  title={book.title}
+                  pubDate={book.pubDate}
+                  auth={book.author}
+                  avgRate={book.avgRating}
+                  rateCount={book.rateCount}
+                  genres={book.genre}
+                  desc={book.desc}
+                  id={book.id}
+                  user={userId}
+                  lib={userLib}
+                />
+              );
+            })}
           </ul>
         </div>
       )}
@@ -138,6 +172,14 @@ const Store = ({ userId }) => {
           <label>Please enter a search query.</label>
         </div>
       )}
+
+      <div className="pagination">
+        {pageNumbers.map((number) => {
+          return (
+            <button className={`page-link ${currentPage == number ? 'active' : ''}`} key={number} onClick={(e) => handlePageClick(e, number)}>{number}</button>
+          );
+        })}
+      </div>
 
     </div>
   )

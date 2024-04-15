@@ -40,3 +40,25 @@
     border-top-right-radius: 8px;
     border-bottom-right-radius: 8px;
 }
+
+.pagination {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.page-link {
+    padding: 4px;
+    color: rgb(100, 58, 184);
+    font-size: large;
+    background-color: white;
+    border: 1px solid mediumpurple;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    margin-left: 5px;
+}
+
+.active {
+    color: rgb(85, 0, 255);
+    background-color: rgb(179, 196, 211);
+}

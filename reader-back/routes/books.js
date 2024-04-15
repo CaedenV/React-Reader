@@ -4,13 +4,12 @@ const db = require('../db');
 
 router.post('/add', async (req, res) => {
   const { id, cover, title, author, pubDate, genre, desc, avgRating, rateCount } = req.body;
-  //console.log(id);
   try {
     const check = 'select * from books where id = ?';
     const [book] = await db.queryDatabase(check, [id]); //check if book already in db
     if (book) {
       let update = "UPDATE books SET cover=?, title=?, author=?, pubDate=?, genre=?, `desc`=?, avgRating=?, rateCount=? WHERE id=?";
-      await db.queryDatabase(update, [cover, title, author, pubDate, genre, desc, avgRating, rateCount, id ]);
+      await db.queryDatabase(update, [cover, title, author, pubDate, genre, desc, avgRating, rateCount, id]);
       return res.json({ success: true, message: 'Book updated.' });
     }
     const query = 'insert into books (id, cover, title, author, pubDate, genre, `desc`, avgRating, rateCount) values (?,?,?,?,?,?,?,?,?)';
@@ -47,4 +46,4 @@ router.get('/getById/:id', async (req, res) => {
   }
 });
 
-module.exports = router;;
+module.exports = router;

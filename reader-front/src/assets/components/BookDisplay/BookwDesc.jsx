@@ -17,7 +17,7 @@ const BookWDesc = ({ cover, title, pubDate, auth, avgRate, rateCount, genres, de
             </Link>
             <div className="bookInfo">
                 <div className="bookGenre">
-                    <Link className="link" to={`/store/subject/${genres}`} >
+                    <Link className="link" to={`/store/subject/${genres}/1`} >
                         <span className="bookGenre">{genres}</span>
                     </Link>
                 </div>
@@ -25,9 +25,9 @@ const BookWDesc = ({ cover, title, pubDate, auth, avgRate, rateCount, genres, de
                     <span className="bookTitle">{title} </span>
                 </Link>
                 <span className="Pub_Auth">
-                    <Link className="link" to={`/store/inauthor/${auth}`}>{auth}</Link> | {moment(pubDate).format('YYYY-MM-DD')}</span>
+                    <Link className="link" to={`/store/inauthor/${auth}/1`}>{auth}</Link> | {moment(pubDate).format('YYYY-MM-DD')}</span>
                 <div className="iconContainer">
-                    <span className="ratingNum">{avgRate}/5: {rateCount} review(s)
+                    <span className="ratingNum">{avgRate > 0 && `${avgRate}/5 :`} {rateCount} review(s)
                         <i className="reviewIcon fa-solid fa-star-half-stroke"></i>
                     </span>
                     {user ? (<LibWrap bookId={id} libraries={lib} />) : (<></>)}

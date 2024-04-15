@@ -25,7 +25,7 @@ function App() {
       <div className="appRoutes container">
         <Routes>
           <Route exact path="/" element={userId !== null ? <UserDash  userId={userId} /> : <DefaultHome />} />
-          <Route path="/store/:sCat/:sQuery" element={<Store userId={userId} />} />
+          <Route path="/store/:sCat/:sQuery/:sStart" element={<Store userId={userId} />} />
           <Route path="/store" element={<Store userId={userId} />} />
           <Route path="/:userId/profile" element={userId !== null ? <Profile userId={userId} /> : <DefaultHome />} />
           <Route path="/profile/:userName" element={userId !== null ? <OtherProfile userId={userId} /> : <DefaultHome />} />
