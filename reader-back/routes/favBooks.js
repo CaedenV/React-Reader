@@ -5,9 +5,19 @@ const verifyJWT = require('./verify');
 
 router.post('/add', verifyJWT, async (req, res) => {
   const fav = req.body.book;
-  var query = "insert into favbooks (userId, bookId, bookRank) values (?,?,?)";
+  let insertQ = "insert into favbooks (userId, bookId, bookRank) values (?,?,?)";
+  let checkQ = "select * from favbooks where userId = ?";
   try {
-    await db.queryDatabase(query, [req.user, fav.bookId, fav.rank]);
+    // TODO: if rank already exists, move everything up 1
+    // const existing = await db.queryDatabase(checkQ, [req.user]);
+    
+    // for (const obj in existing) {
+    //   if (obj.bookRank === fav.rank) {
+        
+    //   }
+    // }
+
+    await db.queryDatabase(insertQ, [req.user, fav.bookId, fav.rank]);
     return res.status(200).json({ success: true, message: "Book Favorited Successfully." });
   } catch (err) {
     return res.status(500).json({ success: false, message: 'An error occured adding to your favorites. Please try again later.', error: err.message });

@@ -54,7 +54,7 @@ const Libraries = ({ userId }) => {
       <div className="ownWrapper">
         <h2>Owned Books</h2>
         <div className="ownList">
-          {ownedBooks.length > 0 && wishedBooks.map((book, i) => (
+          {ownedBooks.length > 0 && ownedBooks.map((book, i) => (
             <BookNoDesc
               key={i}
               cover={book.cover}

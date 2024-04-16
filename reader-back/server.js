@@ -12,6 +12,7 @@ const owned = require('./routes/ownedBooks');
 const wished = require('./routes/wishedBooks');
 const notifs = require('./routes/notifs');
 const revs = require('./routes/reviews');
+const recs = requir('./routes/recommends');
 const app = express();
 
 app.use(cors({
@@ -30,6 +31,7 @@ app.use('/revs', revs);
 app.use('/wished', wished);
 app.use('/favs', favBooks);
 app.use('/owned', owned);
+app.use('/recs', recs);
 app.use('/uploads', express.static('uploads'));
 
 app.listen(process.env.PORT, () => {

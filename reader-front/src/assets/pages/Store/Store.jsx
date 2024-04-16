@@ -1,7 +1,7 @@
 import './store.css';
 import BookWDesc from '../../components/BookDisplay/BookwDesc';
 import { React, useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { bookBack, userBack } from '../../backendRoutes';
 import axios from 'axios';
 import moment from 'moment';
@@ -45,7 +45,7 @@ const Store = ({ userId }) => {
     if (sQuery) {
       const modQ = sQuery.replace(' ', '+');
       const searchUrl = `https://www.googleapis.com/books/v1/volumes?q=+${selectedCat}:${modQ}&langRestrict=en&printType=books&maxResults=${resultsPerPage}&startIndex=${(currentPage - 1) * resultsPerPage}&orderBy=relevance`;
-
+      // TODO: adjust size based on filtered results to have 10 on every page
       async function getRes() {
         await axios.get(searchUrl).then((response) => {
           const formattedResults = response.data.items.map((item) => {

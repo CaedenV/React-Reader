@@ -7,3 +7,4 @@ export const notifBack = "http://localhost:8080/notifs";
 export const wishBack = "http://localhost:8080/wished";
 export const favBack = "http://localhost:8080/favs";
 export const ownBack = "http://localhost:8080/owned";
+export const recBack = "http://localhost:8080/recs";

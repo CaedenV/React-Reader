@@ -38,35 +38,6 @@ function generateRecommendations(user, books, similarityMatrix) {
     return similarityScores.map(score => score.bookId);
 }
 
-// Utility function to get user preferences
-function getUserPreferences(userId) {
-    const favoriteBookIdsQuery = 'SELECT bookId FROM favbooks WHERE userId = ?';
-    const favoriteBookIds = db.queryDatabase(favoriteBookIdsQuery, [userId]);
-
-    const ownedBookIdsQuery = 'SELECT bookId FROM ownedbooks WHERE userId = ?';
-    const ownedBookIds = db.queryDatabase(ownedBookIdsQuery, [userId]);
-
-    const wishedBookIdsQuery = 'SELECT bookId FROM wishedbooks WHERE userId = ?';
-    const wishedBookIds = db.queryDatabase(wishedBookIdsQuery, [userId]);
-
-    const userFavGenreQuery = 'SELECT favGenre FROM users WHERE id = ?';
-    const userFavGenre = db.queryDatabase(userFavGenreQuery, [userId]);
-
-    const friendRecQuery = "SELECT book FROM notifs WHERE notifType = 'book' AND receiverId = ?";
-    const friendRecBooks = db.queryDatabase(friendRecQuery, [userId]);
-
-    return Promise.all([favoriteBookIds, ownedBookIds, wishedBookIds, userFavGenre, friendRecBooks])
-        .then(([favorites, owned, wished, user, friendSent]) => {
-            return {
-                favorites: favorites,
-                owned: owned,
-                wished: wished,
-                favGenre: user[0].favGenre,
-                friendSent: friendSent
-            };
-        });
-}
-
 // Utility function to generate recommendation lists
 async function generateRecommendations(userId) {
     const results = getUserPreferences(userId);
@@ -99,25 +70,27 @@ async function generateRecommendations(userId) {
         `;
     const favoriteAuthorBooks = db.queryDatabase(favoriteAuthorBooksQuery, [userId, userId]);
 
-    const reviewedBooksQuery = `
+    const popularBooksQuery = ` 
             SELECT books.id, books.title, books.cover, books.desc, books.author, books.pubDate, books.genre, books.avgRating, books.rateCount
             FROM books
-            INNER JOIN reviews ON books.id = reviews.bookId
-            WHERE reviews.userId = ?
-        `;
-    const reviewedBooks = db.queryDatabase(reviewedBooksQuery, [userId]);
+            WHERE books.rateCount
+        `; // TODO: get max rateCount and avgRating
+    const popularBooks = db.queryDatabase(popularBooksQuery, []);
 
-    return Promise.all([favoriteGenreBooks, favoriteAuthorBooks])
-        .then(([genreBased, authorBased]) => {
+    return Promise.all([favoriteGenreBooks, favoriteAuthorBooks, popularBooks])
+        .then(([genreBased, authorBased, popularBased]) => {
             return {
                 genreBased: genreBased,
-                AuthorBased: authorBased,
+                authorBased: authorBased,
+                popular: popularBased, 
             };
         });
 }
 
 
-router.get('/generateRecs', async (req, res) => {
+router.get('/getRecs', async (req, res) => {
+
+
     const recs = generateRecommendations(req.user);
     return res.status(200).json({ success: true, recs: recs });
 });
