@@ -173,9 +173,9 @@ router.patch('/update', verifyJWT, type, async (req, res) => {
   }
 });
  
-router.patch('/nowRead', verifyJWT, async (req, res) => {
+router.patch('/nowRead/:bookId', verifyJWT, async (req, res) => {
   const id = req.user;
-  const bookId = req.body;
+  const {bookId} = req.params;
   try {
     const query = "UPDATE users SET nowRead=? WHERE id=?";
     await db.queryDatabase(query, [bookId, id]);

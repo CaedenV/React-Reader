@@ -40,11 +40,11 @@ router.delete('/remove/:bookId', verifyJWT, async (req, res) => {
   }
 });
 
-router.get('/getByUser/:id', verifyJWT, async (req, res) => {
+router.get('/get', verifyJWT, async (req, res) => {
   const query = "select bookId from favbooks where userId = ?";
   try {
     const results = await db.queryDatabase(query, [req.user]);
-    return res.status(200).json({ success: true, wished: results });
+    return res.status(200).json({ success: true, faved: results });
   } catch (err) {
     return res.status(500).json({ success: false, message: 'An error occured getting your favorite books. Please try again later.', error: err.message });
   }

@@ -30,12 +30,12 @@ router.delete('/remove', verifyJWT, async (req, res) => {
   }
 });
 
-router.get('/getByUser/:id', verifyJWT, async (req, res) => {
+router.get('/get', verifyJWT, async (req, res) => {
   const id = req.user;
   const query = "select bookId from wishedbooks where userId = ?";
   try {
     const results = await db.queryDatabase(query, [id]);
-    return res.status(200).json({ success: true, wished: results });
+    return res.status(200).json({ success: true, owned: results });
   } catch(err) {
     return res.status(500).json({ success: false, message: 'An error occured getting your Wished Books. Please try again later.', error: err.message });
   }

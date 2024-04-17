@@ -31,7 +31,7 @@ function App() {
           <Route path="/profile/:userName" element={userId !== null ? <OtherProfile userId={userId} /> : <DefaultHome />} />
           <Route path="/view/:bookId" element={<Single userId={userId} />} />
           <Route path="/:userId/library" element={userId !== null ? <Libraries userId={userId} /> : <DefaultHome />} />
-          <Route path="/read/:bookId" element={userId !== null ? <Read /> : <DefaultHome />} />
+          <Route path="/read/:bookId" element={userId !== null ? <Read userId={userId}/> : <DefaultHome />} />
         </Routes>
       </div>
 
