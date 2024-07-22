@@ -22,7 +22,7 @@ async function getUserByEmail(email) {
     return res[0];
   }
   catch (err) {
-    return res.status(500).json({ success: false, message: err.message });
+    return err.message;
   }
 }
 
@@ -54,8 +54,8 @@ router.post('/register', async (req, res) => {
     const token = jwt.sign({ id: results[0].insertId }, process.env.ACCESS_TOKEN, { expiresIn: '3h' });
     return res.status(200).json({ success: true, message: "Login Successful!", token: token });
   }
-  catch (error) {
-    return res.status(500).json({ success: false, message: error });
+  catch (e) {
+    return res.status(500).json({ success: false, message: e.message });
   }
 });
 

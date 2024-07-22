@@ -12,7 +12,7 @@ const owned = require('./routes/ownedBooks');
 const wished = require('./routes/wishedBooks');
 const notifs = require('./routes/notifs');
 const revs = require('./routes/reviews');
-const recs = requir('./routes/recommends');
+const recs = require('./routes/recommends');
 const app = express();
 
 app.use(cors({
