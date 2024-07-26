@@ -38,7 +38,7 @@ async function getIdByName(name) {
 
 router.post('/register', async (req, res) => {
   req.withCredentials = true;
-  const { userName, email, password, pic } = req.body;
+  const { userName, email, password } = req.body;
 
   if (!userName || !email || !password) {
     console.log("Not all fields");
@@ -49,8 +49,8 @@ router.post('/register', async (req, res) => {
     if (exist) { return res.json({ success: false, message: 'Account already exists. Please sign in.' }); }
 
     const hashedPassword = hashPassword(password);
-    let query = "insert into users (userName, email, password, pic) values (?,?,?,?)";
-    const results = await db.queryDatabase(query, [userName, email, hashedPassword, pic]);
+    let query = "insert into users (userName, email, password) values (?,?,?)";
+    const results = await db.queryDatabase(query, [userName, email, hashedPassword]);
     const token = jwt.sign({ id: results[0].insertId }, process.env.ACCESS_TOKEN, { expiresIn: '3h' });
     return res.status(200).json({ success: true, message: "Login Successful!", token: token });
   }
@@ -68,13 +68,14 @@ router.post('/login', async (req, res) => {
   try {
     query = "select id, password from users where email = ?";
     const user = await getUserByEmail(email);
+
     if (!user) {
       return res.json({ success: false, message: 'Incorrect Email or Password.' });
     }
 
     bcrypt.compare(password, user.password, (err, match) => {
       if (err) {
-        return res.status(500).json({ success: false, message: 'An error occured while checking credentials.' });
+        return res.status(500).json({ success: false, message: 'An error occured while checking credentials. ' + err.message });
       }
       if (!match) {
         return res.json({ success: false, message: 'Incorrect Email or Password.' });
@@ -83,7 +84,7 @@ router.post('/login', async (req, res) => {
       return res.status(200).json({ success: true, message: "Login Successful!", token: token });
     });
   } catch (error) {
-    return res.status(500).json({ success: false, message: 'An error occured while checking credentials.' });
+    return res.status(500).json({ success: false, message: 'An error occured while logging in.\n' + error.message });
   }
 });
 

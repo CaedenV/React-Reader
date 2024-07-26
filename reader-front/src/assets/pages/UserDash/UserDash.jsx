@@ -26,26 +26,28 @@ const UserDash = ({ userId }) => {
     FetchData();
   }, [userId]);
 
-  useEffect(() => {
-    async function FetchRecs() {
-      await axios.get(`${recBack}/getRecs`,
-        {
-          userLib: userLib,
-          genre: user.favGenre
-        }, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-        .then((response) => { setRecs(response.data.recs); })
-    }
+  // useEffect(() => {
+  //   async function FetchRecs() {
+  //     if (user.favGenre) {
+  //       await axios.get(`${recBack}/getRecs`,
+  //         {
+  //           userLib: userLib,
+  //           genre: user.favGenre
+  //         }, {
+  //         headers: { Authorization: `Bearer ${token}` }
+  //       })
+  //         .then((response) => { setRecs(response.data.recs); })
+  //     }
+  //   }
 
-    FetchRecs();
-  }, [userId])
+  //   FetchRecs();
+  // }, [userId]);
 
   return (
     <div className="recsOverall">
       <h1>Dashboard</h1>
 
-      {user.favGenre &&
+      {/* {user.favGenre &&
         <div className="genre group">
           <h2>{user.FavGenre} books you may enjoy:</h2>
           <div className="books">
@@ -190,7 +192,7 @@ const UserDash = ({ userId }) => {
               />))}
           </div>
         </div>
-      }
+      } */}
     </div>
   )
 }
