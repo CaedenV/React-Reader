@@ -11,6 +11,7 @@ const SmallBook = ({ bookId }) => {
         async function getBooks() {
             await axios.get(`${bookBack}/getById/${bookId}`).then((response) => {
                 setBook(response.data.book);
+                console.log(bookId);
             });
         }
         getBooks();

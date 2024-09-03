@@ -30,11 +30,11 @@
 .favList {
     overflow: hidden;
     overflow-y: scroll;
-    height: 67vh;
+    height: 40vh;
 }
 
 .ownList {
-    overflow-x: auto;
+    overflow-x: scroll;
     /* Enable horizontal scrolling */
     overflow-y: hidden;
     /* Hide vertical scrolling */
@@ -42,22 +42,9 @@
     /* Prevent line breaks */
     padding-bottom: 10px;
     /* Add padding to accommodate scrollbar */
+    width: 100vb;
 }
 
 .ownList>* {
     display: inline-block;
-    /* Make child elements display inline */
-}
-
-/* Hide scrollbar for Firefox */
-.listWrapper::-webkit-scrollbar {
-    display: none;
-}
-
-/* Hide scrollbar for other browsers */
-.listWrapper {
-    -ms-overflow-style: none;
-    /* IE and Edge */
-    scrollbar-width: none;
-    /* Firefox */
 }

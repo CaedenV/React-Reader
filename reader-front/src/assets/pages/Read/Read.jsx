@@ -1,3 +1,4 @@
+import './read.css';
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ReactReader } from 'react-reader';
@@ -8,122 +9,90 @@ import axios from 'axios';
 
 const Read = ({ userId }) => {
   const { bookId } = useParams();
-  const [fSize, setFSize] = useState(20);
-  const [theme, setTheme] = useState('light');
-  const [lineHeight, setLineHeight] = useState(1.5);
 
-  const [comments, getComments] = useState({});
-  const [currentRead, setCurrentRead] = useState('');
+  const [currentRead, setCurrentRead] = useState([]);
   const [ownedBooks, setOwnedBooks] = useState({});
+  const [validAccess, setValidAccess] = useState(false);
+  const [show, setShowOwned] = useState(false);
   const nav = useNavigate();
 
   const token = localStorage.getItem('token');
 
   const [location, setLocation] = useState(null);
-  const locationChanged = (epubcifi) => {
-    setLocation(epubcifi);
-  }
-  const handleFontSizeChange = (newFontSize) => {
-    setFSize(newFontSize);
-  };
-  const handleThemeChange = (newTheme) => {
-    setTheme(newTheme);
-  };
-  const handleLineHeightChange = (newLineHeight) => {
-    setLineHeight(newLineHeight);
-  }
+
 
   useEffect(() => {
     async function getBooks() {
       await axios.get(`${ownBack}/get`, {
         headers: { Authorization: `Bearer ${token}` }
-      }).then((response) => { setOwnedBooks(response.data.owned); });
+      }).then((response) => { setOwnedBooks(response.data.owned); console.log(ownedBooks); });
 
       await axios.get(`${ownBack}/nowRead`, {
         headers: { Authorization: `Bearer ${token}` }
-      }).then((response) => { setCurrentRead(response.data.nowRead) });
+      }).then((response) => {
+        const epubFile = response.data.nowRead.nowReadFile;
+        const blob = new Blob([atob(epubFile)], { type: 'application/epub+zip' });
+        const url = URL.createObjectURL(blob);
+        setCurrentRead({
+          nowReadId: response.data.nowRead.nowReadId,
+          nowReadFN: url
+        });
+      });
+
     }
 
     getBooks();
+    if (bookId in ownedBooks) {
+      setValidAccess(true);
+    }
   }, [userId, bookId]);
+
+  const setBookAdds = async () => {
+    await axios.set(`${ownBack}/bookAdds`, {
+      headers: { Authorization: `Bearer ${token}` },
+      body: {},
+    });
+  }
+
+  const toggleOwned = () => {
+    setShowOwned(!show);
+  }
 
   const startRead = async (bookId) => {
     await axios.patch(`${userBack}/nowRead/${bookId}`, {
-      headers: { Authorization: `Bearere ${token}` }
+      headers: { Authorization: `Bearer ${token}` }
     });
 
-    const redirect = `/read/${currentRead}`;
+    const redirect = `/read/${currentRead.nowReadId}`;
     nav(redirect);
   }
 
-  const getRendition = (rendition) => {
-    const colors = {
-      light: {
-        background: '#FFE4C4',
-        text: '#000000',
-      },
-      dark: {
-        background: '#212427',
-        text: '#EFEFEF',
-      },
-    };
-    const themeColors = colors[theme];
-    rendition.themes.register('custom', {
-      body: {
-        background: themeColors.background,
-        color: themeColors.text,
-      },
-    });
-    rendition.themes.select('custom');
-    rendition.hooks.content.register((content) => {
-      content.default({
-        style: {
-          fontSize: `${fSize}px`,
-          color: themeColors.text,
-          lineHeight: `${lineHeight}em`,
-        },
-      });
-    });
-  };
-
   return (
     <div className='read'>
-      <div className="settings">
-        <Popup trigger={<button className='options'><i className="fa-solid fa-sliders" /></button>}>
+      <div className="readerSettings">
+        <button className="setting fSize"><i className="fa-solid fa-text-height" /></button>
+        <button className="setting color"><i className="fa-solid fa-palette" /></button>
+        <button className="setting lineHeight"><i className="fa-solid fa-arrow-down-up-across-line" /></button>
+        <button className="setting comment"><i className="fa-solid fa-comment-dots" /></button>
 
-        </Popup>
-        {ownedBooks && <Popup trigger={<button className='showOwn'><i className="fa-solid fa-book" /></button>} >
-          {/* <div className="owned">
-            {ownedBooks.map((bookId) => {
-              return (
-                <button className="readBook" onClick={() => startRead(bookId)}>
-                  <SmallBook bookId={bookId} />
-                </button>
-              )
-            })}
-          </div> */}
-        </Popup>}
-
-        <button className="fSize"><i className="fa-regular fa-text-size" /></button>
-        <button className="color"><i className="fa-solid fa-palette" /></button>
-        <button className="lineHeight"><i className="fa-solid fa-arrow-down-up-across-line" /></button>
-        <button className="comment"><i className="fa-solid fa-comment-dots" /></button>
+        {ownedBooks && <button className='showOwn' onClick={toggleOwned}><i className="fa-solid fa-book" /></button>}
+          <button className="setting save" onClick={setBookAdds}>Save</button>
       </div>
+      <div className={show ? "owned " + 'true': "owned " + "false"}>
+            {ownedBooks.length > 0 && ownedBooks.map((book, i) => {
+              <div className="bookOptions">
+                <SmallBook bookId={book.bookId} key={i} />
+                <button className="readBook" onClick={() => startRead(bookId)}> Read</button>
+              </div>
+
+            })}
+            <label>Visible</label>
+          </div>
       <div className="eReader">
         <ReactReader
+          url="https://react-reader.metabits.no/files/alice.epub"
           location={location}
-          locationChanged={locationChanged}
-          url={currentRead}
-          epubOptions={{
-            allowPopups: true,
-            allowScriptedContent: true
-          }}
-          getRendition={getRendition}
-          onFontSizeChange={handleFontSizeChange}
-          onThemeChange={handleThemeChange}
-          onLineHightChange={handleLineHeightChange}
-          theme={theme}
-
+          locationChanged={(epubcfi) => setLocation(epubcfi)}
         />
       </div>
     </div>

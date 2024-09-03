@@ -2,6 +2,8 @@ const express = require('express');
 const db = require('../db');
 const router = express.Router();
 const verifyJWT = require('./verify');
+const fs = require('fs');
+const path = require('path');
 
 router.post('/add', verifyJWT, async (req, res) => {
   const bookId = req.body;
@@ -51,9 +53,35 @@ router.get('/nowRead', verifyJWT, async(req, res) => {
       return res.status(404).json({ success: false, message: 'User not found.' });
     }
     const nowReadId = results[0].nowRead;
-    const nowReadFN = `http://localhost:8080/books/${nowReadId}`;
+    const epubFilePath = path.join(__dirname, '../books', `${nowReadId}.epub`);
+
     //console.log(nowRead);
-    return res.status(200).json({success: true, nowRead: nowReadFN });
+
+    const bookQ = "SELECT bookAdds FROM ownedbooks WHERE userId = ? and bookId = ?";
+    const bookRes = await db.queryDatabase(bookQ, [id, nowReadId]);
+    if (bookRes.length <= 0) {
+      return res.status(404).json({ success: false, message: 'book not found.' });
+    }
+    const bookAdds = bookRes[0];
+    
+
+    if (!fs.existsSync(epubFilePath)) {
+      return res.status(404).json({ success: false, message: 'Book not found.' });
+    }
+
+    const nowReadFile = fs.readFileSync(epubFilePath);
+    res.setHeader('Content-Type', 'application/epub+zip');
+    res.setHeader('Content-Disposition', `attachment; filename="${nowReadId}.epub"`);
+
+    return res.status(200).json(
+      {
+        success: true, 
+        nowRead: {
+          nowReadId,
+          nowReadFile: nowReadFile.toString('base64')
+        },
+        adds: bookAdds
+      });
   } catch (error) {
     return res.status(500).json({error: error.message});
   }

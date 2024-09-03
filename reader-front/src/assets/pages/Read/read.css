@@ -1,0 +1,26 @@
+.setting {
+    color: mediumpurple;
+    background-color: transparent;
+    font-size: 30px;
+    margin-left: 15px;
+    padding: 5px;
+    border-radius: 25%;
+    border-color: mediumpurple;
+}
+.setting:hover {
+    background-color: rgb(255, 208, 150);
+    color: rgb(113, 86, 168);
+}
+.showOwn{
+    font-size: 30px;
+    border: none;
+    color: mediumpurple;
+    background-color: transparent;
+}
+.owned {
+    background-color: rgb(165, 138, 219);
+    width: 100%;
+}
+.false {
+    visibility: hidden;
+}
