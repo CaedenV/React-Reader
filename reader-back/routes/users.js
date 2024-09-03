@@ -117,6 +117,23 @@ router.get('/getMe', verifyJWT, async (req, res) => {
   }
 });
 
+// Get self nowRead
+router.get('/nowRead', verifyJWT, async(req, res) => {
+  const id = req.user;
+  try {
+    const query = "SELECT nowRead FROM users WHERE id = ?";
+    const results = await db.queryDatabase(query, [id]);
+    if (results.length <= 0) {
+      return res.status(404).json({ success: false, message: 'User not found.' });
+    }
+    const nowRead = results[0].nowRead;
+    //console.log(nowRead);
+    return res.status(200).json({success: true, nowRead });
+  } catch (error) {
+    return res.status(500).json({error: error.message});
+  }
+});
+
 // Get specific user
 router.get('/getOther/:profileName', verifyJWT, async (req, res) => {
   const {profileName} = req.params;
@@ -136,6 +153,7 @@ router.get('/getOther/:profileName', verifyJWT, async (req, res) => {
 });
 
 var type = upload.single('image');
+
 // Update user profile
 router.patch('/update', verifyJWT, type, async (req, res) => {
   const id = req.user;
@@ -173,7 +191,8 @@ router.patch('/update', verifyJWT, type, async (req, res) => {
     }
   }
 });
- 
+
+// Changes the user's nowRead book 
 router.patch('/nowRead/:bookId', verifyJWT, async (req, res) => {
   const id = req.user;
   const {bookId} = req.params;

@@ -39,20 +39,20 @@ const Read = ({ userId }) => {
         headers: { Authorization: `Bearer ${token}` }
       }).then((response) => { setOwnedBooks(response.data.owned); });
 
-      await axios.get(`${ownBack}/getNowRead/${bookId}`, {
+      await axios.get(`${ownBack}/nowRead`, {
         headers: { Authorization: `Bearer ${token}` }
-      }).then((response) => { setCurrentRead(response.data.URL) });
+      }).then((response) => { setCurrentRead(response.data.nowRead) });
     }
 
     getBooks();
-  }, [userId]);
+  }, [userId, bookId]);
 
   const startRead = async (bookId) => {
     await axios.patch(`${userBack}/nowRead/${bookId}`, {
       headers: { Authorization: `Bearere ${token}` }
     });
 
-    const redirect = `/read/${bookId}`;
+    const redirect = `/read/${currentRead}`;
     nav(redirect);
   }
 
@@ -89,11 +89,11 @@ const Read = ({ userId }) => {
   return (
     <div className='read'>
       <div className="settings">
-        <Popup trigger={<button className='options'><i class="fa-solid fa-sliders" /></button>}>
+        <Popup trigger={<button className='options'><i className="fa-solid fa-sliders" /></button>}>
 
         </Popup>
         {ownedBooks && <Popup trigger={<button className='showOwn'><i className="fa-solid fa-book" /></button>} >
-          <div className="owned">
+          {/* <div className="owned">
             {ownedBooks.map((bookId) => {
               return (
                 <button className="readBook" onClick={() => startRead(bookId)}>
@@ -101,13 +101,13 @@ const Read = ({ userId }) => {
                 </button>
               )
             })}
-          </div>
+          </div> */}
         </Popup>}
 
-        <button className="fSize"><i class="fa-regular fa-text-size" /></button>
-        <button className="color"><i class="fa-solid fa-palette" /></button>
-        <button className="lineHeight"><i class="fa-solid fa-arrow-down-up-across-line" /></button>
-        <button className="comment"><i class="fa-solid fa-comment-dots" /></button>
+        <button className="fSize"><i className="fa-regular fa-text-size" /></button>
+        <button className="color"><i className="fa-solid fa-palette" /></button>
+        <button className="lineHeight"><i className="fa-solid fa-arrow-down-up-across-line" /></button>
+        <button className="comment"><i className="fa-solid fa-comment-dots" /></button>
       </div>
       <div className="eReader">
         <ReactReader

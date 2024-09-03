@@ -24,6 +24,7 @@ const Single = ({ userId }) => {
       axios.get(`${bookBack}/getById/${bookId}`)
         .then((response) => {
           setBookInfo(response.data.book);
+          console.log(response.data);
         });
       if (userId) {
         axios.get(`${friendBack}/getUser`, {

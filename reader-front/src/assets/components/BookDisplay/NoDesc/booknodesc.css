@@ -1,0 +1,35 @@
+.bnCover{
+    width: 120px;
+    height: 200px;
+    object-fit:fill;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.bnInfo{
+    color: mediumpurple;
+    font-family: 'Merriweather', serif;
+    margin-left: 10px;
+    
+}
+
+.bnGenre{
+    font-size: 16px;
+    line-height: 20px;
+    margin-top: 10px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.bnTitle{
+    font-family: 'Phudu', cursive;
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.bnAuth{
+    font-style: italic;
+    font-size: 16px;
+}

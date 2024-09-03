@@ -1,5 +1,5 @@
 import './store.css';
-import BookWDesc from '../../components/BookDisplay/BookwDesc';
+import BookWDesc from '../../components/BookDisplay/Desc/BookwDesc';
 import { React, useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { bookBack, userBack } from '../../backendRoutes';
@@ -59,10 +59,10 @@ const Store = ({ userId }) => {
               rateCount: volumeInfo.ratingsCount || 0,
               genre: volumeInfo.categories && volumeInfo.categories[0],
               desc: volumeInfo.description,
-              id: volumeInfo.industryIdentifiers && volumeInfo.industryIdentifiers[0].identifier,
+              id: volumeInfo.industryIdentifiers && volumeInfo.industryIdentifiers[0].identifier.replace(/[^0-9]/g, ''),
             };
           });
-          //console.log(formattedResults);
+          console.log(formattedResults);
           const filteredResults = formattedResults.filter((item) => {
             return item.cover && item.title && item.pubDate && item.author && item.genre && item.desc;
           });
@@ -84,7 +84,7 @@ const Store = ({ userId }) => {
           setTotalRes(300);
         }
       });
-      //console.log(searchUrl);
+      console.log(searchUrl);
     }
   }, [selectedCat, sQuery, sStart]);
 

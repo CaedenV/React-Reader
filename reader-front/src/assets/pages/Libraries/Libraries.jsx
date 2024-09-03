@@ -3,8 +3,8 @@ import React from 'react';
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { userBack, bookBack } from '../../backendRoutes';
-import BookNoDesc from '../../components/BookDisplay/BookNoDesc';
-import BookWDesc from '../../components/BookDisplay/BookwDesc';
+import BookNoDesc from '../../components/BookDisplay/NoDesc/BookNoDesc';
+import BookWDesc from '../../components/BookDisplay/Desc/BookwDesc';
 
 const Libraries = ({ userId }) => {
   const [userLib, setUserLib] = useState({});

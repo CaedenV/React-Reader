@@ -86,8 +86,8 @@ router.get('/getByBook/:bookId', async (req, res) => {
     try {
         const results = await db.queryDatabase(query, [bookId]);
         return res.status(200).json({ success: true, revs: results });
-    } catch {
-        return res.status(500).json({ success: false, message: 'Error occured while retrieving reviews. Please try again later.' });
+    } catch (err) {
+        return res.status(500).json({ success: false, message: 'Error occured while retrieving reviews. Please try again later.', error: err });
     }
 });
 

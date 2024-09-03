@@ -7,10 +7,13 @@ const SmallBook = ({ bookId }) => {
     const [book, setBook] = useState({});
     const single = `/view/${bookId}`;
 
-    useEffect(async () => {
-        await axios.get(`${bookBack}/getById/${bookId}`).then((response) => {
-            setBook(response.data.book);
-        })
+    useEffect(() => {
+        async function getBooks() {
+            await axios.get(`${bookBack}/getById/${bookId}`).then((response) => {
+                setBook(response.data.book);
+            });
+        }
+        getBooks();
     }, [bookId])
 
     return (

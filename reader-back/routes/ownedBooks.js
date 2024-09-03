@@ -18,7 +18,7 @@ router.post('/add', verifyJWT, async (req, res) => {
 router.delete('/remove', verifyJWT, async (req, res) => {
   const bookId = req.body;
   const userId = req.user;
-  const query = "delete from wishedbooks where userId = ? and bookId = ?";
+  const query = "delete from ownedbooks where userId = ? and bookId = ?";
   try {
     const results = await db.queryDatabase(query, [userId, bookId]);
     if (results.affectedRows == 0) {
@@ -32,12 +32,30 @@ router.delete('/remove', verifyJWT, async (req, res) => {
 
 router.get('/get', verifyJWT, async (req, res) => {
   const id = req.user;
-  const query = "select bookId from wishedbooks where userId = ?";
+  const query = "select bookId from ownedbooks where userId = ?";
   try {
     const results = await db.queryDatabase(query, [id]);
     return res.status(200).json({ success: true, owned: results });
   } catch(err) {
     return res.status(500).json({ success: false, message: 'An error occured getting your Wished Books. Please try again later.', error: err.message });
+  }
+});
+
+// Get self nowRead
+router.get('/nowRead', verifyJWT, async(req, res) => {
+  const id = req.user;
+  try {
+    const query = "SELECT nowRead FROM users WHERE id = ?";
+    const results = await db.queryDatabase(query, [id]);
+    if (results.length <= 0) {
+      return res.status(404).json({ success: false, message: 'User not found.' });
+    }
+    const nowReadId = results[0].nowRead;
+    const nowReadFN = `http://localhost:8080/books/${nowReadId}`;
+    //console.log(nowRead);
+    return res.status(200).json({success: true, nowRead: nowReadFN });
+  } catch (error) {
+    return res.status(500).json({error: error.message});
   }
 });
 

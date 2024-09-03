@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './navbar.css';
 import logo from '../../../assets/logo.png';
 import Popup from 'reactjs-popup';
@@ -6,10 +6,14 @@ import Login from '../Login-Register/Login';
 import Register from '../Login-Register/Register';
 import { Link } from 'react-router-dom';
 import NotifList from '../NotifDisplay/NotifList';
+import axios from 'axios';
+import { userBack } from '../../backendRoutes';
 
 const NavBar = ({ userId, updateUserId }) => {
     const [loginPopOpen, setLoginPopOpen] = useState(false);
     const [registerPopOpen, setRegisterPopOpen] = useState(false);
+    const [nowRead, setNowRead] = useState("");
+    const token = localStorage.getItem('token');
 
     const handleLoginClick = () => {
         setLoginPopOpen(true);
@@ -26,6 +30,20 @@ const NavBar = ({ userId, updateUserId }) => {
         updateUserId(null);
     }
 
+    useEffect(() => {
+        async function getNowRead() {
+            await axios.get(`${userBack}/nowRead`, {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+                .then((response) => {
+                    setNowRead(response.data.nowRead);
+                });
+        }
+        if (userId) {
+            getNowRead();
+        }
+    }, [userId]);
+
 
     return (
         <div>
@@ -34,8 +52,8 @@ const NavBar = ({ userId, updateUserId }) => {
                 <ul>
                     <li><Link to={'/'}>HOME</Link></li>
                     <li><Link to={`store`}>STORE</Link></li>
-                    <li><Link to={userId ? `read`: '/'}>READ</Link></li>
-                    <li><Link to={userId ? `${userId}/library`: '/'}>LIBRARY</Link></li>
+                    <li><Link to={userId ? `/read/${nowRead}` : '/'}>READ</Link></li>
+                    <li><Link to={userId ? `${userId}/library` : '/'}>LIBRARY</Link></li>
                 </ul>
                 <div className="profile">
                     <Popup trigger={<button><i className="fa-solid fa-circle-user"></i></button>} position="bottom center" className='userOptions'>
@@ -60,8 +78,8 @@ const NavBar = ({ userId, updateUserId }) => {
                     )}
                 </div>
             </nav>
-            {registerPopOpen && <Register onClose={() => setRegisterPopOpen(false)}  onSign={handleSignRegClose} updateUserId={updateUserId}/>}
-            {loginPopOpen && <Login onClose={() => setLoginPopOpen(false)} updateUserId={updateUserId}/>}
+            {registerPopOpen && <Register onClose={() => setRegisterPopOpen(false)} onSign={handleSignRegClose} updateUserId={updateUserId} />}
+            {loginPopOpen && <Login onClose={() => setLoginPopOpen(false)} updateUserId={updateUserId} />}
         </div>
     )
 }
