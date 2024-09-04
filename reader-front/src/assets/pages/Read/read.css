@@ -11,16 +11,32 @@
     background-color: rgb(255, 208, 150);
     color: rgb(113, 86, 168);
 }
-.showOwn{
-    font-size: 30px;
-    border: none;
-    color: mediumpurple;
-    background-color: transparent;
-}
 .owned {
-    background-color: rgb(165, 138, 219);
+    background-color: rgba(165, 138, 219, 0.712);
     width: 100%;
+    display: flex;
+    flex-direction: row;
+    margin-top: 5px;
 }
 .false {
     visibility: hidden;
+}
+.active {
+    background-color: mediumpurple;
+    color: bisque;
+}
+.bookOptions {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+.readBook {
+    color: rgb(128, 97, 189);
+    border: 2px rgb(140, 100, 219) solid;
+    background-color: rgb(255, 244, 230);
+    border-radius: 5px;
+}
+.readBook:hover{
+    background-color: rgb(128, 97, 189);
+    color: rgb(255, 244, 230);
 }

@@ -62,9 +62,9 @@ const Store = ({ userId }) => {
               id: volumeInfo.industryIdentifiers && volumeInfo.industryIdentifiers[0].identifier.replace(/[^0-9]/g, ''),
             };
           });
-          console.log(formattedResults);
+          //console.log(formattedResults);
           const filteredResults = formattedResults.filter((item) => {
-            return item.cover && item.title && item.pubDate && item.author && item.genre && item.desc;
+            return item.cover && item.title && item.pubDate && item.author && item.genre && item.desc && item.id;
           });
 
           if (filteredResults.length > 0) {
@@ -84,7 +84,7 @@ const Store = ({ userId }) => {
           setTotalRes(300);
         }
       });
-      console.log(searchUrl);
+      //console.log(searchUrl);
     }
   }, [selectedCat, sQuery, sStart]);
 
@@ -176,7 +176,7 @@ const Store = ({ userId }) => {
       <div className="pagination">
         {pageNumbers.map((number) => {
           return (
-            <button className={`page-link ${currentPage == number ? 'active' : ''}`} key={number} onClick={(e) => handlePageClick(e, number)}>{number}</button>
+            <button className={`page-link ${currentPage == number ? 'curPage' : ''}`} key={number} onClick={(e) => handlePageClick(e, number)}>{number}</button>
           );
         })}
       </div>
