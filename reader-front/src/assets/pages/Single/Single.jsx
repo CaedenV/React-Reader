@@ -24,7 +24,6 @@ const Single = ({ userId }) => {
       axios.get(`${bookBack}/getById/${bookId}`)
         .then((response) => {
           setBookInfo(response.data.book);
-          console.log(response.data);
         });
       if (userId) {
         axios.get(`${friendBack}/getUser`, {
@@ -56,7 +55,7 @@ const Single = ({ userId }) => {
               <LibWrap bookId={bookId} libraries={userLib} />
               <Popup trigger={<button className='share'><i className="fa-regular fa-share-from-square" /></button>} position='bottom center'>
                 <div className="list">
-                  {friends ? friends.map((friend, i) => (
+                  {friends.length > 0 ? friends.map((friend, i) => (
                     <ShareFriend friend={friend} book={bookInfo} key={i}/>
                   )) : <label className='friend'>Add more friends to share books with!</label>}
                 </div>
@@ -91,4 +90,4 @@ const Single = ({ userId }) => {
   )
 }
 
-export default Single
+export default Single;
