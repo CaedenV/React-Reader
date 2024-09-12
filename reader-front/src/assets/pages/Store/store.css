@@ -5,6 +5,11 @@
     color: rgb(130, 99, 190);
 }
 
+.store >h1 {
+    color: mediumpurple;
+    font-size: 50px;
+}
+
 .results{
     margin-top: 50px;
 }

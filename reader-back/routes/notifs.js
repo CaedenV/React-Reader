@@ -33,8 +33,8 @@ router.post('/sendBook', verifyJWT, async (req, res) => {
     sender.accept = false;
     //sender is always user. 
     try {
-        let query = "insert into notifs (senderId, receiverId, book, friendRequest, notifType) values (?,?,?,?, 'book')";
-        await db.queryDatabase(query, [req.user, friendId, JSON.stringify(book), JSON.stringify(sender)]);
+        let query = "insert into notifs (senderId, receiverId, book, friendRequest, notifType, createdAt) values (?,?,?,?, 'book', ?)";
+        await db.queryDatabase(query, [req.user, friendId, JSON.stringify(book), JSON.stringify(sender), new Date()]);
         return res.status(200).json({ success: true, message: "Sent!" });
     } catch (err) {
         return res.status(500).json({ success: false, message: 'Something went wrong sending the recommendation. Please try again later.', error: err.message });
@@ -47,11 +47,11 @@ router.post('/sendFriend', verifyJWT, async (req, res) => {
     const sender = await getUserById(req.user);
     sender.accept = false;
     try {
-        let query = "insert into notifs (senderId, receiverId, friendRequest, notifType) values (?,?,?, 'friend')";
-        await db.queryDatabase(query, [sender.id, receiver.id, JSON.stringify(sender)]);
+        let query = "insert into notifs (senderId, receiverId, friendRequest, notifType, createdAt) values (?,?,?, 'friend', ?)";
+        await db.queryDatabase(query, [sender.id, receiver.id, JSON.stringify(sender), new Date()]);
         return res.status(200).json({ success: true, message: "Recommendation Sent Successfully." });
     } catch (err) {
-        return res.status(500).json({ success: false, message: 'Something went wrong sending the recommendation. Please try again later.', error: err.message });
+        return res.status(500).json({ success: false, message: 'Something went wrong sending the friend request. Please try again later.', error: err.message });
     }
 });
 

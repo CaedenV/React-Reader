@@ -39,7 +39,7 @@ const FavBtn = ({ bookId, favRank }) => {
                 :
                 (
                     <span className='getRank'>
-                        <button className="add fav" onClick={getRank}> <i className="fa-regular fa-heart" /> </button>
+                        <button className="add fav" onClick={getRank}><i className="fa-regular fa-heart" /></button>
                         {isFav ?
                             (<form onSubmit={setFavorite} >
                                 <input type="integer" className="Fav Rank" name='rank' placeholder={favRank} />

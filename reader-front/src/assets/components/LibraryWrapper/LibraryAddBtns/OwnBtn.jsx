@@ -29,7 +29,7 @@ const OwnBtn = ({ bookId, isOwned }) => {
                 (<button className="add buy" onClick={purchaseBook}><i className="fa-solid fa-cart-shopping"/></button>)
                 :
                 (<Link className="startRead" to={`/read/${bookId}`}>
-                    <button className="read" onClick={setCurrentRead}> Read </button>
+                    <button className="add read" onClick={setCurrentRead}><i className="fa-solid fa-book-open-reader" /></button>
                 </Link>)}
         </div>
     )

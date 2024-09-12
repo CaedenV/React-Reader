@@ -21,7 +21,7 @@ const WishBtn = ({ bookId, isWished }) => {
   }
   return (
     <button className="add wish" >
-      {wished ? <i className="singleIcon fa-solid fa-bookmark" onClick={rmvFromWish} /> : <i className="wishIcon fa-regular fa-bookmark" onClick={addToWish}></i>}
+      {wished ? <i className="singleIcon fa-solid fa-bookmark" onClick={rmvFromWish} /> : <i className="wishIcon fa-regular fa-bookmark" onClick={addToWish} />}
     </button>
   )
 }

@@ -61,6 +61,7 @@ const NotifSingle = ({ friend, book, time, read, message, type, notifId }) => {
         }).then((response) => {
             setStatus(response.data.status);
         });
+        
     }
 
     return (

@@ -14,7 +14,7 @@ const Store = ({ userId }) => {
   const [isRes, setIsRes] = useState(false);
   const nav = useNavigate();
   const currentPage = sStart || 1;
-  const [resultsPerPage] = useState(10);
+  const [resultsPerPage] = useState(15);
 
   const token = localStorage.getItem('token');
   const [userLib, setUserLib] = useState({});
@@ -44,7 +44,7 @@ const Store = ({ userId }) => {
   useEffect(() => {
     if (sQuery) {
       const modQ = sQuery.replace(' ', '+');
-      const searchUrl = `https://www.googleapis.com/books/v1/volumes?q=+${selectedCat}:${modQ}&langRestrict=en&printType=books&maxResults=${resultsPerPage}&startIndex=${(currentPage - 1) * resultsPerPage}&orderBy=relevance`;
+      const searchUrl = `https://www.googleapis.com/books/v1/volumes?q=${modQ}+${selectedCat}:${modQ}&langRestrict=en&printType=books&maxResults=${resultsPerPage}&startIndex=${(currentPage - 1) * resultsPerPage}&orderBy=relevance`;
       // TODO: adjust size based on filtered results to have 10 on every page
       async function getRes() {
         await axios.get(searchUrl).then((response) => {
@@ -116,7 +116,7 @@ const Store = ({ userId }) => {
 
   return (
     <div className="store">
-      <label className="pageLabel">Store</label>
+      <h1 className="pageLabel">Store</h1>
       <div className='SearchArea'>
         <form className="searchBar" onSubmit={handleSubmit}>
           <select className='type' id='type' value={selectedCat} onChange={(e) => setSCat(e.target.value)} >

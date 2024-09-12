@@ -18,6 +18,9 @@
     object-fit:cover;
 }
 
+.data {
+    padding: 10px;
+}
 
 .unFriends .uName {
     color: rgba(90, 7, 255, 0.959);
@@ -117,24 +120,32 @@
     margin-left: 10px;
 }
 
-
-.libNums {
+.bottom {
+    margin-top: 20px;
     display: flex;
-    justify-content: center;
-    margin-top: 25px;
-
+    flex-direction: row;
+    justify-content: space-between;
 }
+
+.nowRead {
+    display: flex;
+    flex-direction: column;
+    border-top: none;
+    padding-right: 10vb;
+}
+
+
 .lib {
     display: flex;
     flex-direction: column;
     align-items: center;
     border: 2px solid mediumpurple;
     border-top: none;
-    padding: 3px;
+    padding: 10px;
     background-color: rgba(255, 248, 220, 0.911);
-    margin-right: 5px;
+    
 }
-.lib .cat {
+.bottom .cat {
     color: rgba(90, 7, 255, 0.959);
 }
 .lib .value {

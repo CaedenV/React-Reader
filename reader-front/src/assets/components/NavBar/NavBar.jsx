@@ -4,7 +4,7 @@ import logo from '../../../assets/logo.png';
 import Popup from 'reactjs-popup';
 import Login from '../Login-Register/Login';
 import Register from '../Login-Register/Register';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import NotifList from '../NotifDisplay/NotifList';
 import axios from 'axios';
 import { userBack } from '../../backendRoutes';
@@ -14,6 +14,7 @@ const NavBar = ({ userId, updateUserId }) => {
     const [registerPopOpen, setRegisterPopOpen] = useState(false);
     const [nowRead, setNowRead] = useState("");
     const token = localStorage.getItem('token');
+    const nav = useNavigate();
 
     const handleLoginClick = () => {
         setLoginPopOpen(true);
@@ -26,8 +27,10 @@ const NavBar = ({ userId, updateUserId }) => {
         setLoginPopOpen(true);
     }
     const handleLogOutClick = () => {
+        const redirect = `/`;
         localStorage.clear();
         updateUserId(null);
+        nav(redirect);
     }
 
     useEffect(() => {
@@ -84,4 +87,4 @@ const NavBar = ({ userId, updateUserId }) => {
     )
 }
 
-export default NavBar
+export default NavBar;

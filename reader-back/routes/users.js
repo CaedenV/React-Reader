@@ -51,7 +51,7 @@ router.post('/register', async (req, res) => {
     const hashedPassword = hashPassword(password);
     let query = "insert into users (userName, email, password) values (?,?,?)";
     const results = await db.queryDatabase(query, [userName, email, hashedPassword]);
-    const token = jwt.sign({ id: results[0].insertId }, process.env.ACCESS_TOKEN, { expiresIn: '3h' });
+    const token = jwt.sign({ id: results.insertId }, process.env.ACCESS_TOKEN, { expiresIn: '3h' });
     return res.status(200).json({ success: true, message: "Login Successful!", token: token });
   }
   catch (e) {
@@ -81,6 +81,7 @@ router.post('/login', async (req, res) => {
         return res.json({ success: false, message: 'Incorrect Email or Password.' });
       }
       const token = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN, { expiresIn: '3h' });
+      //get time stamp of login/register. Crate another timestamp for 2hr 50 min later. Check every 10 min? if current datetime = logout timestamp. 
       return res.status(200).json({ success: true, message: "Login Successful!", token: token });
     });
   } catch (error) {
@@ -110,6 +111,23 @@ router.get('/getMe', verifyJWT, async (req, res) => {
     }
     const user = results[0];
     user.pic = `http://localhost:8080${results[0].pic}`;
+
+    return res.status(200).json({ success: true, user });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+// Get User's favorite Genre & Current read for recs
+router.get('/getRecInfo', verifyJWT, async (req, res) => {
+  const id = req.user;
+  try {
+    const query = "SELECT favGenre, nowRead FROM users WHERE id = ?";
+    const results = await db.queryDatabase(query, [id]);
+    if (results.length <= 0) {
+      return res.status(404).json({ success: false, message: 'User not found.' });
+    }
+    const user = results[0];
 
     return res.status(200).json({ success: true, user });
   } catch (error) {

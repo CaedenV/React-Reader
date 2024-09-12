@@ -2,10 +2,14 @@
     overflow-x: scroll;
     overflow-y: hidden;
     white-space: nowrap;
-    margin-bottom: 100px;
+    margin-bottom: 50px;
+}
+.books>* {
+    display: inline-block;
+    vertical-align: top;
 }
 
-.recsOverall {
+.dashboard {
     display: flex;
     flex-direction: column;
     align-items: normal;
@@ -23,4 +27,17 @@
     color: mediumpurple;
     margin-bottom: 15px;
     border-bottom: 3px solid mediumpurple;
+}
+.group {
+    margin-bottom: 50px;
+    border: 2px solid rgb(173, 73, 255);
+    border-radius: 10px;
+    padding-top: 20px ;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+.dashboard>h1{
+    color: mediumpurple;
+    font-size: 50px;
+    margin-bottom: 50px;
 }

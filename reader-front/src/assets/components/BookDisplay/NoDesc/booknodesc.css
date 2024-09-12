@@ -10,7 +10,8 @@
     color: mediumpurple;
     font-family: 'Merriweather', serif;
     margin-left: 10px;
-    
+    white-space: pre-wrap;
+    max-width: 200px;
 }
 
 .bnGenre{
@@ -35,4 +36,5 @@
 }
 .libNbooks{
     margin-left: 20px;
+    padding-bottom: 7px;
 }

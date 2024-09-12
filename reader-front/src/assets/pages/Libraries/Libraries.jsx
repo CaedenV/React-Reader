@@ -63,6 +63,7 @@ const Libraries = ({ userId }) => {
               auth={book.author}
               avgRate={book.avgRating}
               genres={book.genre}
+              rateCount={book.rateCount}
               id={book.id}
               user={userId}
               lib={userLib}
@@ -82,6 +83,7 @@ const Libraries = ({ userId }) => {
                 pubDate={book.pubDate}
                 auth={book.author}
                 avgRate={book.avgRating}
+                rateCount={book.rateCount}
                 genres={book.genre}
                 desc={book.desc}
                 id={book.id}
@@ -102,6 +104,7 @@ const Libraries = ({ userId }) => {
                 pubDate={book.pubDate}
                 auth={book.author}
                 avgRate={book.avgRating}
+                rateCount={book.rateCount}
                 genres={book.genre}
                 desc={book.desc}
                 id={book.id}

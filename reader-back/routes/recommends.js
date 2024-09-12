@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
+const verifyJWT = require('./verify');
 
 // Calculate Jaccard similarity between two book descriptions
 function jaccardSimilarity(desc1, desc2) {
@@ -25,73 +26,93 @@ function calculateJaccardSimilarityMatrix(books) {
 }
 
 // Generate recommendations for a user based on their liked and ranked books
-function generateRecommendations(user, books, similarityMatrix) {
-    const userProfile = user.likedBooks.map(bookId => ({ bookId, rating: books[bookId].rating }));
-    const similarityScores = [];
-    for (let i = 0; i < books.length; i++) {
-        if (!userProfile.some(profile => profile.bookId === i)) {
-            const similarityScore = userProfile.reduce((score, profile) => score + similarityMatrix[i][profile.bookId] * profile.rating, 0);
-            similarityScores.push({ bookId: i, similarityScore });
-        }
-    }
-    similarityScores.sort((a, b) => b.similarityScore - a.similarityScore);
-    return similarityScores.map(score => score.bookId);
+// function generateRecommendations(user, books, similarityMatrix) {
+//     const userProfile = user.likedBooks.map(bookId => ({ bookId, rating: books[bookId].rating }));
+//     const similarityScores = [];
+//     for (let i = 0; i < books.length; i++) {
+//         if (!userProfile.some(profile => profile.bookId === i)) {
+//             const similarityScore = userProfile.reduce((score, profile) => score + similarityMatrix[i][profile.bookId] * profile.rating, 0);
+//             similarityScores.push({ bookId: i, similarityScore });
+//         }
+//     }
+//     similarityScores.sort((a, b) => b.similarityScore - a.similarityScore);
+//     return similarityScores.map(score => score.bookId);
+// }
+
+async function generateFavAuthorBooks(userId, favGenre) {
+    //1. Find the most common authors
+    const commonAuthQ = `
+        SELECT books.author, count(*) as count
+        FROM favbooks
+        INNER JOIN books on favbooks.bookId = books.id
+        WHERE userId = ? AND favbooks.bookRank < 11
+        GROUP BY books.author
+        ORDER BY count DESC;
+    `;
+    const commonAuth = await db.queryDatabase(commonAuthQ, [userId]);
+    const topAuthors = commonAuth.filter(author => author.count === commonAuth[0].count);
+    const randomAuthor = topAuthors[Math.floor(Math.random() * topAuthors.length)];
+
+    const topAuthBookQ = `
+        SELECT *
+        FROM books
+        WHERE author = ?
+        ORDER BY CASE WHEN genre = ? THEN 0 ELSE 1 END, avgRating DESC, rateCount DESC
+        LIMIT 20;
+    `;
+    const topAuthBooks = await db.queryDatabase(topAuthBookQ, [randomAuthor.author, favGenre]);
+
+    return topAuthBooks;
 }
 
 // Utility function to generate recommendation lists
-async function generateRecommendations(userId) {
-    const results = getUserPreferences(userId);
-
+async function generateRecommendations(userId, favGenre, current) {
     const favoriteGenreBooksQuery = `
-            SELECT books.id, books.title, books.cover, books.desc, books.author, books.pubDate, books.genre, books.avgRating, books.rateCount
-            FROM books
-            WHERE books.genre = ? AND books.avgRating >= 3
-            ORDER BY books.rateCount desc
-            LIMIT 15;
-        `;
-    const favoriteGenreBooks = db.queryDatabase(favoriteGenreBooksQuery, [results.favGenre]);
+        SELECT *
+        FROM books
+        WHERE books.genre = ? AND books.avgRating >= 3
+        ORDER BY books.avgRating DESC
+        LIMIT 20;
+    `;
 
-    const favoriteAuthorBooksQuery = `
-            SELECT books.id, books.title, books.cover, books.desc, books.author, books.pubDate, books.genre, books.avgRating, books.rateCount
-            FROM books
-            INNER JOIN (
-            SELECT bookId, SUM(rank) as totalRank
-            FROM favbooks
-            WHERE userId = ?
-            GROUP BY bookId
-            ) as favoriteBookRanks ON books.id = favoriteBookRanks.bookId
-            WHERE books.author IN (
-            SELECT author
-            FROM favbooks
-            WHERE userId = ?
-            GROUP BY author
-            HAVING SUM(bookRank)  < 11
-          )
-        `;
-    const favoriteAuthorBooks = db.queryDatabase(favoriteAuthorBooksQuery, [userId, userId]);
+    const popularQuery = ` 
+        SELECT * 
+        FROM books
+        WHERE books.avgRating > 3
+        ORDER BY avgRating DESC, rateCount DESC
+        LIMIT 20;
+    `;
 
-    const popularBooksQuery = ` 
-            SELECT books.id, books.title, books.cover, books.desc, books.author, books.pubDate, books.genre, books.avgRating, books.rateCount
-            FROM books
-            WHERE books.rateCount
-        `; // TODO: get max rateCount and avgRating
-    const popularBooks = db.queryDatabase(popularBooksQuery, []);
+    const recentQuery = `
+        SELECT *
+        FROM books
+        ORDER BY pubDate DESC, avgRating DESC
+        LIMIT 20;
+    `;
+    // Recs based on notifs. Find similarites between books (genre, author, pubDate, etc) within notifs or librarie (owned, faved)
 
-    return Promise.all([favoriteGenreBooks, favoriteAuthorBooks, popularBooks])
-        .then(([genreBased, authorBased, popularBased]) => {
-            return {
-                genreBased: genreBased,
-                authorBased: authorBased,
-                popular: popularBased, 
-            };
-        });
+    const [favoriteGenreBooks, favoriteAuthorBooks, popularBooks, recentBooks] = await Promise.all([
+        db.queryDatabase(favoriteGenreBooksQuery, [favGenre]),
+        generateFavAuthorBooks(userId, favGenre),
+        db.queryDatabase(popularQuery, []),
+        db.queryDatabase(recentQuery, []),
+    ]);
+
+    const recs = {
+        genreBased: favoriteGenreBooks,
+        authorBased: favoriteAuthorBooks,
+        popular: popularBooks,
+        recents: recentBooks
+    };
+
+    return recs;
 }
 
 
-router.get('/getRecs', async (req, res) => {
+router.get('/getRecs', verifyJWT, async (req, res) => {
+    const { genre, current } = req.query;
 
-
-    const recs = generateRecommendations(req.user);
+    const recs = await generateRecommendations(req.user, genre, current);
     return res.status(200).json({ success: true, recs: recs });
 });
 

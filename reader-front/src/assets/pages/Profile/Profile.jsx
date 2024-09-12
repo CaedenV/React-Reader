@@ -3,6 +3,7 @@ import React from 'react';
 import Popup from 'reactjs-popup';
 import { useState, useEffect, useRef } from "react";
 import { userBack, friendBack, notifBack } from '../../backendRoutes';
+import { bisacGenres } from '../../bisacGenres';
 import profPic from '../../profPic.png';
 import axios from "axios";
 import { Link } from 'react-router-dom';
@@ -18,6 +19,8 @@ const Profile = ({ userId }) => {
   const [file, setFile] = useState(null);
   const inputRef = useRef(null);
   const token = localStorage.getItem('token');
+
+
 
   useEffect(() => {
     // Retrieve info from the users table
@@ -106,9 +109,6 @@ const Profile = ({ userId }) => {
     formData.set('userName', formData.get('userName') || user.userName);
     formData.set('favGenre', formData.get('favGenre') || user.favGenre);
 
-    for (const [key, value] of formData.entries()) {
-      console.log(`${key}: ${value}`);
-    }
     await axios.patch(`${userBack}/update`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -154,6 +154,12 @@ const Profile = ({ userId }) => {
               </div>
               <div className="changeText">
                 <input type="text" className='top' name="userName" placeholder={user.userName || "UserName"} />
+                <select className='type' id='type' value={user.favGenre} >
+                  {/* {bisacGenres.map((genre, i) => {
+                    return (<option value={genre} key={i}> {genre}</option>);
+                  })} */}
+
+                </select>
                 <input type="text" name="favGenre" placeholder={user.favGenre || "Favorite Genre"} />
                 <label>{editResponse}</label>
                 <button type='submit'>Save</button>
@@ -167,26 +173,31 @@ const Profile = ({ userId }) => {
           <label>{user.favGenre || " This user hasn't set their favorite genre."}</label>
         </div>
 
-        <div className="libNums">
-          {user.nowRead ? <div className="nowRead">
-            <label className='cat'>Currently Reading:</label>
-            <SmallBook bookId={user.nowRead} />
-          </div> : <></>}
-          <Link className='libNums' to={`/${userId}/library`}>
-            <div className="lib owns">
-              <label className='cat'> Owns </label>
-              <label className='value'> {libNums.own} </label>
-            </div>
-            <div className="lib favs">
-              <label className='cat'> Favorites </label>
-              <label className='value'> {libNums.fav} </label>
-            </div>
-            <div className="lib wishes">
-              <label className='cat'> Wishlist </label>
-              <label className='value'> {libNums.wish} </label>
-            </div>
-          </Link>
+        <div className="bottom">
+          {user.nowRead ?
+            <div className="nowRead">
+              <label className='cat'>Currently Reading:</label>
+              <SmallBook bookId={user.nowRead} />
+            </div> : <></>}
+          <div className="libNums">
+
+            <Link className='libNums' to={`/${userId}/library`}>
+              <div className="lib owns">
+                <label className='cat'> Owns </label>
+                <label className='value'> {libNums.own} </label>
+              </div>
+              <div className="lib favs">
+                <label className='cat'> Favorites </label>
+                <label className='value'> {libNums.fav} </label>
+              </div>
+              <div className="lib wishes">
+                <label className='cat'> Wishlist </label>
+                <label className='value'> {libNums.wish} </label>
+              </div>
+            </Link>
+          </div>
         </div>
+
       </div>
     </div >
 

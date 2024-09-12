@@ -30,9 +30,13 @@ const FriendItem = ({ friend, relationship, pending, onPendingChange }) => {
         <div className="fItem" >
             <p className='namePic'>
                 <Link to={userId != friend.id ? `/profile/${friend.userName}` : `/${userId}/profile`} > <img src={`${backend}${friend.pic}`} className='miniF' /> </Link>
-                <Link to={userId != friend.id ? `/profile/${friend.userName}` : `/${userId}/profile`} > {friend.userName} </Link>
+                <Link to={userId != friend.id ? `/profile/${friend.userName}` : `/${userId}/profile`} style={{fontWeight: 'bold'}}> {friend.userName} </Link>
             </p>
-            {userId != friend.id ? !pending ? <button onClick={() => addOrRemoveFriend(friend, relationship)}>{relationship}</button> : <label> Requested </label> : <></>}
+            {userId != friend.id ? !pending ? <button onClick={() => addOrRemoveFriend(friend, relationship)}>{relationship}</button> :
+                <label style={{ fontSize: '15px', color: 'purple', fontWeight: 'bold' }} className='requested'>
+                    Sent
+                </label> : <></>
+            }
 
         </div>
     )
