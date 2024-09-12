@@ -1,43 +1,66 @@
-.books{
-    overflow-x: scroll;
-    overflow-y: hidden;
-    white-space: nowrap;
-    margin-bottom: 50px;
-}
-.books>* {
-    display: inline-block;
-    vertical-align: top;
-}
-
 .dashboard {
     display: flex;
     flex-direction: column;
     align-items: normal;
 }
 
-.recsOverall > h1{
-    font-family: 'Lora', serif;
-    font-size: 100px;
+.dashboard>h1 {
     color: mediumpurple;
-    margin-bottom: 55px;
+    font-size: 50px;
+    margin-bottom: 50px;
 }
-.group > h2{
+
+.group>h2 {
     font-family: 'Merriweather', serif;
     font-size: 30px;
-    color: mediumpurple;
+    color: rgb(145, 90, 255);
     margin-bottom: 15px;
     border-bottom: 3px solid mediumpurple;
 }
+
 .group {
     margin-bottom: 50px;
     border: 2px solid rgb(173, 73, 255);
     border-radius: 10px;
-    padding-top: 20px ;
+    padding-top: 20px;
     padding-left: 20px;
     padding-right: 20px;
+    background-color: rgba(214, 194, 255, 0.63);
 }
-.dashboard>h1{
-    color: mediumpurple;
-    font-size: 50px;
-    margin-bottom: 50px;
+
+.books {
+    overflow-x: scroll;
+    overflow-y: hidden;
+    white-space: nowrap;
+    margin-bottom: 30px;
+}
+
+.books>* {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.books::-webkit-scrollbar {
+    width: 10px;
+    /* Set the scrollbar width */
+    height: 11px;
+    /* Set the scrollbar height */
+    background-color: #00000000;
+    /* Set the scrollbar background color */
+    border: 1px solid #9370D8;
+    border-radius: 10px;
+}
+
+/* Target the scrollbar thumb (the moving part) */
+.books::-webkit-scrollbar-thumb {
+    background-color: #AD49FF;
+    /* Set the thumb background color */
+    border-radius: 10px;
+    /* Set the thumb border radius */
+}
+
+/* Target the scrollbar track (the background) */
+.books::-webkit-scrollbar-track {
+    background-color: #00000000;
+    /* Set the track background color */
 }

@@ -1,6 +1,7 @@
 .libBooks{
     margin: 0px 25px 40px 25px;
     display: flex;
+    color: rgb(121, 54, 255);
 }
 
 .bookCover{
@@ -12,14 +13,12 @@
 }
 
 .bookInfo{
-    color: mediumpurple;
     font-family: 'Merriweather', serif;
     margin-left: 10px;
 }
 
 .bookGenre{
     font-size: 15px;
-    color: mediumpurple;
     line-height: 20px;
     margin-top: 10px;
     margin-right: 10px;
@@ -27,9 +26,9 @@
 }
 
 .bookTitle{
-    font-family: 'Phudu', cursive;
+    font-family: 'Bebas Neue', serif;
     font-size: 28px;
-    font-weight: 700;
+    font-weight: 500;
     margin-top: 10px;
     cursor: pointer;
 }

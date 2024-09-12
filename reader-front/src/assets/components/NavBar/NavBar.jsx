@@ -29,6 +29,7 @@ const NavBar = ({ userId, updateUserId }) => {
     const handleLogOutClick = () => {
         const redirect = `/`;
         localStorage.clear();
+        sessionStorage.clear();
         updateUserId(null);
         nav(redirect);
     }

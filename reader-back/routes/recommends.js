@@ -89,7 +89,7 @@ async function generateRecommendations(userId, favGenre, current) {
         ORDER BY pubDate DESC, avgRating DESC
         LIMIT 20;
     `;
-    // Recs based on notifs. Find similarites between books (genre, author, pubDate, etc) within notifs or librarie (owned, faved)
+    // Recs based on notifs. Find similarites between books (genre, author, pubDate, etc) within notifs or libraries (owned, faved)
 
     const [favoriteGenreBooks, favoriteAuthorBooks, popularBooks, recentBooks] = await Promise.all([
         db.queryDatabase(favoriteGenreBooksQuery, [favGenre]),
@@ -97,7 +97,7 @@ async function generateRecommendations(userId, favGenre, current) {
         db.queryDatabase(popularQuery, []),
         db.queryDatabase(recentQuery, []),
     ]);
-
+    //console.log("accomplished promises");
     const recs = {
         genreBased: favoriteGenreBooks,
         authorBased: favoriteAuthorBooks,
@@ -111,8 +111,9 @@ async function generateRecommendations(userId, favGenre, current) {
 
 router.get('/getRecs', verifyJWT, async (req, res) => {
     const { genre, current } = req.query;
-
+    //console.log("in endpoint");
     const recs = await generateRecommendations(req.user, genre, current);
+    //console.log("recs returned");
     return res.status(200).json({ success: true, recs: recs });
 });
 

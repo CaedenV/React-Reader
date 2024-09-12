@@ -49,3 +49,26 @@
 .ownList>* {
     display: inline-block;
 }
+
+.ownList::-webkit-scrollbar, 
+.favList::-webkit-scrollbar, 
+.wishList::-webkit-scrollbar {
+    width: 10px;
+    height: 11px;
+    background-color: #00000000;
+    border: 1px solid #9370D8;
+    border-radius: 10px;
+}
+
+.ownList::-webkit-scrollbar-thumb, 
+.favList::-webkit-scrollbar-thumb, 
+.wishList::-webkit-scrollbar-thumb {
+    background-color: #AD49FF;
+    border-radius: 10px;
+}
+
+.ownList::-webkit-scrollbar-track, 
+.favList::-webkit-scrollbar-track, 
+.wishList::-webkit-scrollbar-track {
+    background-color: #00000000;
+}

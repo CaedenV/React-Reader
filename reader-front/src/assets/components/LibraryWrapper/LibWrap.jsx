@@ -9,7 +9,7 @@ const LibWrap = ({ libraries, bookId }) => {
     const [isWished, setWished] = useState(false);
     const [isOwned, setOwned] = useState(false);
     const [favRank, setRank] = useState(0);
-    
+
     useEffect(() => {
         if (libraries.wished) {
             for (const obj of libraries.wished) {
@@ -29,19 +29,14 @@ const LibWrap = ({ libraries, bookId }) => {
         //console.log(bookId + ": wished " + isWished + ", faved " + favRank + ", owned: " + isOwned);
     }, [libraries]);
 
-    
+
 
     return (
-        <div className="wrap">
-            {active ?
-                <div className="btns">
-                    <button className='display' onClick={() => setActive(!active)}> - </button>
-                    <FavBtn bookId={bookId} favRank={favRank} />
-                    <WishBtn bookId={bookId} isWished={isWished} />
-                    <OwnBtn bookId={bookId} isOwned={isOwned} />
-                </div> : <button className='display' onClick={() => setActive(!active)}> + </button>}
+        <div className="btns">
+            <FavBtn bookId={bookId} favRank={favRank} />
+            <WishBtn bookId={bookId} isWished={isWished} />
+            <OwnBtn bookId={bookId} isOwned={isOwned} />
         </div>
-
     )
 }
 

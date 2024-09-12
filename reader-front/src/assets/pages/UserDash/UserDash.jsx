@@ -9,43 +9,57 @@ const UserDash = ({ userId }) => {
   const [recs, setRecs] = useState({});
   const [userLib, setUserLib] = useState({});
 
-  const token = localStorage.getItem('token'); 
+  const token = localStorage.getItem('token');
+  
 
   useEffect(() => {
     async function FetchData() {
-      await axios.get(`${userBack}/getRecInfo`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-        .then((response) => { setUser(response.data.user); });
-      await axios.get(`${userBack}/libraries`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-        .then((response) => { setUserLib(response.data.library); })
-    }
-
-    async function FetchRecs() {
-      if (user.favGenre) {
-        await axios.get(`${recBack}/getRecs`, {
-          params: {
-            genre: user.favGenre,
-            current: user.nowRead,
-          },
+      try {
+        const userResponse = await axios.get(`${userBack}/getRecInfo`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setUser(userResponse.data.user);
+        const libraryResponse = await axios.get(`${userBack}/libraries`, {
           headers: { Authorization: `Bearer ${token}` }
         })
-          .then((response) => { setRecs(response.data.recs); });
+        setUserLib(libraryResponse.data.library);
+      } catch (error) {
+        console.error('Error fetching data: ', error);
       }
     }
 
-    FetchData().then(() => {
-      FetchRecs();
-    });
+    FetchData();
   }, [userId]);
+
+  useEffect(() => {
+    async function FetchRecs() {
+      if (user && user.favGenre) {
+        try {
+          const recsResponse = await axios.get(`${recBack}/getRecs`, {
+            params: {
+              genre: user.favGenre,
+              current: user.nowRead,
+            },
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          setRecs(recsResponse.data.recs);
+          sessionStorage.setItem('recs', JSON.stringify(recsResponse.data.recs));
+          //console.log("Fetched recommendations:", recsResponse.data.recs);
+        } catch (error) {
+          console.error('Error fetching recs: ', error);
+        }
+      }
+    }
+    if (user && user.favGenre) {
+      FetchRecs();
+    }
+  }, [user])
 
   return (
     <div className="dashboard">
       <h1 className='dashTitle'>Dashboard</h1>
 
-      {user.favGenre && 
+      {user.favGenre &&
         <div className="genre group">
           <h2>{user.favGenre} books you may enjoy:</h2>
           <div className="books">
@@ -69,7 +83,7 @@ const UserDash = ({ userId }) => {
         </div>
       }
 
-      {userLib && userLib.faved &&
+      {userLib && userLib.faved && recs &&
         <div className="author group">
           <h2>Based on some of your favorite authors:</h2>
           <div className="books">
