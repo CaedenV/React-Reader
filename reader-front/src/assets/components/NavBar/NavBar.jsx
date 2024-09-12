@@ -4,6 +4,7 @@ import logo from '../../../assets/logo.png';
 import Popup from 'reactjs-popup';
 import Login from '../Login-Register/Login';
 import Register from '../Login-Register/Register';
+import TokenWarning from '../Login-Register/TokenWarning';
 import { Link, useNavigate } from 'react-router-dom';
 import NotifList from '../NotifDisplay/NotifList';
 import axios from 'axios';
@@ -12,6 +13,10 @@ import { userBack } from '../../backendRoutes';
 const NavBar = ({ userId, updateUserId }) => {
     const [loginPopOpen, setLoginPopOpen] = useState(false);
     const [registerPopOpen, setRegisterPopOpen] = useState(false);
+
+    const [tokenWarning, setTokenWarning] = useState(false);
+    const [expiresAt, setExpiresAt] = useState(null);
+
     const [nowRead, setNowRead] = useState("");
     const token = localStorage.getItem('token');
     const nav = useNavigate();
@@ -48,6 +53,19 @@ const NavBar = ({ userId, updateUserId }) => {
         }
     }, [userId]);
 
+    useEffect(() => {
+        if (token) {
+          const warningTime = expiresAt - 10 * 60 * 1000; // 10 minutes before expiration
+          const timer = setTimeout(() => {
+            setTokenWarning(true);
+          }, warningTime - Date.now());
+      
+          return () => {
+            clearTimeout(timer);
+          };
+        }
+      }, [userId]);
+
 
     return (
         <div>
@@ -82,8 +100,9 @@ const NavBar = ({ userId, updateUserId }) => {
                     )}
                 </div>
             </nav>
-            {registerPopOpen && <Register onClose={() => setRegisterPopOpen(false)} onSign={handleSignRegClose} updateUserId={updateUserId} />}
-            {loginPopOpen && <Login onClose={() => setLoginPopOpen(false)} updateUserId={updateUserId} />}
+            {registerPopOpen && <Register onClose={() => setRegisterPopOpen(false)} onSign={handleSignRegClose} updateUserId={updateUserId} setExpiresAt={setExpiresAt} />}
+            {loginPopOpen && <Login onClose={() => setLoginPopOpen(false)} updateUserId={updateUserId} setExpiresAt={setExpiresAt} />}
+            {tokenWarning && <TokenWarning expiresAt={expiresAt} setExpiresAt={setExpiresAt}/>}
         </div>
     )
 }

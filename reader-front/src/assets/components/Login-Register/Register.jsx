@@ -6,7 +6,7 @@ import { userBack } from '../../backendRoutes';
 import { jwtDecode } from "jwt-decode";
 import profPic from '../../profPic.png';
 
-const Register = ({ onClose, onSign, updateUserId }) => {
+const Register = ({ onClose, onSign, updateUserId, setExpiresAt }) => {
     const [typedPass, setTypedPass] = useState('');
     const [valid, setValid] = useState('');
 
@@ -34,6 +34,7 @@ const Register = ({ onClose, onSign, updateUserId }) => {
         if(response.data.success) {
             localStorage.setItem('token', response.data.token);
             updateUserId(jwtDecode(response.data.token));
+            setExpiresAt(response.data.expiresAt);
             onClose;
         }
     }

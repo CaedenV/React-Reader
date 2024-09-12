@@ -5,7 +5,7 @@ import { userBack } from '../../backendRoutes';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 
-const Login = ({ onClose, updateUserId }) => {
+const Login = ({ onClose, updateUserId, setExpiresAt }) => {
     const [valid, setValid] = useState('');
     const submitForm = async (e) => {
         e.preventDefault();
@@ -19,6 +19,8 @@ const Login = ({ onClose, updateUserId }) => {
         if (response.data.success) {
             localStorage.setItem('token', response.data.token);
             updateUserId(jwtDecode(response.data.token).id);
+            console.log(response.data.expiresAt);
+            setExpiresAt(response.data.expiresAt);
             onClose;
         }
     }

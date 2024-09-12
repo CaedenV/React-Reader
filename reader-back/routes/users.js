@@ -52,7 +52,8 @@ router.post('/register', async (req, res) => {
     let query = "insert into users (userName, email, password) values (?,?,?)";
     const results = await db.queryDatabase(query, [userName, email, hashedPassword]);
     const token = jwt.sign({ id: results.insertId }, process.env.ACCESS_TOKEN, { expiresIn: '3h' });
-    return res.status(200).json({ success: true, message: "Login Successful!", token: token });
+    const expiresAt = Date.now() + 3 * 60 * 60 * 1000; // 3 hours from now
+    return res.status(200).json({ success: true, message: "Login Successful!", token: token, expiresAt: expiresAt });
   }
   catch (e) {
     return res.status(500).json({ success: false, message: e.message });
@@ -81,8 +82,10 @@ router.post('/login', async (req, res) => {
         return res.json({ success: false, message: 'Incorrect Email or Password.' });
       }
       const token = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN, { expiresIn: '3h' });
+      //const expiresAt = Date.now() + 3 * 60 * 60 * 1000; // 3 hours from now
+      const expiresAt = Date.now() + 1 * 60 * 1000; // 1 min from now
       //get time stamp of login/register. Crate another timestamp for 2hr 50 min later. Check every 10 min? if current datetime = logout timestamp. 
-      return res.status(200).json({ success: true, message: "Login Successful!", token: token });
+      return res.status(200).json({ success: true, message: "Login Successful!", token: token, expiresAt: expiresAt });
     });
   } catch (error) {
     return res.status(500).json({ success: false, message: 'An error occured while logging in.\n' + error.message });
