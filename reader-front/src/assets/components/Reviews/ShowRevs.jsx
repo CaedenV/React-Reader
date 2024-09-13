@@ -2,32 +2,22 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import SingleRev from "./SingleRev";
 import { revBack } from "../../backendRoutes";
+import './singleRev.css';
 
-const ShowRevs = ({bookId}) => {
-    const [reviews, setReviews] = useState([]);
-
-    useEffect(() => {
-      async function getReviews() {
-        axios.get(`${revBack}/getByBook/${bookId}`)
-        .then((response) => {
-          setReviews(response.data.revs);
-        });
-      } 
-      
-      getReviews();
-      setInterval(getReviews, 60000);
-    }, [bookId]);
-  
+const ShowRevs = ({bookId, getReviews, reviews}) => {
     return (
-      <div>
+      <div className="revs">
         {reviews.length > 0 ? (
           <ul>{reviews.map((review, i) => (
               <SingleRev
                 key={i}
-                user={review.user}
+                id={review.id}
+                bookId={bookId}
+                user={review.userName}
                 revTitle={review.title}
                 revRating={review.rating}
                 revText={review.text}
+                getReviews={getReviews}
               />))}
           </ul>
         ) : (
@@ -38,4 +28,4 @@ const ShowRevs = ({bookId}) => {
     )
 }
 
-export default ShowRevs
+export default ShowRevs;

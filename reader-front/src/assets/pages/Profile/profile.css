@@ -1,3 +1,8 @@
+.profilePage {
+    display: flex;
+    flex-direction: column;
+}
+
 .topCategory {
     margin-top: 20px;
     display: flex;
@@ -11,11 +16,12 @@
     align-items: center;
     margin-top: 10px 0;
 }
+
 .settingsProfPic>img {
     width: 500px;
     height: 500px;
     border-radius: 20px;
-    object-fit:cover;
+    object-fit: cover;
 }
 
 .data {
@@ -26,6 +32,7 @@
     color: rgba(90, 7, 255, 0.959);
     font-size: 72px;
 }
+
 .unFriends>button {
     font-size: xx-large;
     color: mediumpurple;
@@ -44,18 +51,21 @@
     margin-right: 5px;
     border: 1px solid rgb(255, 166, 56);
 }
+
 .friendsList .namePic {
     margin-top: 3px;
     display: flex;
     flex-direction: row;
     align-items: center;
 }
+
 .friendsList .fItem {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
 }
+
 .fItem>button {
     background-color: transparent;
     padding-left: 5px;
@@ -65,6 +75,7 @@
     border-radius: 50%;
     color: mediumpurple;
 }
+
 .fItem>button:hover {
     background-color: mediumpurple;
     color: bisque;
@@ -78,6 +89,7 @@
     border-radius: 5px;
     font-size: larger;
 }
+
 .addPop {
     display: flex;
     flex-direction: row;
@@ -85,8 +97,9 @@
     margin-bottom: 10px;
     padding-bottom: 3px;
     border-bottom: 1px solid mediumpurple;
-    
+
 }
+
 .enterName>input {
     background-color: bisque;
     color: mediumpurple;
@@ -97,9 +110,11 @@
     font-size: medium;
     width: 125px;
 }
+
 .enterName>input::placeholder {
     color: mediumpurple;
 }
+
 .enterName .addF {
     color: bisque;
     background-color: mediumpurple;
@@ -113,9 +128,11 @@
 .favGenre {
     margin-top: 25px;
 }
+
 .favGenre .title {
     color: rgba(90, 7, 255, 0.959);
 }
+
 .favGenre>label {
     margin-left: 10px;
 }
@@ -143,13 +160,34 @@
     border-top: none;
     padding: 10px;
     background-color: rgba(255, 248, 220, 0.911);
-    
+
 }
+
 .bottom .cat {
     color: rgba(90, 7, 255, 0.959);
 }
+
 .lib .value {
     font-size: x-large;
+}
+
+
+.userRevs {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+}
+.userRevs>h1 {
+    color: rgba(90, 7, 255, 0.959);
+    border-bottom: 1px solid mediumpurple;
+}
+.rev {
+    padding: 5px;
+    font-size: 30px;
+    color: rgb(104, 76, 158);
+}
+.revInfo {
+    margin-right: 50px;
 }
 
 
@@ -167,14 +205,17 @@
     border: 2px solid rgb(116, 57, 235);
     padding-left: 5px;
 }
+
 .changeText .top {
     border-radius: 8px;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
 }
+
 .changeText>input::placeholder {
     color: rgb(116, 57, 235);
 }
+
 .changeText>button {
     color: rgb(116, 57, 235);
     font-size: xx-large;
@@ -194,12 +235,14 @@
     border: 5px solid rgb(116, 57, 235);
     border-radius: 8px;
 }
+
 .edit .changeText {
     display: flex;
     flex-direction: column;
     margin-left: 10px;
 }
-.edit>label{
+
+.edit>label {
     color: aliceblue;
     font-size: xx-large;
 }

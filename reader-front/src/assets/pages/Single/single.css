@@ -7,8 +7,9 @@
 
 .singleBookTitle {
     text-align: left;
-    font-family: 'Phudu', cursive;
-    font-size: 50px;
+    font-family: 'Bebas Neue';
+    font-size: 90px;
+    font-weight: 700;
     margin-left: 12px;
     color: mediumpurple;
 }
@@ -32,6 +33,7 @@
     font-size: 16px;
     color: rgb(117, 87, 177);
     flex: 3;
+    border-bottom: 1px solid mediumpurple;
 }
 
 .singleBookDesc {

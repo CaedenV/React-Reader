@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { revBack } from '../../backendRoutes';
 
-const MakeRev = ({ bookId }) => {
+const MakeRev = ({ bookId, getReviews }) => {
     const [rating, setRating] = useState(null);
     const token = localStorage.getItem('token');
 
@@ -25,6 +25,7 @@ const MakeRev = ({ bookId }) => {
         });
         setRating(null);
         e.target.reset();
+        getReviews();
     };
 
     return (

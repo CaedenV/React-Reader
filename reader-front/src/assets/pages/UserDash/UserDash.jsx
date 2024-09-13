@@ -43,7 +43,6 @@ const UserDash = ({ userId }) => {
             headers: { Authorization: `Bearer ${token}` }
           });
           setRecs(recsResponse.data.recs);
-          sessionStorage.setItem('recs', JSON.stringify(recsResponse.data.recs));
           //console.log("Fetched recommendations:", recsResponse.data.recs);
         } catch (error) {
           console.error('Error fetching recs: ', error);

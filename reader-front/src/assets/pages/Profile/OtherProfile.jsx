@@ -2,7 +2,7 @@ import './profile.css';
 import React from 'react';
 import Popup from 'reactjs-popup';
 import { useState, useEffect } from "react";
-import { userBack, friendBack } from '../../backendRoutes';
+import { userBack, friendBack, revBack } from '../../backendRoutes';
 import profPic from '../../profPic.png';
 import axios from "axios";
 import { useParams } from 'react-router-dom';
@@ -13,6 +13,7 @@ const OtherProfile = ({ userId }) => {
     const [other, setOther] = useState({});
     const [otherFriends, setOtherFriends] = useState([]);
     const [libNums, setLibNums] = useState({});
+    const [userRevs, setUserRevs] = useState({});
     const [pendingFriends, setPendingFriends] = useState([]);
     const [userFriends, setUserFriends] = useState([]);
     const token = localStorage.getItem('token');
@@ -49,8 +50,20 @@ const OtherProfile = ({ userId }) => {
         }
         GetFriends();
         GetMainInfo();
-        setInterval(GetFriends, 60000);
-    }, [userId]);
+    }, [userId, userName]);
+
+    useEffect(() => {
+        async function getRevs() {
+            await axios.get(`${revBack}/user/${userName}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+                .then((response) => { setUserRevs(response.data.userRevs); });
+        }
+
+        getRevs();
+        //console.log(userRevs);
+    }, [userName]);
+
 
     const handlePendingChange = (friend, pending) => {
         setPendingFriends(prevPendingFriends => {
@@ -67,44 +80,66 @@ const OtherProfile = ({ userId }) => {
 
 
     return (
-        <div className="topCategory" >
-            <div className="settingsProfPic">
-                <img className="topProfile"
-                    src={(other.pic) || profPic} />
-            </div>
-            <div className="data">
-                <div className="unFriends">
-                    <label className='uName'>{userName}</label>
+        <div className="profilePage">
+            <div className="topCategory" >
+                <div className="settingsProfPic">
+                    <img className="topProfile"
+                        src={(other.pic) || profPic} />
+                </div>
+                <div className="data">
+                    <div className="unFriends">
+                        <label className='uName'>{userName}</label>
 
-                    <Popup trigger={<button className="friends">Friends</button>} position="bottom center">
-                        <div className="listPop">
-                            <FriendList userFriends={userFriends} otherFriends={otherFriends} userId={userId} pendingFriends={pendingFriends} onPendingChange={handlePendingChange} />
+                        <Popup trigger={<button className="friends">Friends</button>} position="bottom center">
+                            <div className="listPop">
+                                <FriendList userFriends={userFriends} otherFriends={otherFriends} userId={userId} pendingFriends={pendingFriends} onPendingChange={handlePendingChange} />
+                            </div>
+                        </Popup>
+                    </div>
+                    <div className="favGenre">
+                        <label className='title'>Favorite Genre:</label>
+                        <label>{other.favGenre || " This user hasn't set their favorite genre."}</label>
+                    </div>
+
+                    <div className="libNums">
+                        {other.nowRead ? <div className="nowRead">
+                            <label className='cat'>Currently Reading:</label>
+                            <SmallBook bookId={other.nowRead} />
+                        </div> : <></>}
+                        <div className="lib owns">
+                            <label className='cat'> Owns </label>
+                            <label className='value'> {libNums.own} </label>
                         </div>
-                    </Popup>
+                        <div className="lib favs">
+                            <label className='cat'> Favorites </label>
+                            <label className='value'> {libNums.fav} </label>
+                        </div>
+                        <div className="lib wishes">
+                            <label className='cat'> Wishlist </label>
+                            <label className='value'> {libNums.wish} </label>
+                        </div>
+                    </div>
                 </div>
-                <div className="favGenre">
-                    <label className='title'>Favorite Genre:</label>
-                    <label>{other.favGenre || " This user hasn't set their favorite genre."}</label>
-                </div>
+            </div>
+            <div className="userRevs">
+                {userRevs && userRevs.length > 0 ?
+                    <h1 className="revListTitle"> {userName}'s Reviews</h1> :
+                    <h1 className="revListTitle">{userName} hasn't left any reviews. Help them out!</h1>
+                }
 
-                <div className="libNums">
-                    {other.nowRead ? <div className="nowRead">
-                        <label className='cat'>Currently Reading:</label>
-                        <SmallBook bookId={other.nowRead} />
-                    </div> : <></>}
-                    <div className="lib owns">
-                        <label className='cat'> Owns </label>
-                        <label className='value'> {libNums.own} </label>
-                    </div>
-                    <div className="lib favs">
-                        <label className='cat'> Favorites </label>
-                        <label className='value'> {libNums.fav} </label>
-                    </div>
-                    <div className="lib wishes">
-                        <label className='cat'> Wishlist </label>
-                        <label className='value'> {libNums.wish} </label>
-                    </div>
-                </div>
+                {userRevs && userRevs.length > 0 &&
+                    <ul>{userRevs.map((review, i) => (
+                        <li className="rev" key={i}>
+                            <Link className="rev" to={`/view/${review.bookId}`}>
+                                <span className="bookInfo">{review.bookTitle}: {review.author}</span> |
+                                <span className="revInfo">{review.revTitle}: {review.rating}/5<i className="reviewIcon fa-solid fa-star-half-stroke" /></span>
+                                <span className="date">{new Date(review.postedAt).toLocaleDateString()}</span>
+                            </Link>
+
+                        </li>
+                    ))}
+                    </ul>
+                }
             </div>
         </div>
     )

@@ -25,7 +25,7 @@ const NotifList = ({ userId }) => {
 
         }
         getNotifs();
-        setInterval(getNotifs, 500);
+        setInterval(getNotifs, 1000);
     }, [userId]);
 
     return (

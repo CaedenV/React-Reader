@@ -3,41 +3,67 @@ const db = require('../db');
 const router = express.Router();
 const verifyJWT = require('./verify');
 
+
+async function updateBook(rateCount, avgRate, bookId) {
+    try {
+        let updateBookQuery = "UPDATE books SET rateCount = ?, avgRating = ? WHERE id = ?";
+        await db.queryDatabase(updateBookQuery, [rateCount, avgRate, bookId]);
+    }
+    catch (err) {
+        return err.message;
+    }
+}
+async function getUserName(userId) {
+    try {
+        let nameQuery = "SELECT userName FROM users WHERE id = ?";
+        const nameData = await db.queryDatabase(nameQuery, [userId]);
+        return (nameData[0].userName);
+    } catch (error) {
+        return error.message;
+    }
+}
+
+
 router.post('/add', verifyJWT, async (req, res) => {
     const { book, rating, title, text } = req.body.review;
+
+    if (!book || !rating || !title || !text) {
+        return res.status(400).json({ success: false, message: 'Missing required fields: book, rating, title, or text.' });
+    }
     try {
-        // Get the userName of the user leaving the review.
-        let nameQuery = "SELECT userName FROM users WHERE id = ?";
-        const nameData = await db.queryDatabase(nameQuery, [req.user]);
-        const userName = nameData[0].userName;
+        const userName = await getUserName(req.user);
 
         // Check if the user has already submitted a review for this book
-        let existingReviewQuery = "select id from reviews where bookId = ? AND user = ?";
+        let existingReviewQuery = "select id from reviews where bookId = ? AND userName = ?";
         const existingReview = await db.queryDatabase(existingReviewQuery, [book, userName]);
-    
+
         if (existingReview.length > 0) {
             // If the user has already submitted a review, update the existing one
-            let updateReviewQuery = "UPDATE reviews SET rating = ?, title = ?, text = ? WHERE id = ?";
-            await db.queryDatabase(updateReviewQuery, [rating, title, text, existingReview[0].id]);
+            let updateReviewQuery = "UPDATE reviews SET rating = ?, title = ?, text = ?, postedAt = ? WHERE id = ?";
+            await db.queryDatabase(updateReviewQuery, [rating, title, text, new Date(), existingReview[0].id]);
         } else {
             // If the user hasn't submitted a review yet, insert a new one
-            let insertReviewQuery = "INSERT INTO reviews (bookId, rating, title, text, user) VALUES (?, ?, ?, ?, ?)";
-            await db.queryDatabase(insertReviewQuery, [book, rating, title, text, userName]);
+            let insertReviewQuery = "INSERT INTO reviews (bookId, rating, title, text, userName, postedAt) VALUES (?, ?, ?, ?, ?, ?)";
+            await db.queryDatabase(insertReviewQuery, [book, rating, title, text, userName, new Date()]);
         }
-    
+
         // Update book statistics
-        let numQuery = "SELECT rateCount, avgRating FROM books WHERE id = ?";
+        let numQuery = "SELECT rateCount, avgRating, prevRate FROM books WHERE id = ?";
         const ratesRow = await db.queryDatabase(numQuery, [book]);
         let rates = ratesRow[0];
-        rates.rateCount += 1;
-        rates.avgRating = ((rates.avgRating * (rates.rateCount - 1)) + rating) / rates.rateCount;
-    
-        let updateBookQuery = "UPDATE books SET rateCount = ?, avgRating = ? WHERE id = ?";
-        await db.queryDatabase(updateBookQuery, [rates.rateCount, rates.avgRating, book]);
-    
+
+        if (existingReview.length === 0) {
+            rates.avgRating = (rates.avgRating * rates.rateCount + rating) / (rates.rateCount + 1);
+            rates.rateCount += 1;
+        }
+        else {
+            rates.avgRating = ((rates.prevRate * (rates.rateCount - 1) + existingReview.rating) - existingReview.rating + rating) / rates.rateCount;
+        }
+
+        await updateBook(rates.rateCount, rates.avgRating, book);
         return res.status(200).json({ success: true, message: "Review Added Successfully." });
     } catch (error) {
-        return res.status(500).json({ success: false, message: 'Error occurred when adding or updating review. Please try again later.' + error.message });
+        return res.status(500).json({ success: false, message: 'Error occurred when adding or updating review. Please try again later.', error: error.message });
     }
 });
 
@@ -45,15 +71,14 @@ router.get('/userWrote/:revId', verifyJWT, async (req, res) => {
     const userId = req.user;
     const { revId } = req.params;
     try {
-        let query = "select user from reviews where id = ?";
+        let query = "select userName from reviews where id = ?";
         const results = await db.queryDatabase(query, [revId]);
-        const userName = results[0].user;
+        const revUser = results[0].userName;
 
         try {
-            let userQ = "select id from users where userName=?";
-            const userRow = await db.queryDatabase(userQ, [userName]);
+            const userName = await getUserName(userId);
 
-            if (userRow[0].id === userId) {
+            if (userName === revUser) {
                 return res.status(200).json({ success: true, userWrote: true });
             }
             return res.status(200).json({ success: true, userWrote: false });
@@ -64,30 +89,75 @@ router.get('/userWrote/:revId', verifyJWT, async (req, res) => {
     } catch (error) {
         return res.status(500).json({ success: false, message: error.message });
     }
-})
+});
 
-router.post('/overWrite', verifyJWT, async (req, res) => {
-    const { book, rating, title, text } = req.body.review;
+router.get('/user/:userName', verifyJWT, async (req, res) => {
+    const { userName } = req.params;
+    //console.log(req.params);
     try {
-        let update = "update reviews set rating=?,title=?,text=? where bookId=? AND user=?";
-        const results = await db.queryDatabase(update, [rating, title, text, book, req.user]);
-        if (results.affectedRows === 0) {
-            return res.status(500).json({success: false, message: "Review not found"});
+        //console.log(req.user, userName);
+        try {
+            let query = `
+                SELECT (books.id) AS bookId, (books.title) AS bookTitle, books.author, reviews.rating, (reviews.title) AS revTitle, reviews.postedAt
+                FROM reviews
+                INNER JOIN books on reviews.bookId = books.id
+                WHERE userName = ?
+                ORDER BY reviews.postedAt DESC
+            `;
+            const results = await db.queryDatabase(query, [userName]);
+            return res.status(200).json({ success: true, userRevs: results });
+        } catch (revsErr) {
+            return res.status(500).json({ success: false, message: 'An error ocurred retrieving your reviews.', error: revsErr.message });
         }
-        return res.status(200).json({success: true, message: "review updated successfully!"});
     } catch (error) {
-        return res.status(500).json({ success: false, message: 'An error occured while deleting your review.', error: error.message });
+        return res.status(500).json({ success: false, message: 'An error ocurred.', error: error.message });
     }
 });
 
 router.get('/getByBook/:bookId', async (req, res) => {
     const { bookId } = req.params;
-    let query = "select id, rating, title, text, user from reviews where bookId = ?";
+    const { userId } = req.query;
+    let userName = "";
+    if (userId) {
+        userName = await getUserName(userId);
+    }
+    //console.log(userName);
+
+    let query = `
+        select id, rating, title, text, userName 
+        from reviews 
+        where bookId = ? 
+        order by CASE WHEN userName = ? THEN 0 ELSE 1 END`;
     try {
-        const results = await db.queryDatabase(query, [bookId]);
+        const results = await db.queryDatabase(query, [bookId, userName]);
         return res.status(200).json({ success: true, revs: results });
     } catch (err) {
-        return res.status(500).json({ success: false, message: 'Error occured while retrieving reviews. Please try again later.', error: err });
+        return res.status(500).json({ success: false, message: 'Error occured while retrieving reviews. Please try again later.', error: err.message });
+    }
+});
+
+router.delete('/delete', verifyJWT, async (req, res) => {
+    const { bookId, id } = req.body;
+    try {
+        let query = "delete from reviews where id = ?";
+        const results = await db.queryDatabase(query, [id]);
+        if (results.affectedRows == 0) {
+            return res.json({ success: false, message: "Review not found." });
+        }
+        else {
+            // Update book statistics
+            let numQuery = "SELECT rateCount, avgRating, prevRate FROM books WHERE id = ?";
+            const ratesRow = await db.queryDatabase(numQuery, [bookId]);
+            let rate = ratesRow[0];
+            rate.rateCount -= 1;
+            rate.avgRating = rate.prevRate;
+
+            await updateBook(rate.rateCount, rate.avgRating, bookId)
+        }
+
+        return res.status(200).json({ success: true, message: "Review Deleted Successfully." });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: 'Error occured deleting the review. Please try again later.', error: error.message });
     }
 });
 

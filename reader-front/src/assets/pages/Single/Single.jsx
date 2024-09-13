@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import MakeRev from '../../components/Reviews/MakeRev';
 import ShowRevs from '../../components/Reviews/ShowRevs';
 import Popup from 'reactjs-popup';
-import { bookBack, friendBack, userBack } from '../../backendRoutes';
+import { bookBack, friendBack, userBack, revBack } from '../../backendRoutes';
 import LibWrap from '../../components/LibraryWrapper/LibWrap';
 import axios from 'axios';
 import ShareFriend from '../../components/ShareBtn/ShareFriend';
@@ -17,7 +17,19 @@ const Single = ({ userId }) => {
   const [bookInfo, setBookInfo] = useState({});
   const [friends, setFriends] = useState([]);
   const [userLib, setLib] = useState({});
+  const [reviews, setReviews] = useState([]);
 
+  const getReviews = async () => {
+    const params = userId ? { userId } : {};
+    axios.get(`${revBack}/getByBook/${bookId}`, { params })
+      .then((response) => {
+        setReviews(response.data.revs);
+      });
+  }
+
+  useEffect(() => {
+    getReviews();
+  }, [bookId]);
 
   useEffect(() => {
     async function FetchAllInfo() {
@@ -38,9 +50,10 @@ const Single = ({ userId }) => {
           .then((response) => { setLib(response.data.library); });
       }
     }
+
     FetchAllInfo();
-    setInterval(FetchAllInfo, 60000);
-  }, [bookId, userId]);
+  }, [bookId, userId, reviews]);
+
 
   return (
     <div className="mainContents">
@@ -56,7 +69,7 @@ const Single = ({ userId }) => {
               <Popup trigger={<button className='share'><i className="fa-regular fa-share-from-square" /></button>} position='bottom center'>
                 <div className="list">
                   {friends.length > 0 ? friends.map((friend, i) => (
-                    <ShareFriend friend={friend} book={bookInfo} key={i}/>
+                    <ShareFriend friend={friend} book={bookInfo} key={i} />
                   )) : <label className='friend'>Add more friends to share books with!</label>}
                 </div>
               </Popup>
@@ -70,7 +83,7 @@ const Single = ({ userId }) => {
             <span className="singleGenre">{bookInfo.genre}</span>
             <span className="split">|</span>
             <span className="ratingNum">{bookInfo.avgRating}/5<i className="reviewIcon fa-solid fa-star-half-stroke" />: {bookInfo.rateCount} review(s)</span>
-            
+
           </div>
           <p className="singleBookDesc">
             {bookInfo.desc}
@@ -83,8 +96,8 @@ const Single = ({ userId }) => {
             Reviews
           </h1>
         </div>
-        {userId && <MakeRev bookId={bookId} />}
-        <ShowRevs bookId={bookId} />
+        {userId && <MakeRev bookId={bookId} getReviews={getReviews} />}
+        <ShowRevs bookId={bookId} reviews={reviews} getReviews={getReviews} />
       </div>
     </div>
   )
