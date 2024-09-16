@@ -41,10 +41,11 @@ const generateAccessToken = (user) => {
   return jwt.sign(user, process.env.ACCESS_TOKEN, { expiresIn: '15m' }); // Access token (short-lived)
 };
 const generateRefreshToken = (user) => {
-  const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN, { expiresIn: '1d' }); // Refresh token (longer-lived)
+  const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN, { expiresIn: '12hr' }); // Refresh token (longer-lived)
   refreshTokens.push(refreshToken); // Store refresh tokens (you can save this in a database)
   return refreshToken;
 };
+
 
 // Registering an account in the users table provided a username, email, and password.
 router.post('/register', async (req, res) => {
@@ -106,19 +107,20 @@ router.post('/login', async (req, res) => {
 });
 
 // refreshes the access token, allowing the user to stay logged in.
-router.post('/refresh', verifyJWT, (req, res) => {
+router.post('/refresh', (req, res) => {
   const { token } = req.body;
   if (!token) return res.status(401).json({ error: 'Missing token.', message: 'No token provided.' });
   if (!refreshTokens.includes(token)) return res.status(403).json({ error: 'Invalid token.', message: 'Refresh token is not valid.' }); // Token is invalid or blacklisted
 
   try {
     const decoded = jwt.verify(token, process.env.REFRESH_TOKEN);
-
+    //console.log(decoded);
     const accessT = generateAccessToken({id: decoded.id, name: decoded.name});
+    req.user = decoded.id;
 
-    return res.json({ accessT});
+    return res.json({accessToken: accessT});
   } catch (err) {
-    return res.status(403).json({error: 'Invalid token.', message: 'REfresh token is invalid or expired.'});
+    return res.status(403).json({error: 'Invalid token.', message: 'Refresh token is invalid or expired.'});
   }
 });
 

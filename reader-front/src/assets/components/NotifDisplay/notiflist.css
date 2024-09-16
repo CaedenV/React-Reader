@@ -1,4 +1,9 @@
 .userNotifs {
+    border: 2px solid rgb(172, 146, 223);
+    background-color: rgb(255, 210, 155);
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
     min-width: 400px;
     padding: 5px;
     max-height: 400px;
@@ -30,11 +35,6 @@
     padding: 5px;
 }
 
-.trigger {
-    display: flex;
-    flex-direction: row;
-    align-content: center;
-}
 .num {
     font-size: 19px;
     color: rgb(132, 85, 226);
@@ -42,3 +42,4 @@
     font-weight: bolder;
     cursor: pointer;
 }
+

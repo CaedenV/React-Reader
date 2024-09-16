@@ -27,8 +27,16 @@ const NavBar = ({ userId, updateUserId }) => {
         setRegisterPopOpen(false);
         setLoginPopOpen(true);
     }
+    async function Logout() {
+        const refreshT = localStorage.getItem('refreshToken');
+        await apiClient.post(`${userBack}/logout`, { token: refreshT }, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+    }
     const handleLogOutClick = () => {
         const redirect = `/`;
+
+        Logout();
         localStorage.clear();
         sessionStorage.clear();
         updateUserId(null);
@@ -61,7 +69,7 @@ const NavBar = ({ userId, updateUserId }) => {
                     <li><Link to={userId ? `${userId}/library` : '/'}>LIBRARY</Link></li>
                 </ul>
                 <div className="profile">
-                    <Popup trigger={<button><i className="fa-solid fa-circle-user"></i></button>} position="bottom center" className='userOptions'>
+                    <Popup trigger={<button><i className="fa-solid fa-circle-user" /></button>} position="bottom center" className='userOptions'>
                         {userId ? (
                             <div className="userOptions">
                                 <Link to={`/${userId}/profile`}>Profile</Link>
@@ -77,13 +85,19 @@ const NavBar = ({ userId, updateUserId }) => {
 
                     </Popup>
                     {userId ? (
-                        <NotifList userId={userId}></NotifList>
+                        <>
+                            <Link to={`/clubs`}>
+                                <i className="clubsIcon fa-solid fa-comment" />
+                            </Link>
+                            <NotifList userId={userId} />
+                        </>
+
                     ) : (
                         <></>
                     )}
                 </div>
             </nav>
-            {registerPopOpen && <Register onClose={() => setRegisterPopOpen(false)} onSign={handleSignRegClose} updateUserId={updateUserId}/>}
+            {registerPopOpen && <Register onClose={() => setRegisterPopOpen(false)} onSign={handleSignRegClose} updateUserId={updateUserId} />}
             {loginPopOpen && <Login onClose={() => setLoginPopOpen(false)} updateUserId={updateUserId} />}
         </div>
     )

@@ -116,8 +116,8 @@ async function generateRecommendations(userId, favGenre, current) {
     const recs = {
         genreBased: favoriteGenreBooks,
         authorBased: favoriteAuthorBooks,
-        popular: basicBooks.popularBooks,
-        recents: basicBooks.recentBooks
+        popular: basicBooks.popular,
+        recents: basicBooks.recents
     };
 
     return recs;

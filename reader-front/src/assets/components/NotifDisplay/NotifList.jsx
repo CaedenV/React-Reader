@@ -24,11 +24,11 @@ const NotifList = ({ userId }) => {
 
         }
         getNotifs();
-        setInterval(getNotifs, 1000);
+        setInterval(getNotifs, 30000);
     }, [userId]);
 
     return (
-        <Popup trigger={<button className='trigger'><i className="notifsBtn fa-solid fa-bell"/> <label className='num'>{fresh > 0 ? fresh : " "}</label></button>} position="bottom center" >
+        <Popup trigger={<button className='notifsBtn'><i className="notifsBtn fa-solid fa-bell"/> <label className='num'>{fresh > 0 ? fresh : " "}</label></button>} position="bottom center" >
             <div className='userNotifs'>
                 {notifs.recs && notifs.friendReq && notifs.sysMessage ?
                     <div className="tabs">

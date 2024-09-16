@@ -10,6 +10,7 @@ import Store from './assets/pages/Store/Store';
 import UserDash from './assets/pages/UserDash/UserDash';
 import useUser from './assets/hooks/useUser';
 import OtherProfile from './assets/pages/Profile/OtherProfile';
+import Clubs from './assets/pages/Clubs/Clubs';
 
 function App() {
   const [userId, setUserId] = useState(useUser());
@@ -32,6 +33,7 @@ function App() {
           <Route path="/view/:bookId" element={<Single userId={userId} />} />
           <Route path="/:userId/library" element={userId !== null ? <Libraries userId={userId} /> : <DefaultHome />} />
           <Route path="/read/:bookId" element={userId !== null ? <Read userId={userId}/> : <DefaultHome />} />
+          <Route path='/clubs' element={userId !== null ? <Clubs /> : <DefaultHome />}/>
         </Routes>
       </div>
 

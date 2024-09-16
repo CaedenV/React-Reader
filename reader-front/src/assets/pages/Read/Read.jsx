@@ -10,7 +10,7 @@ const Read = ({ userId }) => {
   const { bookId } = useParams();
 
   const [currentRead, setCurrentRead] = useState([]);
-  const [ownedBooks, setOwnedBooks] = useState({});
+  const [ownedBooks, setOwnedBooks] = useState([]);
   const [validAccess, setValidAccess] = useState(false);
   const [show, setShowOwned] = useState(false);
   const nav = useNavigate();
@@ -26,24 +26,21 @@ const Read = ({ userId }) => {
         headers: { Authorization: `Bearer ${token}` }
       }).then((response) => { setOwnedBooks(response.data.owned); });
 
-      await apiClient.get(`${ownBack}/nowRead`, {
+      const response = await apiClient.get(`${ownBack}/nowRead`, {
         headers: { Authorization: `Bearer ${token}` }
-      }).then((response) => {
-        const epubFile = response.data.nowRead.nowReadFile;
-        const blob = new Blob([atob(epubFile)], { type: 'application/epub+zip' });
-        const url = URL.createObjectURL(blob);
-        setCurrentRead({
-          nowReadId: response.data.nowRead.nowReadId,
-          nowReadFN: url
-        });
       });
-
+      const epubFile = response.data.nowRead.nowReadFile;
+      const blob = new Blob([atob(epubFile)], { type: 'application/epub+zip' });
+      const url = URL.createObjectURL(blob);
+      setCurrentRead({
+        nowReadId: response.data.nowRead.nowReadId,
+        nowReadFN: url
+      });
     }
 
     getBooks();
-    if (bookId in ownedBooks) {
-      setValidAccess(true);
-    }
+    setValidAccess(currentRead.nowReadId === bookId);
+    console.log(currentRead.nowReadId, bookId);
   }, [userId, bookId]);
 
   const setBookAdds = async () => {
@@ -73,14 +70,14 @@ const Read = ({ userId }) => {
           <button className="setting color"><i className="fa-solid fa-palette" /></button>
           <button className="setting comment"><i className="fa-solid fa-comment-dots" /></button>
 
-          {ownedBooks && <button className={show ? "active " + 'setting showOwn': 'setting showOwn'} onClick={toggleOwned}><i className="fa-solid fa-book" /></button>}
+          {ownedBooks && <button className={show ? "active " + 'setting showOwn' : 'setting showOwn'} onClick={toggleOwned}><i className="fa-solid fa-book" /></button>}
           <button className="setting save" onClick={setBookAdds}>Save</button>
         </div>
         <div className={show ? "owned " + 'true' : "owned " + "false"}>
           {ownedBooks.length > 0 ? ownedBooks.map((book, i) => (
-            <div className="bookOptions">
+            <div className="bookOptions" key={i}>
               <SmallBook bookId={book.bookId} key={book.bookId} />
-              <button className="readBook" key={i} onClick={() => startRead(book.bookId)}> Read</button>
+              <button className="readBook"  onClick={() => startRead(book.bookId)}> Read</button>
             </div>
           )) : <></>}
         </div>
