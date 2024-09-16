@@ -12,7 +12,8 @@ const Read = ({ userId }) => {
   const [currentRead, setCurrentRead] = useState([]);
   const [ownedBooks, setOwnedBooks] = useState([]);
   const [validAccess, setValidAccess] = useState(false);
-  const [show, setShowOwned] = useState(false);
+  const [showOwned, setShowOwned] = useState(false);
+  const [bookAdds, setBookAdds] = useState({});
   const nav = useNavigate();
 
   const token = localStorage.getItem('accessToken');
@@ -30,28 +31,27 @@ const Read = ({ userId }) => {
       const response = await apiClient.get(`${ownBack}/nowRead`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      const epubFile = response.data.nowRead.nowReadFile;
-      const blob = new Blob([atob(epubFile)], { type: 'application/epub+zip' });
-      const url = URL.createObjectURL(blob);
+      if(response.data.success) {
+        setValidAccess(response.data.nowReadId === bookId);
+      }
       setCurrentRead({
-        nowReadId: response.data.nowRead.nowReadId,
-        nowReadFN: url
+        nowReadId: response.data.nowReadId,
+        url: response.data.nowReadUrl
       });
-      setValidAccess(response.data.nowRead.nowReadId === bookId);
     }
 
     getBooks();
+    console.log(currentRead);
   }, [userId, bookId]);
 
-  const setBookAdds = async () => {
-    await apiClient.patch(`${ownBack}/bookAdds`, {
+  const handleSave = async () => {
+    await apiClient.patch(`${ownBack}/bookAdds`, {bookAdds: bookAdds}, {
       headers: { Authorization: `Bearer ${token}` },
-      body: {},
     });
   }
 
   const toggleOwned = () => {
-    setShowOwned(!show);
+    setShowOwned(!showOwned);
   }
 
   const startRead = async (bookId) => {
@@ -69,23 +69,23 @@ const Read = ({ userId }) => {
           <button className="setting fSize"><i className="fa-solid fa-text-height" /></button>
           <button className="setting color"><i className="fa-solid fa-palette" /></button>
           <button className="setting comment"><i className="fa-solid fa-comment-dots" /></button>
-
-          {ownedBooks && <button className={show ? "active " + 'setting showOwn' : 'setting showOwn'} onClick={toggleOwned}><i className="fa-solid fa-book" /></button>}
-          <button className="setting save" onClick={setBookAdds}>Save</button>
+          {ownedBooks && <button className={showOwned ? "active " + 'setting showOwn' : 'setting showOwn'} onClick={toggleOwned}><i className="fa-solid fa-book" /></button>}
+          <div className={showOwned ? "owned " + 'true' : "owned " + "false"}>
+            {ownedBooks.length > 0 ? ownedBooks.map((book, i) => (
+              <div className="bookOptions" key={i}>
+                <SmallBook bookId={book.bookId} key={book.bookId} />
+                <button className="readBook" onClick={() => startRead(book.bookId)}> Read</button>
+              </div>
+            )) : <></>}
+          </div>
+          <button className="setting save" onClick={handleSave}>Save</button>
         </div>
-        <div className={show ? "owned " + 'true' : "owned " + "false"}>
-          {ownedBooks.length > 0 ? ownedBooks.map((book, i) => (
-            <div className="bookOptions" key={i}>
-              <SmallBook bookId={book.bookId} key={book.bookId} />
-              <button className="readBook"  onClick={() => startRead(book.bookId)}> Read</button>
-            </div>
-          )) : <></>}
-        </div>
-        <div className="eReader">
+        <div className="eReader" style={{ height: '87vh', border: '1px solid mediumpurple', }}>
           <ReactReader
-            url="https://react-reader.metabits.no/files/alice.epub"
+            url={currentRead.url}
             location={location}
             locationChanged={(epubcfi) => setLocation(epubcfi)}
+            
           />
         </div>
       </div>

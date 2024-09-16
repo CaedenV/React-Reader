@@ -14,23 +14,26 @@ nav {
     justify-content: space-between;
     z-index: 10;
 }
-.logo{
+
+.logo {
     width: 180px;
     border-radius: 8px;
 }
+
 nav ul li {
     display: inline-block;
     list-style: none;
     margin: 5px 20px;
     font-size: 20px;
 }
+
 .profile {
-    display: flex; 
+    display: flex;
     flex-direction: row;
     align-items: center;
 }
 
-.profile>button{
+.profile>button {
     color: bisque;
     background-color: mediumpurple;
     font-size: 26px;
@@ -38,7 +41,8 @@ nav ul li {
     cursor: pointer;
     margin-right: 10px;
 }
-.userOptions{
+
+.userOptions {
     background-color: rgb(172, 146, 223);
     color: bisque;
     border: 1px solid rgb(250, 198, 135);
@@ -51,6 +55,14 @@ nav ul li {
 
 .userOptions a {
     margin-top: 5px;
+}
+
+.userBtn {
+    color: bisque;
+    background-color: transparent;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
 }
 
 

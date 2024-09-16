@@ -19,8 +19,10 @@
     margin-top: 5px;
 }
 .false {
-    visibility: hidden;
+    display: none;
 }
+
+
 .active {
     background-color: mediumpurple;
     color: bisque;
@@ -39,4 +41,12 @@
 .readBook:hover{
     background-color: rgb(128, 97, 189);
     color: rgb(255, 244, 230);
+}
+
+
+
+.readerSettings {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 5px;
 }
