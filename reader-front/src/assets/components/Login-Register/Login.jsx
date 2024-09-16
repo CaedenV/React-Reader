@@ -2,10 +2,10 @@ import { React, useState } from 'react'
 import './login-register.css';
 import Popup from 'reactjs-popup';
 import { userBack } from '../../backendRoutes';
-import axios from 'axios';
+import apiClient from '../../axiosTokenIntercept';
 import { jwtDecode } from 'jwt-decode';
 
-const Login = ({ onClose, updateUserId, setExpiresAt }) => {
+const Login = ({ onClose, updateUserId }) => {
     const [valid, setValid] = useState('');
     const submitForm = async (e) => {
         e.preventDefault();
@@ -14,13 +14,12 @@ const Login = ({ onClose, updateUserId, setExpiresAt }) => {
             email: formData.get('email'),
             password: formData.get('pw'),
         }
-        const response = await axios.post(`${userBack}/login`, data);
+        const response = await apiClient.post(`${userBack}/login`, data);
         setValid(response.data.message);
         if (response.data.success) {
-            localStorage.setItem('token', response.data.token);
-            updateUserId(jwtDecode(response.data.token).id);
-            console.log(response.data.expiresAt);
-            setExpiresAt(response.data.expiresAt);
+            localStorage.setItem('accessToken', response.data.token.accessT);
+            localStorage.setItem('refreshToken', response.data.token.refreshT);
+            updateUserId(jwtDecode(response.data.token.accessT).id);
             onClose;
         }
     }

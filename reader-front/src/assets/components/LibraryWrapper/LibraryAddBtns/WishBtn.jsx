@@ -1,20 +1,20 @@
 import './addbtns.css';
 import React, { useState } from 'react';
 import { wishBack } from '../../../backendRoutes';
-import axios from 'axios';
+import apiClient from '../../../axiosTokenIntercept';
 
 const WishBtn = ({ bookId, isWished }) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('accessToken');
   const [wished, setWished] = useState(isWished);
 
   const addToWish = async () => {
-    await axios.post(`${wishBack}/add`, {bookId: bookId}, {
+    await apiClient.post(`${wishBack}/add`, {bookId: bookId}, {
       headers: { Authorization: `Bearer ${token}` }
     });
     setWished(true);
   }
   const rmvFromWish = async () => {
-    await axios.delete(`${wishBack}/remove/${bookId}`, {
+    await apiClient.delete(`${wishBack}/remove/${bookId}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     setWished(false);

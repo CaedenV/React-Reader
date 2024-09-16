@@ -4,7 +4,7 @@ import Popup from 'reactjs-popup';
 import { useState, useEffect } from "react";
 import { userBack, friendBack, revBack } from '../../backendRoutes';
 import profPic from '../../profPic.png';
-import axios from "axios";
+import apiClient from '../../axiosTokenIntercept';
 import { useParams } from 'react-router-dom';
 import FriendList from '../../components/FriendList/FriendList';
 
@@ -16,16 +16,16 @@ const OtherProfile = ({ userId }) => {
     const [userRevs, setUserRevs] = useState({});
     const [pendingFriends, setPendingFriends] = useState([]);
     const [userFriends, setUserFriends] = useState([]);
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('accessToken');
 
     useEffect(() => {
         async function GetMainInfo() {
-            await axios.get(`${userBack}/getOther/${userName}`, {          // gets the necessary profile information
+            await apiClient.get(`${userBack}/getOther/${userName}`, {          // gets the necessary profile information
                 headers: { Authorization: `Bearer ${token}` }
             }).then((response) => {
                 setOther(response.data.user);
             });
-            await axios.get(`${userBack}/libCount/${userName}`, {         // gets the library count of the profile
+            await apiClient.get(`${userBack}/libCount/${userName}`, {         // gets the library count of the profile
                 headers: { Authorization: `Bearer ${token}` }
             }).then((response) => {
                 const data = {
@@ -37,12 +37,12 @@ const OtherProfile = ({ userId }) => {
             });
         }
         async function GetFriends() {
-            await axios.get(`${friendBack}/getOther/${userName}`, {      // gets the friends of the viewed profile
+            await apiClient.get(`${friendBack}/getOther/${userName}`, {      // gets the friends of the viewed profile
                 headers: { Authorization: `Bearer ${token}` }
             }).then((response) => {
                 setOtherFriends(response.data.friends);
             });
-            await axios.get(`${friendBack}/getUser`, {                  // gets the friends of the user
+            await apiClient.get(`${friendBack}/getUser`, {                  // gets the friends of the user
                 headers: { Authorization: `Bearer ${token}` }
             }).then((response) => {
                 setUserFriends(response.data.friends);
@@ -54,7 +54,7 @@ const OtherProfile = ({ userId }) => {
 
     useEffect(() => {
         async function getRevs() {
-            await axios.get(`${revBack}/user/${userName}`, {
+            await apiClient.get(`${revBack}/user/${userName}`, {
                 headers: { Authorization: `Bearer ${token}` }
             })
                 .then((response) => { setUserRevs(response.data.userRevs); });

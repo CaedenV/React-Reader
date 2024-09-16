@@ -1,6 +1,6 @@
 import './userDash.css';
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import apiClient from '../../axiosTokenIntercept';
 import { recBack, userBack } from '../../backendRoutes';
 import BookNoDesc from '../../components/BookDisplay/NoDesc/BookNoDesc';
 
@@ -9,17 +9,17 @@ const UserDash = ({ userId }) => {
   const [recs, setRecs] = useState({});
   const [userLib, setUserLib] = useState({});
 
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('accessToken');
   
 
   useEffect(() => {
     async function FetchData() {
       try {
-        const userResponse = await axios.get(`${userBack}/getRecInfo`, {
+        const userResponse = await apiClient.get(`${userBack}/getRecInfo`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setUser(userResponse.data.user);
-        const libraryResponse = await axios.get(`${userBack}/libraries`, {
+        const libraryResponse = await apiClient.get(`${userBack}/libraries`, {
           headers: { Authorization: `Bearer ${token}` }
         })
         setUserLib(libraryResponse.data.library);
@@ -35,7 +35,7 @@ const UserDash = ({ userId }) => {
     async function FetchRecs() {
       if (user && user.favGenre) {
         try {
-          const recsResponse = await axios.get(`${recBack}/getRecs`, {
+          const recsResponse = await apiClient.get(`${recBack}/getRecs`, {
             params: {
               genre: user.favGenre,
               current: user.nowRead,

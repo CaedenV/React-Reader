@@ -4,21 +4,17 @@ import logo from '../../../assets/logo.png';
 import Popup from 'reactjs-popup';
 import Login from '../Login-Register/Login';
 import Register from '../Login-Register/Register';
-import TokenWarning from '../Login-Register/TokenWarning';
 import { Link, useNavigate } from 'react-router-dom';
 import NotifList from '../NotifDisplay/NotifList';
-import axios from 'axios';
+import apiClient from '../../axiosTokenIntercept';
 import { userBack } from '../../backendRoutes';
 
 const NavBar = ({ userId, updateUserId }) => {
     const [loginPopOpen, setLoginPopOpen] = useState(false);
     const [registerPopOpen, setRegisterPopOpen] = useState(false);
 
-    const [tokenWarning, setTokenWarning] = useState(false);
-    const [expiresAt, setExpiresAt] = useState(null);
-
     const [nowRead, setNowRead] = useState("");
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('accessToken');
     const nav = useNavigate();
 
     const handleLoginClick = () => {
@@ -41,7 +37,7 @@ const NavBar = ({ userId, updateUserId }) => {
 
     useEffect(() => {
         async function getNowRead() {
-            await axios.get(`${userBack}/nowRead`, {
+            await apiClient.get(`${userBack}/nowRead`, {
                 headers: { Authorization: `Bearer ${token}` }
             })
                 .then((response) => {
@@ -52,19 +48,6 @@ const NavBar = ({ userId, updateUserId }) => {
             getNowRead();
         }
     }, [userId]);
-
-    useEffect(() => {
-        if (token) {
-          const warningTime = expiresAt - 10 * 60 * 1000; // 10 minutes before expiration
-          const timer = setTimeout(() => {
-            setTokenWarning(true);
-          }, warningTime - Date.now());
-      
-          return () => {
-            clearTimeout(timer);
-          };
-        }
-      }, [userId]);
 
 
     return (
@@ -100,9 +83,8 @@ const NavBar = ({ userId, updateUserId }) => {
                     )}
                 </div>
             </nav>
-            {registerPopOpen && <Register onClose={() => setRegisterPopOpen(false)} onSign={handleSignRegClose} updateUserId={updateUserId} setExpiresAt={setExpiresAt} />}
-            {loginPopOpen && <Login onClose={() => setLoginPopOpen(false)} updateUserId={updateUserId} setExpiresAt={setExpiresAt} />}
-            {tokenWarning && <TokenWarning expiresAt={expiresAt} setExpiresAt={setExpiresAt}/>}
+            {registerPopOpen && <Register onClose={() => setRegisterPopOpen(false)} onSign={handleSignRegClose} updateUserId={updateUserId}/>}
+            {loginPopOpen && <Login onClose={() => setLoginPopOpen(false)} updateUserId={updateUserId} />}
         </div>
     )
 }

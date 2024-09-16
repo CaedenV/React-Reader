@@ -1,15 +1,15 @@
 import './addbtns.css';
 import React, { useState } from 'react';
 import { favBack } from '../../../backendRoutes';
-import axios from 'axios';
+import apiClient from '../../../axiosTokenIntercept';
 
 const FavBtn = ({ bookId, favRank }) => {
     const [isFav, setIsFav] = useState(false);
     const [rank, setRank] = useState(favRank);
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('accessToken');
 
     const unFavorite = async () => {
-        await axios.delete(`${favBack}/remove/${bookId}`, {
+        await apiClient.delete(`${favBack}/remove/${bookId}`, {
             headers: { Authorization: `Bearer ${token}` }
         });
         setRank(0);
@@ -26,7 +26,7 @@ const FavBtn = ({ bookId, favRank }) => {
         const r = formData.get('rank');
         setRank(r);
         const book = { bookId: bookId, rank: r };
-        await axios.post(`${favBack}/add`, { book: book }, {
+        await apiClient.post(`${favBack}/add`, { book: book }, {
 
             headers: { Authorization: `Bearer ${token}` }
         });

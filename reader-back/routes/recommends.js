@@ -65,6 +65,34 @@ async function generateFavAuthorBooks(userId, favGenre) {
     return topAuthBooks;
 }
 
+async function generateBasics() {
+    const popularQuery = ` 
+    SELECT * 
+    FROM books
+    WHERE books.avgRating > 3
+    ORDER BY avgRating DESC, rateCount DESC
+    LIMIT 20;
+`;
+
+    const recentQuery = `
+    SELECT *
+    FROM books
+    ORDER BY pubDate DESC, avgRating DESC
+    LIMIT 20;
+`;
+
+    const [populars, recents] = await Promise.all([
+        db.queryDatabase(popularQuery, []),
+        db.queryDatabase(recentQuery, []),
+    ]);
+    const basics = {
+        popular: populars,
+        recents: recents
+    };
+
+    return basics;
+}
+
 // Utility function to generate recommendation lists
 async function generateRecommendations(userId, favGenre, current) {
     const favoriteGenreBooksQuery = `
@@ -75,34 +103,21 @@ async function generateRecommendations(userId, favGenre, current) {
         LIMIT 20;
     `;
 
-    const popularQuery = ` 
-        SELECT * 
-        FROM books
-        WHERE books.avgRating > 3
-        ORDER BY avgRating DESC, rateCount DESC
-        LIMIT 20;
-    `;
 
-    const recentQuery = `
-        SELECT *
-        FROM books
-        ORDER BY pubDate DESC, avgRating DESC
-        LIMIT 20;
-    `;
     // Recs based on notifs. Find similarites between books (genre, author, pubDate, etc) within notifs or libraries (owned, faved)
 
-    const [favoriteGenreBooks, favoriteAuthorBooks, popularBooks, recentBooks] = await Promise.all([
+    const [favoriteGenreBooks, favoriteAuthorBooks, basicBooks] = await Promise.all([
         db.queryDatabase(favoriteGenreBooksQuery, [favGenre]),
         generateFavAuthorBooks(userId, favGenre),
-        db.queryDatabase(popularQuery, []),
-        db.queryDatabase(recentQuery, []),
+        generateBasics()
+
     ]);
     //console.log("accomplished promises");
     const recs = {
         genreBased: favoriteGenreBooks,
         authorBased: favoriteAuthorBooks,
-        popular: popularBooks,
-        recents: recentBooks
+        popular: basicBooks.popularBooks,
+        recents: basicBooks.recentBooks
     };
 
     return recs;
@@ -116,5 +131,10 @@ router.get('/getRecs', verifyJWT, async (req, res) => {
     //console.log("recs returned");
     return res.status(200).json({ success: true, recs: recs });
 });
+
+router.get('/basicRecs', async (req, res) => {
+    const basics = await generateBasics();
+    return res.status(200).json({ success: true, recs: basics });
+})
 
 module.exports = router;

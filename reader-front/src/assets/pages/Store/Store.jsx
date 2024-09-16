@@ -4,6 +4,7 @@ import { React, useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { bookBack, userBack } from '../../backendRoutes';
 import axios from 'axios';
+import apiClient from '../../axiosTokenIntercept';
 import moment from 'moment';
 
 const Store = ({ userId }) => {
@@ -16,7 +17,6 @@ const Store = ({ userId }) => {
   const currentPage = sStart || 1;
   const [resultsPerPage] = useState(15);
 
-  const token = localStorage.getItem('token');
   const [userLib, setUserLib] = useState({});
 
   const addToDB = async (books) => {
@@ -27,8 +27,8 @@ const Store = ({ userId }) => {
 
   useEffect(() => {
     async function getLib() {
-      await axios.get(`${userBack}/libraries`, {
-        headers: { Authorization: `Bearer ${token}` }
+      await apiClient.get(`${userBack}/libraries`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
       })
         .then((response) => { setUserLib(response.data.library); });
     }

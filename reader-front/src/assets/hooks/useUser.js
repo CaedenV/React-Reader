@@ -5,7 +5,7 @@ const useUser = () => {
     const [user, setUser] = useState(null);
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('accessToken');
         if(token) {
             const decodedToken = jwtDecode(token).id;
             setUser(decodedToken);

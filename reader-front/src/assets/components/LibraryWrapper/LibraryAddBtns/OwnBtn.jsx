@@ -1,14 +1,14 @@
 import './addbtns.css';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 import { ownBack, userBack } from '../../../backendRoutes';
+import apiClient from '../../../axiosTokenIntercept';
 
 const OwnBtn = ({ bookId, isOwned }) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('accessToken');
 
     const purchaseBook = async () => {
-        await axios.post(`${ownBack}/add`, {
+        await apiClient.post(`${ownBack}/add`, {
             body: {bookId: bookId},
             headers: { Authorization: `Bearer ${token}` }
           });
@@ -17,7 +17,7 @@ const OwnBtn = ({ bookId, isOwned }) => {
     };
 
     const setCurrentRead = async () => {
-        await axios.put(`${userBack}/nowRead`, {
+        await apiClient.put(`${userBack}/nowRead`, {
             body: {bookId: bookId},
             headers: { Authorization: `Bearer ${token}` }
         });

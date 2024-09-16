@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ReactReader } from 'react-reader';
 import { ownBack, userBack } from '../../backendRoutes';
 import SmallBook from '../../components/BookDisplay/SmallBook/SmallBook';
-import axios from 'axios';
+import apiClient from '../../axiosTokenIntercept';
 
 const Read = ({ userId }) => {
   const { bookId } = useParams();
@@ -15,18 +15,18 @@ const Read = ({ userId }) => {
   const [show, setShowOwned] = useState(false);
   const nav = useNavigate();
 
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('accessToken');
 
   const [location, setLocation] = useState(null);
 
 
   useEffect(() => {
     async function getBooks() {
-      await axios.get(`${ownBack}/get`, {
+      await apiClient.get(`${ownBack}/get`, {
         headers: { Authorization: `Bearer ${token}` }
-      }).then((response) => { setOwnedBooks(response.data.owned); console.log(ownedBooks); });
+      }).then((response) => { setOwnedBooks(response.data.owned); });
 
-      await axios.get(`${ownBack}/nowRead`, {
+      await apiClient.get(`${ownBack}/nowRead`, {
         headers: { Authorization: `Bearer ${token}` }
       }).then((response) => {
         const epubFile = response.data.nowRead.nowReadFile;
@@ -47,7 +47,7 @@ const Read = ({ userId }) => {
   }, [userId, bookId]);
 
   const setBookAdds = async () => {
-    await axios.patch(`${ownBack}/bookAdds`, {
+    await apiClient.patch(`${ownBack}/bookAdds`, {
       headers: { Authorization: `Bearer ${token}` },
       body: {},
     });
@@ -58,14 +58,14 @@ const Read = ({ userId }) => {
   }
 
   const startRead = async (bookId) => {
-    await axios.patch(`${userBack}/nowRead/${bookId}`, {
+    await apiClient.patch(`${userBack}/nowRead/${bookId}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
 
     const redirect = `/read/${currentRead.nowReadId}`;
     nav(redirect);
   }
-  if (true) {
+  if (validAccess) {
     return (
       <div className='read'>
         <div className="readerSettings">

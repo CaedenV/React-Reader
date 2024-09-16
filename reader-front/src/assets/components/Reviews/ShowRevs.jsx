@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React from "react";
 import SingleRev from "./SingleRev";
-import { revBack } from "../../backendRoutes";
 import './singleRev.css';
 
 const ShowRevs = ({bookId, getReviews, reviews}) => {

@@ -1,17 +1,17 @@
 import './share.css';
 import React, { useState } from 'react';
-import axios from 'axios';
+import apiClient from '../../axiosTokenIntercept';
 import { notifBack, backend } from '../../backendRoutes';
 
 const ShareFriend = ({ friend, book }) => {
     const [response, setResponse] = useState("");
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('accessToken');
     const shareBook = async () => {
         const data = {
             friend: friend.id,
             book: book
         };
-        const results = await axios.post(`${notifBack}/sendBook`, { data: data }, {
+        const results = await apiClient.post(`${notifBack}/sendBook`, { data: data }, {
             headers: { Authorization: `Bearer ${token}` }
         });
         if (results.data.success) {

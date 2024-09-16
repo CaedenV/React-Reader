@@ -1,11 +1,10 @@
 import './makerev.css';
 import React, { useState } from 'react';
-import axios from 'axios';
+import apiClient from '../../axiosTokenIntercept';
 import { revBack } from '../../backendRoutes';
 
 const MakeRev = ({ bookId, getReviews }) => {
     const [rating, setRating] = useState(null);
-    const token = localStorage.getItem('token');
 
     const handleRatingChange = (event) => {
         setRating(Number(event.target.value));
@@ -20,8 +19,8 @@ const MakeRev = ({ bookId, getReviews }) => {
             text: formData.get('text'),
             rating: rating,
         }
-        await axios.post(`${revBack}/add`, { review: rev }, {
-            headers: { Authorization: `Bearer ${token}` }
+        await apiClient.post(`${revBack}/add`, { review: rev }, {
+            headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
         });
         setRating(null);
         e.target.reset();

@@ -1,6 +1,6 @@
 import './libraries.css';
 import React from 'react';
-import axios from "axios";
+import apiClient from '../../axiosTokenIntercept';
 import { useState, useEffect } from "react";
 import { userBack, bookBack } from '../../backendRoutes';
 import BookNoDesc from '../../components/BookDisplay/NoDesc/BookNoDesc';
@@ -11,11 +11,10 @@ const Libraries = ({ userId }) => {
   const [ownedBooks, setOwnedBooks] = useState([]);
   const [wishedBooks, setWishedBooks] = useState([]);
   const [favoriteBooks, setFavoriteBooks] = useState([]);
-  const token = localStorage.getItem('token');
 
   const getLib = async () => {
-    const res = await axios.get(`${userBack}/libraries`, {
-      headers: { Authorization: `Bearer ${token}` }
+    const res = await apiClient.get(`${userBack}/libraries`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
     });
     setUserLib(res.data.library);
     const ownIds = res.data.library.owned;
@@ -38,7 +37,7 @@ const Libraries = ({ userId }) => {
   }
 
   const fetchBookData = async (bookId) => {
-    const response = await axios.get(`${bookBack}/getById/${bookId}`);
+    const response = await apiClient.get(`${bookBack}/getById/${bookId}`);
     const bookData = await response.data.book;
     return bookData;
   };

@@ -2,14 +2,14 @@ import './notifsingle.css';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { friendBack, notifBack, backend } from '../../backendRoutes';
-import axios from 'axios';
+import apiClient from '../../axiosTokenIntercept';
 
 const NotifSingle = ({ friend, book, time, read, message, type, notifId }) => {
     const { cover, title, id } = book || {};
     const { userName } = friend || {};
     const [reqAccept, setReqAccept] = useState(friend.accept);
     const [status, setStatus] = useState(read);
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('accessToken');
 
     const getTime = (timestamp) => {
         const givenTimestamp = new Date(Date.parse(timestamp));
@@ -42,21 +42,21 @@ const NotifSingle = ({ friend, book, time, read, message, type, notifId }) => {
     const onAccept = async () => {
         //Add pair to friends table
         friend.accept = true;
-        await axios.post(`${friendBack}/add`, { friendName: userName }, {
+        await apiClient.post(`${friendBack}/add`, { friendName: userName }, {
             headers: { Authorization: `Bearer ${token}` }
         });
-        await axios.patch(`${notifBack}/acceptFriend/${notifId}`, { friend: friend }, {
+        await apiClient.patch(`${notifBack}/acceptFriend/${notifId}`, { friend: friend }, {
             headers: { Authorization: `Bearer ${token}` }
         });
         setReqAccept(true);
     }
     const handleRemove = async () => {
-        await axios.delete(`${notifBack}/delete/${notifId}`, {
+        await apiClient.delete(`${notifBack}/delete/${notifId}`, {
             headers: { Authorization: `Bearer ${token}` }
         });
     }
     const handleRead = async () => {
-        await axios.patch(`${notifBack}/read/${notifId}`, { notifRead: !status }, {
+        await apiClient.patch(`${notifBack}/read/${notifId}`, { notifRead: !status }, {
             headers: { Authorization: `Bearer ${token}` }
         }).then((response) => {
             setStatus(response.data.status);

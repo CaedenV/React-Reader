@@ -1,23 +1,23 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { backend, notifBack, friendBack } from '../../backendRoutes';
-import axios from 'axios';
+import apiClient from '../../axiosTokenIntercept';
 import useUser from '../../hooks/useUser';
 
 const FriendItem = ({ friend, relationship, pending, onPendingChange }) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('accessToken');
     const userId = useUser();
 
     const addOrRemoveFriend = async (friend, operation) => {
         try {
             if (operation === '+') {
-                await axios.post(`${notifBack}/sendFriend/`, { friendName: friend.userName }, {
+                await apiClient.post(`${notifBack}/sendFriend/`, { friendName: friend.userName }, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 onPendingChange(friend, true);
             } else {
                 const id = friend.friendUsersId;
-                await axios.delete(`${friendBack}/delete/${id}`, {
+                await apiClient.delete(`${friendBack}/delete/${id}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
             }

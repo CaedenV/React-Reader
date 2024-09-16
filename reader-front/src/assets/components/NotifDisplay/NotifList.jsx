@@ -3,24 +3,23 @@ import React, { useEffect, useState } from 'react';
 import Popup from 'reactjs-popup';
 import { notifBack } from '../../backendRoutes';
 import NotifSingle from './NotifSingle';
-import axios from 'axios';
+import apiClient from '../../axiosTokenIntercept';
 
 const NotifList = ({ userId }) => {
     const [notifs, setNotifs] = useState({});
     const [tab, setTab] = useState(0);
     const [fresh, setFresh] = useState(0);
-    const token = localStorage.getItem('token');
 
 
     useEffect(() => {
         async function getNotifs() {
-            await axios.get(`${notifBack}/getByUser`, {
-                headers: { Authorization: `Bearer ${token}` }
+            await apiClient.get(`${notifBack}/getByUser`, {
+                headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
             })
                 .then((response) => { setNotifs(response.data.notifs); });
 
-            await axios.get(`${notifBack}/getNumByUser`, {
-                headers: { Authorization: `Bearer ${token}` }
+            await apiClient.get(`${notifBack}/getNumByUser`, {
+                headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
             }).then((response) => { setFresh(response.data.notifs); });
 
         }

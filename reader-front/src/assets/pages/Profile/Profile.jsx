@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { userBack, friendBack, notifBack, revBack } from '../../backendRoutes';
 import { bisacGenres } from '../../bisacGenres';
 import profPic from '../../profPic.png';
-import axios from "axios";
+import apiClient from '../../axiosTokenIntercept';
 import { Link } from 'react-router-dom';
 import SmallBook from '../../components/BookDisplay/SmallBook/SmallBook';
 import FriendList from '../../components/FriendList/FriendList';
@@ -19,17 +19,17 @@ const Profile = ({ userId }) => {
   const [userRevs, setUserRevs] = useState({});
   const [file, setFile] = useState(null);
   const inputRef = useRef(null);
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('accessToken');
 
 
   //Retrieve info from the userFriends table 
   async function getFriends() {
-    await axios.get(`${friendBack}/getUser`, {
+    await apiClient.get(`${friendBack}/getUser`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then((response) => { setFriends(response.data.friends); });
 
-    await axios.get(`${friendBack}/getNum`, {
+    await apiClient.get(`${friendBack}/getNum`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then((response) => { setFNum(response.data.num); });
@@ -38,12 +38,12 @@ const Profile = ({ userId }) => {
   useEffect(() => {
     // Retrieve info from the users table
     async function GetPersonalInfo() {
-      await axios.get(`${userBack}/getMe`, {
+      await apiClient.get(`${userBack}/getMe`, {
         headers: { Authorization: `Bearer ${token}` }
       })
         .then((response) => { setUser(response.data.user); });
 
-      await axios.get(`${userBack}/selfLibCount`, {
+      await apiClient.get(`${userBack}/selfLibCount`, {
         headers: { Authorization: `Bearer ${token}` }
       })
         .then((response) => {
@@ -65,7 +65,7 @@ const Profile = ({ userId }) => {
   useEffect(() => {
     async function getRevs() {
       try {
-        const response = await axios.get(`${revBack}/user/${user.userName}`, {
+        const response = await apiClient.get(`${revBack}/user/${user.userName}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
 
@@ -83,7 +83,7 @@ const Profile = ({ userId }) => {
     e.preventDefault();
     const fd = new FormData(e.target);
     const friendName = fd.get('friendName');
-    await axios.post(`${notifBack}/sendFriend/`, { friendName: friendName }, {
+    await apiClient.post(`${notifBack}/sendFriend/`, { friendName: friendName }, {
       headers: { Authorization: `Bearer ${token}` }
     });
   };
@@ -115,7 +115,7 @@ const Profile = ({ userId }) => {
     formData.set('userName', formData.get('userName') || user.userName);
     formData.set('favGenre', formData.get('favGenre') || user.favGenre);
 
-    await axios.patch(`${userBack}/update`, formData, {
+    await apiClient.patch(`${userBack}/update`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${token}`

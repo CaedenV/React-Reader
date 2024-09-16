@@ -7,12 +7,13 @@ import Popup from 'reactjs-popup';
 import { bookBack, friendBack, userBack, revBack } from '../../backendRoutes';
 import LibWrap from '../../components/LibraryWrapper/LibWrap';
 import axios from 'axios';
+import apiClient from '../../axiosTokenIntercept';
 import ShareFriend from '../../components/ShareBtn/ShareFriend';
 import moment from 'moment';
 
 const Single = ({ userId }) => {
   const { bookId } = useParams();
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('accessToken');
 
   const [bookInfo, setBookInfo] = useState({});
   const [friends, setFriends] = useState([]);
@@ -38,13 +39,13 @@ const Single = ({ userId }) => {
           setBookInfo(response.data.book);
         });
       if (userId) {
-        axios.get(`${friendBack}/getUser`, {
+        apiClient.get(`${friendBack}/getUser`, {
           headers: { Authorization: `Bearer ${token}` }
         })
           .then((response) => {
             setFriends(response.data.friends);
           });
-        axios.get(`${userBack}/libraries`, {
+        apiClient.get(`${userBack}/libraries`, {
           headers: { Authorization: `Bearer ${token}` }
         })
           .then((response) => { setLib(response.data.library); });

@@ -1,12 +1,12 @@
 import { revBack } from '../../backendRoutes';
 import './singlerev.css';
-import axios from 'axios';
+import apiClient from '../../axiosTokenIntercept';
 import React, { useEffect, useState } from 'react';
 
 const SingleRev = ({ user, id, bookId, revTitle, revRating, revText, getReviews }) => {
   const [overFlow, setOverFlow] = useState(false);
   const [userWrote, setUserWrote] = useState(false);
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('accessToken');
 
   const handleOverflow = () => {
     setOverFlow(true);
@@ -14,7 +14,7 @@ const SingleRev = ({ user, id, bookId, revTitle, revRating, revText, getReviews 
 
   const handleRemoveClick = async () => {
     try {
-      await axios.delete(`${revBack}/delete`, {
+      await apiClient.delete(`${revBack}/delete`, {
         headers: { Authorization: `Bearer ${token}` },
         data: {bookId, id}
       });
@@ -28,7 +28,7 @@ const SingleRev = ({ user, id, bookId, revTitle, revRating, revText, getReviews 
   useEffect(() => {
     async function fetchUserWrote() {
       try {
-        const userResponse = await axios.get(`${revBack}/userWrote/${id}`, {
+        const userResponse = await apiClient.get(`${revBack}/userWrote/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setUserWrote(userResponse.data.userWrote);

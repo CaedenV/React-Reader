@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import './login-register.css';
 import Popup from 'reactjs-popup';
-import axios from 'axios';
+import apiClient from '../../axiosTokenIntercept';
 import { userBack } from '../../backendRoutes';
 import { jwtDecode } from "jwt-decode";
 import profPic from '../../profPic.png';
 
-const Register = ({ onClose, onSign, updateUserId, setExpiresAt }) => {
+const Register = ({ onClose, onSign, updateUserId }) => {
     const [typedPass, setTypedPass] = useState('');
     const [valid, setValid] = useState('');
 
@@ -29,12 +29,12 @@ const Register = ({ onClose, onSign, updateUserId, setExpiresAt }) => {
             pic: profPic,
         }
         
-        const response = await axios.post(`${userBack}/register`, data);
+        const response = await apiClient.post(`${userBack}/register`, data);
         setValid(response.data.message);
-        if(response.data.success) {
-            localStorage.setItem('token', response.data.token);
-            updateUserId(jwtDecode(response.data.token));
-            setExpiresAt(response.data.expiresAt);
+        if (response.data.success) {
+            localStorage.setItem('accessToken', response.data.token.accessT);
+            localStorage.setItem('refreshToken', response.data.token.refreshT);
+            updateUserId(jwtDecode(response.data.token.accessT).id);
             onClose;
         }
     }

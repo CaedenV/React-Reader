@@ -5,8 +5,10 @@ const bcrypt = require('bcryptjs');
 const verifyJWT = require('./verify');
 const db = require('../db');
 const multer = require('multer');
-const upload = multer({dest: '/uploads'})
+const upload = multer({ dest: '/uploads' })
 const fs = require('fs');
+
+let refreshTokens = [];
 
 // Create the Hashed Password
 const hashPassword = (password) => {
@@ -25,7 +27,6 @@ async function getUserByEmail(email) {
     return err.message;
   }
 }
-
 async function getIdByName(name) {
   try {
     const query = "select id from users where userName = ?";
@@ -36,8 +37,19 @@ async function getIdByName(name) {
   }
 }
 
+const generateAccessToken = (user) => {
+  return jwt.sign(user, process.env.ACCESS_TOKEN, { expiresIn: '15m' }); // Access token (short-lived)
+};
+const generateRefreshToken = (user) => {
+  const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN, { expiresIn: '1d' }); // Refresh token (longer-lived)
+  refreshTokens.push(refreshToken); // Store refresh tokens (you can save this in a database)
+  return refreshToken;
+};
+
+// Registering an account in the users table provided a username, email, and password.
 router.post('/register', async (req, res) => {
   req.withCredentials = true;
+
   const { userName, email, password } = req.body;
 
   if (!userName || !email || !password) {
@@ -51,15 +63,16 @@ router.post('/register', async (req, res) => {
     const hashedPassword = hashPassword(password);
     let query = "insert into users (userName, email, password) values (?,?,?)";
     const results = await db.queryDatabase(query, [userName, email, hashedPassword]);
-    const token = jwt.sign({ id: results.insertId }, process.env.ACCESS_TOKEN, { expiresIn: '3h' });
-    const expiresAt = Date.now() + 3 * 60 * 60 * 1000; // 3 hours from now
-    return res.status(200).json({ success: true, message: "Login Successful!", token: token, expiresAt: expiresAt });
+    const accessT = generateAccessToken({ id: results.insertId, name: userName });
+    const refreshT = generateRefreshToken({ id: results.insertId, name: userName });
+    return res.status(200).json({ success: true, message: "Login Successful!", token: { accessT, refreshT } });
   }
   catch (e) {
     return res.status(500).json({ success: false, message: e.message });
   }
 });
 
+// handles the user's logging in, provided an email and password.
 router.post('/login', async (req, res) => {
   req.withCredentials = true;
   const { email, password } = req.body;
@@ -67,7 +80,7 @@ router.post('/login', async (req, res) => {
     return res.json({ success: false, message: 'Both email and password are required.' });
   }
   try {
-    query = "select id, password from users where email = ?";
+    query = "select id, password, userName from users where email = ?";
     const user = await getUserByEmail(email);
 
     if (!user) {
@@ -81,16 +94,42 @@ router.post('/login', async (req, res) => {
       if (!match) {
         return res.json({ success: false, message: 'Incorrect Email or Password.' });
       }
-      const token = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN, { expiresIn: '3h' });
-      //const expiresAt = Date.now() + 3 * 60 * 60 * 1000; // 3 hours from now
-      const expiresAt = Date.now() + 11 * 60 * 1000; // 1 min from now
+      const accessT = generateAccessToken({ id: user.id, name: user.userName });
+      const refreshT = generateRefreshToken({ id: user.id, name: user.userName });
+
       //get time stamp of login/register. Crate another timestamp for 2hr 50 min later. Check every 10 min? if current datetime = logout timestamp. 
-      return res.status(200).json({ success: true, message: "Login Successful!", token: token, expiresAt: expiresAt });
+      return res.status(200).json({ success: true, message: "Login Successful!", token: { accessT, refreshT } });
     });
   } catch (error) {
     return res.status(500).json({ success: false, message: 'An error occured while logging in.\n' + error.message });
   }
 });
+
+// refreshes the access token, allowing the user to stay logged in.
+router.post('/refresh', verifyJWT, (req, res) => {
+  const { token } = req.body;
+  if (!token) return res.status(401).json({ error: 'Missing token.', message: 'No token provided.' });
+  if (!refreshTokens.includes(token)) return res.status(403).json({ error: 'Invalid token.', message: 'Refresh token is not valid.' }); // Token is invalid or blacklisted
+
+  try {
+    const decoded = jwt.verify(token, process.env.REFRESH_TOKEN);
+
+    const accessT = generateAccessToken({id: decoded.id, name: decoded.name});
+
+    return res.json({ accessT});
+  } catch (err) {
+    return res.status(403).json({error: 'Invalid token.', message: 'REfresh token is invalid or expired.'});
+  }
+});
+
+// Logout route (invalidate refresh token)
+router.post('/logout', verifyJWT, (req, res) => {
+  const { token } = req.body;
+  refreshTokens = refreshTokens.filter(rt => rt !== token); // Remove the refresh token
+  res.sendStatus(204); // Successful logout
+});
+
+
 
 // Get all users
 router.get('/getAll', verifyJWT, async (req, res) => {
@@ -139,7 +178,7 @@ router.get('/getRecInfo', verifyJWT, async (req, res) => {
 });
 
 // Get self nowRead
-router.get('/nowRead', verifyJWT, async(req, res) => {
+router.get('/nowRead', verifyJWT, async (req, res) => {
   const id = req.user;
   try {
     const query = "SELECT nowRead FROM users WHERE id = ?";
@@ -149,16 +188,16 @@ router.get('/nowRead', verifyJWT, async(req, res) => {
     }
     const nowRead = results[0].nowRead;
     //console.log(nowRead);
-    return res.status(200).json({success: true, nowRead });
+    return res.status(200).json({ success: true, nowRead });
   } catch (error) {
-    return res.status(500).json({error: error.message});
+    return res.status(500).json({ error: error.message });
   }
 });
 
 // Get specific user
 router.get('/getOther/:profileName', verifyJWT, async (req, res) => {
-  const {profileName} = req.params;
-  const {id} = await getIdByName(profileName);
+  const { profileName } = req.params;
+  const { id } = await getIdByName(profileName);
   try {
     const query = "SELECT pic, favGenre, nowRead FROM users WHERE id = ?";
     const results = await db.queryDatabase(query, [id]);
@@ -178,13 +217,13 @@ var type = upload.single('image');
 // Update user profile
 router.patch('/update', verifyJWT, type, async (req, res) => {
   const id = req.user;
-  const {userName, favGenre} = req.body;
+  const { userName, favGenre } = req.body;
 
-  if(req.file) {
+  if (req.file) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const newFName = req.file.originalname.replace('.','-' + uniqueSuffix + '.');
+    const newFName = req.file.originalname.replace('.', '-' + uniqueSuffix + '.');
     fs.rename(req.file.path, `uploads/${newFName}`, function (err) {
-      if(err) {return res.status(500).json({error: err.message, message: 'Something went wrong. Please try again later.'});}
+      if (err) { return res.status(500).json({ error: err.message, message: 'Something went wrong. Please try again later.' }); }
     });
 
     const pic = `/uploads/${newFName}`;
@@ -193,7 +232,7 @@ router.patch('/update', verifyJWT, type, async (req, res) => {
       const results = await db.queryDatabase(query, [userName, pic, favGenre, id]);
       if (results.affectedRows === 0) {
         return res.json({ success: false, message: 'User ID does not exist.' });
-      } 
+      }
       return res.json({ success: true, message: 'User updated successfully. Please refresh.' });
     } catch (error) {
       return res.status(500).json({ error: error.message, message: 'Something went wrong. Please try again later.' });
@@ -216,7 +255,7 @@ router.patch('/update', verifyJWT, type, async (req, res) => {
 // Changes the user's nowRead book 
 router.patch('/nowRead/:bookId', verifyJWT, async (req, res) => {
   const id = req.user;
-  const {bookId} = req.params;
+  const { bookId } = req.params;
   try {
     const query = "UPDATE users SET nowRead=? WHERE id=?";
     await db.queryDatabase(query, [bookId, id]);
@@ -286,8 +325,8 @@ router.get('/selfLibCount', verifyJWT, async (req, res) => {
 });
 
 router.get('/libCount/:name', verifyJWT, async (req, res) => {
-  const {name} = req.params;
-  const {id} = await getIdByName(name);
+  const { name } = req.params;
+  const { id } = await getIdByName(name);
   try {
     const ownedBooksQuery = "SELECT count(*) FROM ownedbooks WHERE userId=?";
     const wishedBooksQuery = "SELECT count(*) FROM wishedbooks WHERE userId=?";

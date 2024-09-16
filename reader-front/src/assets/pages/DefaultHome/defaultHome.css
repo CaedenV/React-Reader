@@ -1,7 +1,7 @@
 .intro {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: normal;
 }
 
 .back {
@@ -21,6 +21,13 @@
     font-size: large;
     color: rgb(97, 81, 128);
     margin-top: 10px;
+}
+
+.introText {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 30px;
 }
 
 .start {
