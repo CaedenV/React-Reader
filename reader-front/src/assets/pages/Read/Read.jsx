@@ -22,9 +22,10 @@ const Read = ({ userId }) => {
 
   useEffect(() => {
     async function getBooks() {
-      await apiClient.get(`${ownBack}/get`, {
+      const fetchOwn = await apiClient.get(`${ownBack}/get`, {
         headers: { Authorization: `Bearer ${token}` }
-      }).then((response) => { setOwnedBooks(response.data.owned); });
+      });
+      setOwnedBooks(fetchOwn.data.owned);
 
       const response = await apiClient.get(`${ownBack}/nowRead`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -36,11 +37,10 @@ const Read = ({ userId }) => {
         nowReadId: response.data.nowRead.nowReadId,
         nowReadFN: url
       });
+      setValidAccess(response.data.nowRead.nowReadId === bookId);
     }
 
     getBooks();
-    setValidAccess(currentRead.nowReadId === bookId);
-    console.log(currentRead.nowReadId, bookId);
   }, [userId, bookId]);
 
   const setBookAdds = async () => {
