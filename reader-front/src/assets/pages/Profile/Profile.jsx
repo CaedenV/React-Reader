@@ -56,7 +56,7 @@ const Profile = ({ userId }) => {
         });
     }
     GetPersonalInfo();
-    //console.log(isUpdated);
+    //console.log(user.pic); 
     getFriends();
 
     setInterval(getFriends, 60000);

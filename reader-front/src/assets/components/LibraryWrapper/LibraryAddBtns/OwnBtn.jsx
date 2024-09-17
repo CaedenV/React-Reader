@@ -17,8 +17,7 @@ const OwnBtn = ({ bookId, isOwned }) => {
     };
 
     const setCurrentRead = async () => {
-        await apiClient.put(`${userBack}/nowRead`, {
-            body: {bookId: bookId},
+        await apiClient.patch(`${userBack}/nowRead/${bookId}`, {}, {
             headers: { Authorization: `Bearer ${token}` }
         });
     }

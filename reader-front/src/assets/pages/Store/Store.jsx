@@ -44,7 +44,7 @@ const Store = ({ userId }) => {
   useEffect(() => {
     if (sQuery) {
       const modQ = sQuery.replace(' ', '+');
-      const searchUrl = `https://www.googleapis.com/books/v1/volumes?q=${modQ}+${selectedCat}:${modQ}&langRestrict=en&printType=books&maxResults=${resultsPerPage}&startIndex=${(currentPage - 1) * resultsPerPage}&orderBy=relevance`;
+      const searchUrl = `https://www.googleapis.com/books/v1/volumes?q=+${selectedCat}:${modQ}&langRestrict=en&printType=books&maxResults=${resultsPerPage}&startIndex=${(currentPage - 1) * resultsPerPage}&orderBy=relevance`;
       // TODO: adjust size based on filtered results to have 10 on every page
       async function getRes() {
         await axios.get(searchUrl).then((response) => {
@@ -92,10 +92,10 @@ const Store = ({ userId }) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const query = formData.get('query');
-    const redirect = `/store/${selectedCat}/${query}/${currentPage}` ||
-      `/store/${selectedCat}/${sQuery}/${currentPage}` ||
-      `/store/${sCat}/${query}/${currentPage}` ||
-      `/store/${sCat}/${sQuery}/${currentPage}`;
+    const redirect = `/store/${selectedCat}/${query}/1` ||
+      `/store/${selectedCat}/${sQuery}/1` ||
+      `/store/${sCat}/${query}/1` ||
+      `/store/${sCat}/${sQuery}/1`;
     nav(redirect);
   };
 

@@ -260,7 +260,7 @@ router.patch('/nowRead/:bookId', verifyJWT, async (req, res) => {
   const { bookId } = req.params;
   try {
     const query = "UPDATE users SET nowRead=? WHERE id=?";
-    await db.queryDatabase(query, [bookId, id]);
+    const results = await db.queryDatabase(query, [bookId, id]);
     if (results.affectedRows === 0) {
       return res.status(404).json({ success: false, message: 'User ID does not exist.' });
     }

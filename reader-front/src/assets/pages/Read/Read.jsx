@@ -1,10 +1,11 @@
 import './read.css';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ReactReader } from 'react-reader';
 import { ownBack, userBack } from '../../backendRoutes';
 import SmallBook from '../../components/BookDisplay/SmallBook/SmallBook';
 import apiClient from '../../axiosTokenIntercept';
+import Popup from 'reactjs-popup';
 
 const Read = ({ userId }) => {
   const { bookId } = useParams();
@@ -18,8 +19,26 @@ const Read = ({ userId }) => {
 
   const token = localStorage.getItem('accessToken');
 
-  const [location, setLocation] = useState(null);
+  const handleSave = async () => {
+    const updatedAdds = { ...bookAdds, fontSize: size, location: location };
+    setBookAdds(updatedAdds);
+    //console.log(updatedAdds);
+    await apiClient.patch(`${ownBack}/bookAdds/${bookId}`, { bookAdds: updatedAdds }, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  }
+  const toggleOwned = () => {
+    setShowOwned(!showOwned);
+  }
+  const startRead = async (bookId) => {
+    console.log(bookId);
+    await apiClient.patch(`${userBack}/nowRead/${bookId}`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
 
+    const redirect = `/read/${bookId}`;
+    nav(redirect);
+  }
 
   useEffect(() => {
     async function getBooks() {
@@ -31,42 +50,51 @@ const Read = ({ userId }) => {
       const response = await apiClient.get(`${ownBack}/nowRead`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      if(response.data.success) {
+      if (response.data.success) {
         setValidAccess(response.data.nowReadId === bookId);
       }
       setCurrentRead({
         nowReadId: response.data.nowReadId,
         url: response.data.nowReadUrl
       });
+      const ba = JSON.parse(response.data.adds);
+      //console.log(ba);
+      setBookAdds(ba);
     }
 
     getBooks();
-    console.log(currentRead);
   }, [userId, bookId]);
 
-  const handleSave = async () => {
-    await apiClient.patch(`${ownBack}/bookAdds`, {bookAdds: bookAdds}, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-  }
+  useEffect(() => {
+    setLocation(bookAdds.location);
+    setSize(bookAdds.fontSize);
+  }, [bookAdds]);
 
-  const toggleOwned = () => {
-    setShowOwned(!showOwned);
-  }
+  const [location, setLocation] = useState(null);
+  const [size, setSize] = useState(100);
+  const reditionRef = useRef(null);
+  const applyFontSize = (newSize) => {
+    //console.log(newSize);
+    setSize(newSize);
+  };
+  useEffect(() => {
+    if (reditionRef.current) {
+      reditionRef.current.themes.fontSize(`%${size}`)
+    }
+  }, [size]);
 
-  const startRead = async (bookId) => {
-    await apiClient.patch(`${userBack}/nowRead/${bookId}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-
-    const redirect = `/read/${currentRead.nowReadId}`;
-    nav(redirect);
-  }
   if (validAccess) {
     return (
       <div className='read'>
         <div className="readerSettings">
-          <button className="setting fSize"><i className="fa-solid fa-text-height" /></button>
+          <Popup trigger={<button className="setting fSize"><i className="fa-solid fa-text-height" /> </button>}>
+            <div className='alterFont'>
+              {size}%
+              <button className='up font' onClick={() => applyFontSize(Math.max(80, size + 10))}>+</button>
+              <button className='down font' onClick={() => applyFontSize(Math.max(80, size - 10))}>-</button>
+            </div>
+          </Popup>
+
           <button className="setting color"><i className="fa-solid fa-palette" /></button>
           <button className="setting comment"><i className="fa-solid fa-comment-dots" /></button>
           {ownedBooks && <button className={showOwned ? "active " + 'setting showOwn' : 'setting showOwn'} onClick={toggleOwned}><i className="fa-solid fa-book" /></button>}
@@ -85,7 +113,9 @@ const Read = ({ userId }) => {
             url={currentRead.url}
             location={location}
             locationChanged={(epubcfi) => setLocation(epubcfi)}
-            
+            getRendition={(rendition) => {
+              reditionRef.current = rendition
+            }}
           />
         </div>
       </div>

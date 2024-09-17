@@ -33,6 +33,7 @@ app.use('/favs', favBooks);
 app.use('/owned', owned);
 app.use('/recs', recs);
 app.use('/uploads', express.static('uploads'));
+app.use('/bookFiles', express.static('bookFiles'));
 
 app.listen(process.env.PORT, () => {
   console.log('Server is running on port ' + process.env.PORT + ".");
