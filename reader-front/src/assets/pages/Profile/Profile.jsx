@@ -161,12 +161,12 @@ const Profile = ({ userId }) => {
                 </div>
                 <div className="changeText">
                   <input type="text" className='top' name="userName" placeholder={user.userName || "UserName"} />
-                  <select className='type' id='type' value={user.favGenre} >
-                    {/* {bisacGenres.map((genre, i) => {
+                  {/*<select className='type' id='type' value={user.favGenre} onChange={setUser(...user, favGenre)}>
+                     {bisacGenres.map((genre, i) => {
                     return (<option value={genre} key={i}> {genre}</option>);
-                  })} */}
+                  })} 
 
-                  </select>
+                  </select>*/}
                   <input type="text" name="favGenre" placeholder={user.favGenre || "Favorite Genre"} />
                   <button type='submit'>Save</button>
                 </div>
@@ -187,7 +187,7 @@ const Profile = ({ userId }) => {
               </div> : <></>}
             <div className="libNums">
 
-              <Link className='libNums' to={`/${userId}/library`}>
+              <Link className='libNums' to={`/library`}>
                 <div className="lib owns">
                   <label className='cat'> Owns </label>
                   <label className='value'> {libNums.own} </label>

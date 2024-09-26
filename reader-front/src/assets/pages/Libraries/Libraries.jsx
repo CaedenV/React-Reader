@@ -49,7 +49,7 @@ const Libraries = ({ userId }) => {
 
   return (
     <div className="library">
-      <h1 className="libTitle">My Library</h1>
+      <h1 className="libTitle">Library</h1>
       <div className="ownWrapper">
         <h2>Owned Books</h2>
         <div className="ownList">

@@ -1,69 +1,115 @@
+.store {
+    padding-left: 5%;
+    padding-right: 5%;
+}
 .store label{
     display: flex;
     flex-direction:column;
     font-size: 50px;
-    color: rgb(130, 99, 190);
+    color: var(--text-color);
 }
 
 .store >h1 {
-    color: mediumpurple;
+    color: var(--text-color);
     font-size: 50px;
+    font-style: italic;
 }
 
 .results{
     margin-top: 50px;
 }
 
-.SearchArea{
+.searchWrapper {
+    display: flex;
+    flex-direction: row;
+    border: solid 1px #65558f;
+    border-radius: 30px;
+}
+
+.searchBar{
     display: flex;
     justify-content: center;
+    flex-direction: row;
 }
-.type {
-    border-top-left-radius: 8px;
-    border-bottom-left-radius: 8px;
-}
+
 .type{
-    font-size: 30px;
-    color: white;
-    background-color: rgb(164, 139, 214);
+    font-size: 20px;
+    padding: 10px;
+    color: #ffeeda;
+    background-color: #65558f;
+    border-top-left-radius: 30px;
+    border-bottom-left-radius: 30px;
+    height: 58px;
+    outline: none;
+    text-align: center;
 }
 .text {
-    font-size: 30px;
-    color: white;
-    background-color: rgb(164, 139, 214);
+    font-size: 20px;
+    color: #65558f;
+    background-color: transparent;
+    height: 58px;
+    border: none;
+    padding-left: 10px;
+    font-weight: 700;
 }
+
+.text:focus {
+    text-decoration: underline solid 3px #65558f;
+    text-underline-offset: 4px;
+}
+
 .searchBar ::placeholder {
-    color: rgb(233, 225, 211);
+    color: #65558f86;
 }
+
+.searchBox {
+    background-color: #e0d1ea;
+    display: flex;
+    flex-direction: row;
+}
+.clearInput {
+    background-color: transparent;
+    border: none;
+    color: #65558f;
+    font-size: 24px;
+    padding: 10px;
+}
+
 .searchIcon{
-    color: mediumpurple;
-    background-color: white;
-    font-size: 30px;
-    border: 1px solid mediumpurple;
+    color: #ffeeda;
+    background-color: #65558f;
+    font-size: 24px;
+    border: none;
     cursor: pointer;
     padding: 1px;
-    border-top-right-radius: 8px;
-    border-bottom-right-radius: 8px;
+    border-top-right-radius: 50%;
+    border-bottom-right-radius: 50%;
+    width: 58px;
+    height: 58px;
 }
 
 .pagination {
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: center;
 }
 
 .page-link {
     padding: 4px;
-    color: rgb(100, 58, 184);
+    color: var(--text-color);
     font-size: large;
-    background-color: white;
-    border: 1px solid mediumpurple;
+    background-color: var(--card-color);
+    
+    border: none;
     border-radius: 5px;
     margin-bottom: 20px;
     margin-left: 5px;
 }
 
 .curPage {
-    color: rgb(85, 0, 255);
-    background-color: rgb(179, 196, 211);
+    color: var(--button-text-color);
+    background-color: var(--button-color);
+    text-decoration: underline solid 2px var(--button-text-color);
+    text-underline-offset: 2px;
 }

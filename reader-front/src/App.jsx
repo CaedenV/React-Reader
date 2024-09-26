@@ -31,7 +31,7 @@ function App() {
           <Route path="/:userId/profile" element={userId !== null ? <Profile userId={userId} /> : <DefaultHome />} />
           <Route path="/profile/:userName" element={userId !== null ? <OtherProfile userId={userId} /> : <DefaultHome />} />
           <Route path="/view/:bookId" element={<Single userId={userId} />} />
-          <Route path="/:userId/library" element={userId !== null ? <Libraries userId={userId} /> : <DefaultHome />} />
+          <Route path="/library" element={userId !== null ? <Libraries userId={userId} /> : <DefaultHome />} />
           <Route path="/read/:bookId" element={userId !== null ? <Read userId={userId}/> : <DefaultHome />} />
           <Route path='/clubs' element={userId !== null ? <Clubs /> : <DefaultHome />}/>
         </Routes>

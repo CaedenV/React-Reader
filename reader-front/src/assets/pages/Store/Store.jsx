@@ -18,6 +18,7 @@ const Store = ({ userId }) => {
   const [resultsPerPage] = useState(15);
 
   const [userLib, setUserLib] = useState({});
+  const [query, setQuery] = useState(sQuery);
 
   const addToDB = async (books) => {
     for (const book of books) {
@@ -113,27 +114,34 @@ const Store = ({ userId }) => {
     });
   };
 
+  const handleClearInput = () => {
+    setQuery('');
+  }
+
 
   return (
     <div className="store">
       <h1 className="pageLabel">Store</h1>
-      <div className='SearchArea'>
-        <form className="searchBar" onSubmit={handleSubmit}>
+      <form className="searchBar" onSubmit={handleSubmit}>
+        <div className="searchWrapper">
           <select className='type' id='type' value={selectedCat} onChange={(e) => setSCat(e.target.value)} >
             <option value="intitle">Book Title</option>
             <option value="inauthor">Author</option>
             <option value="subject">Genre</option>
           </select>
-          <input type="text" placeholder={sQuery} className="text" name='query' />
+          <div className="searchBox">
+            <input type="text" placeholder={sQuery || 'Search WeReader'} className="text" name='query'value={query} onChange={(e) => setQuery(e.value)}/>
+            <button type='button' className="clearInput" onClick={() => handleClearInput()}><i className="fa-solid fa-delete-left" /></button>
+          </div>
           <button className="searchIcon" type='submit'><i className="sIcon fa-solid fa-magnifying-glass" /></button>
-        </form>
-      </div>
+        </div>
+      </form>
       {sQuery && isRes && (
         <div className="results">
-          <label> Here's what we found for {sQuery} in
-            {selectedCat === 'intitle' && " 'Titles'"}
-            {selectedCat === 'inauthor' && " 'Authors'"}
-            {selectedCat === 'subject' && " 'Genres'"}:
+          <label> Here's what we found for '{sQuery}' in
+            {selectedCat === 'intitle' && " Titles"}
+            {selectedCat === 'inauthor' && " Authors"}
+            {selectedCat === 'subject' && " Genres"}:
           </label>
           <ul className="found">
             {results.map((book, i) => {

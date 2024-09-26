@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import apiClient from '../../axiosTokenIntercept';
 import { recBack, userBack } from '../../backendRoutes';
 import BookNoDesc from '../../components/BookDisplay/NoDesc/BookNoDesc';
+import backImg from '../../image.png';
 
 const UserDash = ({ userId }) => {
   const [user, setUser] = useState({});
@@ -10,7 +11,7 @@ const UserDash = ({ userId }) => {
   const [userLib, setUserLib] = useState({});
 
   const token = localStorage.getItem('accessToken');
-  
+
 
   useEffect(() => {
     async function FetchData() {
@@ -56,11 +57,19 @@ const UserDash = ({ userId }) => {
 
   return (
     <div className="dashboard">
-      <h1 className='dashTitle'>Dashboard</h1>
+      <section className='intro'>
+        <form className="searchForm">
+          <h2 className='searchPrompt'>Looking for something?</h2>
+          <div className="searchInput">
+          <input type="text" className="findBook" name='searchBox' placeholder="Let's find it!" />
+          <button type='submit' className="searchButton"><i className="sIcon fa-solid fa-magnifying-glass" /></button>
+          </div>
+        </form>
+      </section>
 
       {user.favGenre &&
         <div className="genre group">
-          <h2>{user.favGenre} books you may enjoy:</h2>
+          <h2>Since you like {user.favGenre}</h2>
           <div className="books">
             {recs.genreBased && recs.genreBased.length > 0 &&
               recs.genreBased.map((book, i) => (
@@ -84,7 +93,7 @@ const UserDash = ({ userId }) => {
 
       {userLib && userLib.faved && recs &&
         <div className="author group">
-          <h2>Based on some of your favorite authors:</h2>
+          <h2>From your favorite authors:</h2>
           <div className="books">
             {recs.authorBased && recs.authorBased.length > 0 &&
               recs.authorBased.map((book, i) => (
@@ -108,7 +117,7 @@ const UserDash = ({ userId }) => {
 
       {recs.popular &&
         <div className="popular group">
-          <h2>Popular Books:</h2>
+          <h2>Trending with members</h2>
           <div className="books">
             {recs.popular && recs.popular.length > 0 &&
               recs.popular.map((book, i) => (
@@ -132,7 +141,7 @@ const UserDash = ({ userId }) => {
 
       {recs.recents &&
         <div className="recent group">
-          <h2>Some new releases:</h2>
+          <h2>Newly published</h2>
           <div className="books">
             {recs.recents && recs.recents.length > 0 &&
               recs.recents.map((book, i) => (

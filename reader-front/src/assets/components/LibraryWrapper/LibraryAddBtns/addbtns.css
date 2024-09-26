@@ -1,6 +1,6 @@
 .add {
-    color: white;
-    background-color: mediumpurple;
+    color: var(--button-text-color);
+    background-color: var(--button-color);
     border-radius: 5px;
     border-color: transparent;
     margin-left: 5px;

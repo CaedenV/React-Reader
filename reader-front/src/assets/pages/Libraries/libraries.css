@@ -1,15 +1,18 @@
 .library {
     display: flex;
     flex-direction: column;
+    padding-left: 5%;
+    padding-right: 5%;
 }
 .library>h1{
-    color: mediumpurple;
+    color: var(--text-color);
+    font-style: italic;
     font-size: 50px;
     align-self:normal;
     margin-bottom: 10px;
 }
 .ownWrapper>h2,.wishWrapper>h2,.favWrapper>h2{
-    color: rgb(118, 86, 182);
+    color: var(--text-color);
 }
 
 .libWrapper {

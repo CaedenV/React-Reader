@@ -28,11 +28,10 @@ const MakeRev = ({ bookId, getReviews }) => {
     };
 
     return (
-        <div className="make">
+        <section className="makeContainer">
             <form className="makeReview" onSubmit={handleSubmit}>
-                <div className="makeRevGrp">
-                    <input type="text" name='title' placeholder="How about a title?" className="revInput" autoFocus={true}
-                    />
+                <header className="titleContainer">
+                    <input type="text" name='title' placeholder="How about a title?" className="makeTitle" />
                     <div className="star-rating">
                         {[...Array(5)].map((_, index) => (
                             <label key={index} className={`star-label ${rating > index ? 'filled' : ''}`}>
@@ -53,13 +52,11 @@ const MakeRev = ({ bookId, getReviews }) => {
                         ))}
                         <p>{rating}</p>
                     </div>
-                    <button className='revSubmit' type='submit'><i className=" fa-solid fa-pen-nib"></i></button>
-                </div>
-                <div className="makeRevText">
-                    <textarea name='text' placeholder="How was it? Let us know in more detail..." type="text" className="revInput revText"></textarea>
-                </div>
+                    <button className='postButton' type='submit'>Post</button>
+                </header>
+                <textarea name='text' placeholder="How was it? Let us know in more detail..." type="text" className="makeRevText"></textarea>
             </form>
-        </div>
+        </section>
     )
 }
 

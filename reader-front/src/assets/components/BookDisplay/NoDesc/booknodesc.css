@@ -1,43 +1,66 @@
-.bnCover{
+.bCover{
+    aspect-ratio: 0.6;
     width: 120px;
-    height: 200px;
-    object-fit:fill;
+    object-fit: cover;
     border-radius: 10px;
     cursor: pointer;
+    object-position: center;
 }
 
-.bnInfo{
-    color: rgb(121, 54, 255);
-    font-family: 'Merriweather', serif;
-    margin-left: 10px;
-    white-space: pre-wrap;
-    max-width: 200px;
+.bInfo{
+    display: flex;
+    color: var(--text-color);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    margin-top: 3px;
+}
+
+.bGenre{
+    color: var(--text-color);
+    margin-top: 7px;
+    font-size: 15px;
+    line-height: 1;
+    cursor: pointer;
+    font-weight: 400;
+    overflow-wrap: break-word;
+    white-space: normal;
+}
+
+.bTitle{
+    color: var(--text-color);
+    font-size: 24px;
+    font-weight: 600;
+    margin-top: 5px;
+    cursor: pointer;
+    overflow-wrap: break-word;
+    white-space: normal;
+    vertical-align: bottom;
+}
+
+.bAuth{
+    color: var(--text-color);
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 1;
+    overflow-wrap: break-word;
+    white-space: normal;
+}
+
+.libNbooks{
+    border-radius: 10px;
+    background-color: var(--card-color);
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
     display: flex;
     flex-direction: column;
-}
-
-.bnGenre{
-    font-size: 16px;
-    line-height: 20px;
-    margin-top: 10px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    width: 200px;
     margin-right: 10px;
-    cursor: pointer;
-}
-
-.bnTitle{
-    font-family: 'Bebas Neue', serif;
-    font-size: 28px;
-    font-weight: 500;
-    margin-top: 10px;
-    cursor: pointer;
-}
-
-.bnAuth{
-    font-style: italic;
-    font-size: 16px;
-}
-.libNbooks{
-    margin-left: 20px;
-    margin-bottom: 7px;
-    padding: 2px;
+    margin-bottom: 10px;
+    text-align: center;
 }

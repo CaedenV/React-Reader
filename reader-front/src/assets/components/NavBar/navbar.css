@@ -1,17 +1,14 @@
 nav {
     width: 100%;
-    background-color: mediumpurple;
+    background-color: #65558F;
     color: bisque;
-    border-radius: 8px;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
+    border-radius: 0 0 8px 8px;
     padding: 4px 0;
     position: fixed;
     top: 0;
     left: 0;
     display: flex;
     align-items: center;
-    justify-content: space-between;
     z-index: 10;
 }
 
@@ -21,25 +18,29 @@ nav {
 }
 
 nav ul li {
-    display: inline-block;
     list-style: none;
     margin: 5px 20px;
     font-size: 20px;
 }
-
-.profile {
+.navTabs {
+    display: flex;
+    margin-left: auto;
+    margin-right: 100px;
+}
+.navActions {
     display: flex;
     flex-direction: row;
-    align-items: center;
+    padding: 0 20px;
+    margin-left: auto;
 }
 
-.profile>button {
+.profButton {
     color: bisque;
-    background-color: mediumpurple;
+    background-color: transparent;
     font-size: 26px;
     border: none;
     cursor: pointer;
-    margin-right: 10px;
+    margin-right: 20px;
 }
 
 .userOptions {
@@ -57,16 +58,23 @@ nav ul li {
     margin-top: 5px;
 }
 
-.userBtn {
-    color: bisque;
-    background-color: transparent;
-    border: none;
+.navBtn {
     font-size: 16px;
+    background-color: var(--background-color);
+    color: mediumpurple;
+    border-radius: 32px;
+    height: 30px;
+    align-items: center;
+    width: 30px;
+    justify-content: center;
+    padding: 1px;
+    border: none;
     cursor: pointer;
 }
 
-
-.clubsIcon {
-    font-size: 26px;
-    margin-right: 10px;
+.navButtons {
+    display: flex;
+    flex-direction: row;
+    gap: 60px;
 }
+

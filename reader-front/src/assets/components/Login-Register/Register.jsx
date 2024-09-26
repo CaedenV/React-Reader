@@ -10,10 +10,15 @@ const Register = ({ onClose, onSign, updateUserId }) => {
     const [typedPass, setTypedPass] = useState('');
     const [valid, setValid] = useState('');
 
+    const inputs = [
+        { label: 'UserName', type: 'text', name: 'userName', placeholder: 'Username' },
+        { label: 'Email', type: 'email', name: 'email', placeholder: 'example@email.com' },
+        { label: 'Password', type: 'password', name: 'pw', placeholder: 'Password', onChange: (e) => setTypedPass(e.target.value) },
+        { label: 'Confirm Password', type: 'password', name: 'rePW', placeholder: 'Password', onChange: (e) => compPass(e.target.value) },
+      ];
+
     const compPass = (reTyped) => {
-        if (reTyped === typedPass) {
-            setValid("");
-        }
+        if (reTyped === typedPass) { setValid("");}
         else {
             setValid("The passwords do NOT match.");
         }
@@ -28,7 +33,7 @@ const Register = ({ onClose, onSign, updateUserId }) => {
             password: formData.get('pw'),
             pic: profPic,
         }
-        
+
         const response = await apiClient.post(`${userBack}/register`, data);
         setValid(response.data.message);
         if (response.data.success) {
@@ -42,22 +47,22 @@ const Register = ({ onClose, onSign, updateUserId }) => {
     return (
         <Popup open={true} onClose={onClose} modal nested>
             {close => (
-                <div className="page">
+                <div className="page alone">
                     <div className="log">
-                        <h1 className="header">Welcome Back!</h1>
-                        <p className="description">Please click 'Sign In' to continue.</p>
-                        <button className="sign" onClick={onSign}>Sign In</button>
+                        <h1 className="header">Already have an account?<br></br>Log in here:</h1>
+                        <button className="sign" onClick={onSign}>Login</button>
                     </div>
                     <div className="create">
                         <h1 className="header">Create Account</h1>
-                        <p className="description">Don't have an account? No problem! It'll only take a few seconds. If you do have an account, please log in.</p>
                         <form action="submit" className="info" onSubmit={submitForm}>
-                            <input type="text" name="userName" className='input userName' placeholder='Username' />
-                            <input type="email" name="email" className='input email' placeholder='Email Address' />
-                            <input type="password" name="pw" className='input password' placeholder='Password' onChange={(e) => setTypedPass(e.target.value)}/>
-                            <input type="password" name="rePW" className="input rePW" placeholder='Re-Enter Password' onChange={(e) => compPass(e.target.value)}/>
+                            {inputs.map((input, index) => (
+                                <div key={index} className="inputContainer">
+                                    <label className='inputLabel'>{input.label}</label>
+                                    <input type={input.type} name={input.name} className={`input`} placeholder={input.placeholder} onChange={input.onChange}/>
+                                </div>
+                            ))}
                             <label className="response">{valid}</label>
-                            <button type="submit" className='submit'>Create Account</button>
+                            <button type="submit" className='submit'>Sign Up</button>
                         </form>
                     </div>
                 </div>

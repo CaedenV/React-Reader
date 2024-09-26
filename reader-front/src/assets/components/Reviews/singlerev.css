@@ -1,58 +1,86 @@
-.review {
-    margin: 0px 25px 40px 25px;
+.reviewCard {
+    border-radius: 10px;
+    background-color: var(--card-color);
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
     display: flex;
-    flex-direction: row;
-    align-items: center;
+    flex-direction: column;
+    overflow: hidden;
+    margin: 0 10px 0 11px;
+    padding: 10px 30px 29px;
 }
 
 .revRemove {
-    height: 30px;
-    width: 30px;
+    height: 40px;
+    width: 40px;
     font-size: larger;
-    color: mediumpurple;
+    border-radius: 10px;
+    border: none;
+    background-color: var(--button-color);
+    color: var(--button-text-color);
     cursor: pointer;
 }
 
-.revInfo {
-    margin-left: 10px;
+.reviewHeader {
+    align-self: flex-start;
+    z-index: 10;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.userInfo {
+    display: flex;
+    gap: 10px;
+}
+
+.userName {
+    color: var(--text-color);
+    font-size: 40px;
+    font-weight: 500;
+}
+
+.ratingContainer {
+    display: flex;
+    gap: 6px;
+    color: var(--text-color);
+}
+
+.ratingContainer>.rating {
+    flex-grow: 1;
+    font-size: 40px;
+}
+
+.ratingContainer>.reviewIcon {
+    font-size: 40px;
+    color: var(--text-color);
+}
+
+.reviewMeta {
+    align-self: stretch;
+    display: flex;
+    gap: 40px 100px;
+    color: var(--text-color);
+    font-weight: 500;
+    line-height: 1.3;
+    flex-wrap: wrap;
+    margin: auto 0;
+    margin-left: 20px;
 }
 
 .reviewTitle {
-    font-family: 'Merriweather', serif;
-    font-size: 30px;
-    font-weight: bold;
-    color: mediumpurple;
-    padding-bottom: 3px;
+    font-size: 32px;
 }
 
-.reviewIcon {
-    margin-left: 5px;
-}
 
 .reviewDate {
-    font-weight: lighter;
-    color: rgb(174, 133, 255);
-    font-style: italic;
+    font-size: 20px;
+    margin: auto 0;
 }
 
 .revDesc {
-    font-family: 'Lora', serif;
-    font-size: 18px;
-    color: rgb(104, 76, 161);
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
-    border-top: 1px solid mediumpurple;
+    font-size: 20px;
+    color: var(--text-color);
 }
-
-.hide {
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-
-
-
 
 .revs {
     margin-bottom: 20px;

@@ -1,68 +1,74 @@
-.make {
-    padding-top: 10;
-    margin: 0px 25px 40px 25px;
-    border: 2px solid mediumpurple;
-    border-radius: 8px;
+.makeContainer {
+  padding: 0 4% 4%;
 }
-
-.makeReview {
-    position: relative;
-}
-.makeRevGrp {
+.titleContainer {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  border-bottom: 1px solid mediumpurple;
+  flex-wrap: wrap;
+  font-weight: 500;
+  font-size: 28px;
+}
+.makeTitle {
+  border-radius: 10px 0 0 0;
+  background-color: #e0d1ea;
+  overflow: hidden;
+  flex-grow: 1;
+  padding: 11px 22px;
+  border: 1px solid #56487c;
+  font: inherit;
+  color: #56487c;
+}
+.postButton {
+  align-self: stretch;
+  border-radius: 0 10px 0 0;
+  background-color: #56487c;
+  min-height: 49px;
+  min-width: 100px;
+  gap: 8px;
+  overflow: hidden;
+  color: #ffeed9;
+  padding: 13px 12px;
+  font-size: 24px;
+  font-weight: 400;
+  border: none;
+  cursor: pointer;
+}
+.postButton:hover {
+  background-color: #211c30;
+}
+.makeRevText {
+  min-height: 500px;
+}
+.makeRevText {
+  display: flex;
+  min-height: 80px;
+  width: 100%;
+  align-items: flex-start;
+  overflow: hidden;
+  justify-content: flex-start;
+  flex: 1;
+  height: 100%;
+  padding: 8px 8px;
+  border: 1px solid #56487c;
+  border-radius: 0 0 5px 5px;
+  background-color: var(--card-color);
+  color: var(--text-color);
+  font-size: 16px;
+}
+.makeRevText::placeholder {
+  color: var(--button-color);
 }
 
-.userName {
-    color: rgb(119, 91, 175);
-    font-size: 25px;
-}
 
-.reviewIcon {
-    width: 25px;
-    height: 25px;
-    color: rgb(174, 152, 219);
-}
-
-.revInput {
-    font-size: 30px;
-    border: none;
-    padding: 10px;
-    color: mediumpurple;
-    background-color: transparent;
-}
-
-.revInput:focus {
-    outline: none;
-}
-
-.revText {
-    font-size: 20px;
-    font-family: 'Lora', serif;
-    color: rgb(104, 76, 161);
-    width: 70vw;
-    height: 150;
-}
-
-.revSubmit {
-    height: 30px;
-    width: 30px;
-    margin-left: 100px;
-    font-size: larger;
-    color: mediumpurple;
-    cursor: pointer;
-}
 
 .star-rating {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0 5px;
 }
 .star-rating>p {
   font-size: 20px;
-  color: rgb(120, 74, 211);
+  color: var(--button-color);
   margin-left: 5px;
   font-weight: bolder;
 }
@@ -74,15 +80,15 @@
 .star-label {
   display: inline-block;
   cursor: pointer;
-  color: rgb(135, 118, 167);
+  color: var(--button-color);
   font-size: 20px;
 }
 
 .star-label.filled:hover,
 .star-label:hover {
-  color: rgb(137, 78, 255);
+  color: var(--button-text-color);
 }
 
 .star-label.filled {
-  color: rgb(133, 72, 255);
+  color: var(--button-color);
 }

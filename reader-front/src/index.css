@@ -1,28 +1,52 @@
 @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Mate:ital@0;1&family=Playfair+Display&display=swap');
-*{
+@import url('https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@0,400..700;1,400..700&display=swap');
+
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Lora", serif;
+  font-family: "Libre Bodoni", serif;
 }
-body{
-  background-color: bisque;
+
+body {
+  background-color: var(--background-color);
 }
-a{
+
+a {
   text-decoration: none;
   color: inherit;
   line-height: 1;
   cursor: pointer;
 }
-.container{
-  padding-left: 10%;
-  padding-right: 10%;
-}
+
 .appRoutes {
   padding-top: 60px;
 }
 
 button {
   cursor: pointer;
+}
+
+input, textarea {
+  outline: none;
+}
+
+:root {
+  /* Light mode colors */
+  --background-color: #dcc1a7;
+  --text-color: #65558f;
+  --card-color: #eadbcb;
+  --button-color: #56487c;
+  --button-text-color: #ffeeda;
+}
+
+.dark-mode {
+  /* Dark mode colors */
+  --background-color: #3f355a;
+  --text-color: #ffeeda;
+  --card-color: #715FA0;
+  --button-color: #ffeeda;
+  --button-text-color: #56487c;
+
 }

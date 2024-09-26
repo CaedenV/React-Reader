@@ -58,39 +58,51 @@ const Single = ({ userId }) => {
 
   return (
     <div className="mainContents">
-      <span className="bookCoverTitle">
-        <img src={bookInfo.cover}
-          alt="Book Cover"
-          className="singleBookCover"
-        />
-        <div className="bookDetails">
-          <h1 className="singleBookTitle"> {bookInfo.title}
-            {userId ? <div className="singleBookOpt">
-              <LibWrap bookId={bookId} libraries={userLib} />
-              <Popup trigger={<button className='share'><i className="fa-regular fa-share-from-square" /></button>} position='bottom center'>
-                <div className="list">
-                  {friends.length > 0 ? friends.map((friend, i) => (
-                    <ShareFriend friend={friend} book={bookInfo} key={i} />
-                  )) : <label className='friend'>Add more friends to share books with!</label>}
+      <main className="bookInfoContainer">
+        <div className="contentWrapper">
+          <aside className="imgColumn">
+            <img loading='lazy' src={bookInfo.cover} alt="Book Cover" className="singleBookCover" />
+          </aside>
+          <section className="detailsColumn">
+            <div className="detailsWrapper">
+              <header className="headerSection">
+                <div className="headerContent">
+                  <div className="headerLayout">
+                    <div className="titleColumn">
+                      <div className="titleWrapper">
+                        <h2 className="genre">{bookInfo.genre}</h2>
+                        <h1 className="bookTitle">{bookInfo.title}</h1>
+                        <p className="authorInfo">
+                          {bookInfo.author} |{" "}
+                          <span className='pubDate' >{moment(bookInfo.pubDate).format('YYYY-MM-DD')}</span>
+                        </p>
+                        <p className="rateInfo">
+                          {bookInfo.avgRating} / 5 <i className="reviewIcon fa-solid fa-star-half-stroke" /> {bookInfo.rateCount} review(s)    
+                        </p>
+                      </div>
+                    </div>
+                    <div className="actionColumn">
+                      {userId && <LibWrap bookId={bookId} libraries={userLib} />}
+                      {userId ?
+                        <Popup trigger={<button className='share'><i className="fa-regular fa-paper-plane" /></button>} position='bottom center'>
+                          <div className="list">
+                            {friends.length > 0 ? friends.map((friend, i) => (
+                              <ShareFriend friend={friend} book={bookInfo} key={i} />
+                            )) : <label className='friend'>Add more friends to share books with!</label>}
+                          </div>
+                        </Popup>
+                       : <></>}
+                    </div>
+                  </div>
                 </div>
-              </Popup>
-            </div> : <></>}
-          </h1>
-          <div className="singleBookInfo">
-            <span className="singleAuthor">Author: <b>{bookInfo.author} </b></span>
-            <span className="split">|</span>
-            <span className="singlePub">{moment(bookInfo.pubDate).format('YYYY-MM-DD')}</span>
-            <span className="split">|</span>
-            <span className="singleGenre">{bookInfo.genre}</span>
-            <span className="split">|</span>
-            <span className="ratingNum">{bookInfo.avgRating}/5<i className="reviewIcon fa-solid fa-star-half-stroke" />: {bookInfo.rateCount} review(s)</span>
-
-          </div>
-          <p className="singleBookDesc">
-            {bookInfo.desc}
-          </p>
+              </header>
+              <article className="desc">
+                {bookInfo.desc}
+              </article>
+            </div>
+          </section>
         </div>
-      </span>
+      </main>
       <div className="revSection">
         <div className="revHeader">
           <h1>

@@ -7,6 +7,12 @@ import { jwtDecode } from 'jwt-decode';
 
 const Login = ({ onClose, updateUserId }) => {
     const [valid, setValid] = useState('');
+
+    const inputs = [
+        { label: 'Email', type: 'email', name: 'email', placeholder: 'example@email.com' },
+        { label: 'Password', type: 'password', name: 'pw', placeholder: 'Password', },
+    ];
+
     const submitForm = async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
@@ -27,14 +33,17 @@ const Login = ({ onClose, updateUserId }) => {
     return (
         <Popup open={true} onClose={onClose} modal nested>
             {close => (
-                <div className='log'>
-                    <h1 className="header">Sign In</h1>
-                    <p className="description">Please enter the following information:</p>
+                <div className='log alone'>
+                    <h1 className="header">Please log in:</h1>
                     <form action="submit" className='info' onSubmit={submitForm}>
-                        <input type="email" name="email" className='input email' placeholder='Email' />
-                        <input type="password" name="pw" className='input password' placeholder='Password' />
+                        {inputs.map((input, index) => (
+                            <div key={index} className="inputContainer">
+                                <label className='inputLabel'>{input.label}</label>
+                                <input type={input.type} name={input.name} className={`input`} placeholder={input.placeholder} onChange={input.onChange} />
+                            </div>
+                        ))}
                         <label className="response">{valid}</label>
-                        <button type='submit' className='sign'>Sign In</button>
+                        <button type='submit' className='sign'>Login</button>
                     </form>
                 </div>
             )}

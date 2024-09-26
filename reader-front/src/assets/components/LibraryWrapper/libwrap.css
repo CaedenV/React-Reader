@@ -1,29 +1,9 @@
 .btns {
     display: flex;
     flex-direction: row;
-    margin-right: 10px;
-    align-items: center;
+    gap: 0 2px;
     font-size: medium;
-}
-.display {
-    padding-left: 2px;
-    padding-right: 2px;
-    margin-right: 5px;
-    color: mediumpurple;
-    background-color: white;
-    border: 1px solid mediumpurple;
-    border-radius: 2px;
-    font-size: 16px;
-}
-
-.display:hover {
-    background-color: rgb(252, 200, 136);
-    color: rgb(81, 53, 138);
-}
-.wrap {
-    display: flex;
-    flex-direction: row;
-    margin-right: 10px;
+    justify-content: center;
     align-items: center;
-    
+    margin-top: 2px;
 }

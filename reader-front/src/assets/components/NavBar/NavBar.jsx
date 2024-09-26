@@ -5,7 +5,6 @@ import Popup from 'reactjs-popup';
 import Login from '../Login-Register/Login';
 import Register from '../Login-Register/Register';
 import { Link, useNavigate } from 'react-router-dom';
-import NotifList from '../NotifDisplay/NotifList';
 import apiClient from '../../axiosTokenIntercept';
 import { userBack } from '../../backendRoutes';
 
@@ -57,44 +56,40 @@ const NavBar = ({ userId, updateUserId }) => {
         }
     }, [userId]);
 
+    const handleToneToggle = () => {
+        document.body.classList.toggle('dark-mode');
+    }
+
 
     return (
         <div>
-            <nav className='container'>
-                <Link to={''}><img src={logo} alt="WeReader" className='logo' /></Link>
-                <ul>
-                    <li><Link to={'/'}>HOME</Link></li>
-                    <li><Link to={`store`}>STORE</Link></li>
-                    <li><Link to={userId ? `/read/${nowRead}` : '/'}>READ</Link></li>
-                    <li><Link to={userId ? `${userId}/library` : '/'}>LIBRARY</Link></li>
-                </ul>
-                <div className="profile">
-                    <Popup trigger={<button><i className="fa-solid fa-circle-user" /></button>} position="bottom center" className='userOptions'>
-                        {userId ? (
-                            <div className="userOptions">
-                                <Link to={`/${userId}/profile`}>Profile</Link>
-                                <a href="">Settings</a>
-                                <a onClick={handleLogOutClick}>Logout</a>
-                            </div>
-                        ) : (
-                            <div className="userOptions">
-                                <button className='userBtn signUp' onClick={handleRegisterClick}>Sign Up</button>
-                                <button className='userBtn logIn' onClick={handleLoginClick}>Log In</button>
-                            </div>
-                        )}
+            <nav className='navigationContainer'>
+                <Link to={'/'}><img src={logo} alt="WeReader" className='logo' /> WeReader</Link>
+                <div className="navActions">
+                    <ul className='navTabs'>
+                        <li><Link to={`store`}>STORE</Link></li>
+                        <li><Link to={userId ? `/read/${nowRead}` : '/'}>READ</Link></li>
+                        <li><Link to={userId ? `/library` : '/'}>LIBRARY</Link></li>
+                        <li><Link to={userId ? `/clubs` : '/'}>CLUBS</Link></li>
+                    </ul>
+                    <div className="navButtons">
+                        <Popup trigger={<button className='navBtn'><i class="navIcon fa-regular fa-user" /></button>} position="bottom center" className='userOptions'>
+                            {userId ? (
+                                <div className="userOptions">
+                                    <Link to={`/${userId}/profile`}>Profile</Link>
+                                    <a onClick={handleLogOutClick}>Logout</a>
+                                </div>
+                            ) : (
+                                <div className="userOptions">
+                                    <button className='userBtn signUp' onClick={handleRegisterClick}>Sign Up</button>
+                                    <button className='userBtn logIn' onClick={handleLoginClick}>Log In</button>
+                                </div>
+                            )}
 
-                    </Popup>
-                    {userId ? (
-                        <>
-                            <Link to={`/clubs`}>
-                                <i className="clubsIcon fa-solid fa-comment" />
-                            </Link>
-                            <NotifList userId={userId} />
-                        </>
+                        </Popup>
+                        <button className="navBtn" id='theme-toggle' onClick={handleToneToggle}>{/*<i className="navIcon fa-solid fa-moon" />*/}<i className="navIcon fa-regular fa-sun" /></button>
+                    </div>
 
-                    ) : (
-                        <></>
-                    )}
                 </div>
             </nav>
             {registerPopOpen && <Register onClose={() => setRegisterPopOpen(false)} onSign={handleSignRegClose} updateUserId={updateUserId} />}

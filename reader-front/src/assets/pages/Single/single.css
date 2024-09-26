@@ -1,53 +1,109 @@
+.bookInfoContainer {
+    align-self: self-start;
+    color: var(--text-color);
+}
+.contentWrapper {
+    display: flex;
+    gap: 20px;
+}
+.imgColumn {
+    display: flex;
+    flex-direction: column;
+    line-height: normal;
+    width: 29%;
+    margin-left: 0;
+}
 .singleBookCover {
-    width: 500px;
-    height: 800px;
+    aspect-ratio: 0.66;
+    object-fit: contain;
+    width: 100%;
+    background-color: black;
+    border-radius: 10px;
+    margin-top: 40px;
+}
+.detailsColumn {
+    display: flex;
+    flex-direction: column;
+    line-height: normal;
+    width: 71%;
+    margin-left: 20px;
+}
+.detailsWrapper {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    margin-top: 40px;
+}
+.headerSection {
+    display: flex;
+    width: 100%;
+    gap: 40px 85px;
+    flex-wrap: wrap;
+}
+.headerContent {
+    flex-grow: 1;
+    flex-basis: auto;
+}
+.headerLayout {
+    display: flex;
+    gap: 20px;
+}
+.titleColumn {
+    display: flex;
+    flex-direction: column;
+    line-height: normal;
+    width: 72%;
+    margin-left: 0;
+}
+.titelWrapper {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    align-items: start;
+    font-weight: 600;
+    line-height: 1.3;
+}
+.genre {
+    font-size: 32px;
+}
+.bookTitle {
+    font-size: 96px;
+    margin-top: 6px;
+}
+.authorInfo {
+    font-size: 40px;
+    font-weight: 500;
+    align-self: stretch;
+    margin-top: 27px;
+}
+.rateInfo {
+    font-size: 24px;
+    font-weight: 600;
+}
+.reviewIcon {
+    padding-right: 4%;
+}
+.actionColumn {
+    display: flex;
+    margin-left: 20px;
+    justify-content: center;
+    align-items: center;
+    gap: 0 50px;
+    margin-bottom: auto;
+    padding-right: 10%;
+}
+.share{
     border-radius: 5px;
-    object-fit: fill;
+    color: var(--button-text-color);
+    background-color:  var(--button-color);
+    font-size: medium;
+    padding: 5px;
+    border: none;
 }
-
-.singleBookTitle {
-    text-align: left;
-    font-family: 'Bebas Neue';
-    font-size: 90px;
-    font-weight: 700;
-    margin-left: 12px;
-    color: mediumpurple;
-}
-
-.singleBookOpt {
-    float: right;
-    font-size: 25px;
-    margin-left: 10px;
-    cursor: pointer;
-    color: mediumpurple;
-    display: flex;
-}
-
-.singleIcons {
-    margin-left: 15px;
-}
-
-.singleBookInfo {
-    margin-left: 15px;
-    display: flex;
-    font-size: 16px;
-    color: rgb(117, 87, 177);
-    flex: 3;
-    border-bottom: 1px solid mediumpurple;
-}
-
-.singleBookDesc {
-    color: rgb(101, 75, 151);
-    font-size: 18px;
-    line-height: 25px;
-}
-
-.bookCoverTitle {
-    display: flex;
-}
-
-.singleBookDesc {
-    margin: 12px;
+.desc {
+    padding-top: 16px;
+    font-size: 20px;
+    font-weight: 600;
 }
 
 .split {
@@ -55,22 +111,14 @@
     margin-right: 5px;
 }
 
-.revSection {
-    margin-top: 15px;
-}
-
-.revHeader>h {
+.revHeader {
+    color: var(--text-color);
     font-size: 36px;
     margin-left: 10px;
-    text-align: center;
 }
-
-.makeReviewIcon {
-    margin-left: 30px;
-    font-size: 25px;
-    cursor: pointer;
-}
-
-.revHeader {
-    color: mediumpurple;
+.mainContents {
+    padding: 0 5%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px 0;
 }

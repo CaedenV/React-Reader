@@ -1,25 +1,15 @@
-.intro {
-    display: flex;
-    flex-direction: column;
-    align-items: normal;
-}
-
-.back {
-    width: 100%;
-    height: 50vh;
-    object-fit: cover;
-    filter: sepia(0.8);
-}
-
 .introHead {
-    font-size: xx-large;
-    color: mediumpurple;
-    margin-top: 10px;
+    color: rgba(255, 228, 196, 1);
+    text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    text-align: center;
+    font-size: 40px;
+    font-weight: 600;
+    line-height: 1.3;
 }
 
 .introBody {
-    font-size: large;
-    color: rgb(97, 81, 128);
+    font-size: 64px;
+    color: #3F355A;
     margin-top: 10px;
 }
 
@@ -28,15 +18,32 @@
     flex-direction: column;
     align-items: center;
     padding-bottom: 30px;
+    background-color: #56487C;
 }
 
 .start {
     border: none;
-    color: bisque;
-    background-color: mediumpurple;
+    color: rgba(255, 228, 196, 1);
+    background-color: #65558F;
     border-radius: 8px;
     font-size: large;
     padding: 3px;
     margin-top: 20px;
 }
+
+.default>div {
+    padding-left: 5%;
+    padding-right: 5%;
+}
+.introBottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 500px;
+}
+
+
+
+
 
